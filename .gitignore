@@ -1,0 +1,50 @@
+# === LOGS ===
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# === FRONTEND (Vite + Node.js) ===
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.env
+frontend/.vite/
+*.local
+
+# === BACKEND (Python) ===
+backend/__pycache__/
+backend/**/*.pyc
+backend/.env
+backend/*.log
+backend/*.sqlite3
+backend/*.pem
+backend/*.crt
+backend/*.key
+backend/*.pfx
+backend/app/app.db
+
+# === ENVIRONMENT FILES (global) ===
+.env
+*.env.*
+
+# === OS / EDITOR FILES ===
+.DS_Store
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+Thumbs.db
+desktop.ini
+
+# === OTHERS ===
+*.zip
+*.bak
+*.tmp

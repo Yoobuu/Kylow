@@ -1,0 +1,123 @@
+﻿[
+    {
+        "HVHost":  "S-HYP-01",
+        "Nombre":  "S2-P-RADFS4-01",
+        "Estado":  "Running",
+        "CPU":  8,
+        "CPU_UsagePct":  0,
+        "RAM_MiB":  16384,
+        "RAM_Demand_MiB":  8683,
+        "RAM_UsagePct":  53,
+        "Ambiente":  null,
+        "SO":  "Windows Server 2019 Standard",
+        "Cluster":  "S-HYP-CLTR-01",
+        "VLANs":  [
+                      3075
+                  ],
+        "IPs":  [
+                    "172.21.75.43"
+                ],
+        "Discos":  [
+                       {
+                           "SizeGiB":  200,
+                           "AllocatedGiB":  87.63,
+                           "AllocatedPct":  44
+                       }
+                   ],
+        "CompatHW":  {
+                         "Version":  "12.0",
+                         "Generation":  2
+                     }
+    },
+    {
+        "HVHost":  "S-HYP-02",
+        "Nombre":  "P-LH-04",
+        "Estado":  "Running",
+        "CPU":  4,
+        "CPU_UsagePct":  0,
+        "RAM_MiB":  4096,
+        "RAM_Demand_MiB":  5652,
+        "RAM_UsagePct":  138,
+        "Ambiente":  "P",
+        "SO":  "Windows Server 2019 Standard",
+        "Cluster":  "S-HYP-CLTR-01",
+        "VLANs":  [
+                      1177
+                  ],
+        "IPs":  [
+                    "169.254.168.15",
+                    "169.254.170.62"
+                ],
+        "Discos":  [
+                       {
+                           "SizeGiB":  100,
+                           "AllocatedGiB":  99.07,
+                           "AllocatedPct":  99
+                       }
+                   ],
+        "CompatHW":  {
+                         "Version":  "12.0",
+                         "Generation":  2
+                     }
+    },
+    {
+        "HVHost":  "S-HYP-03",
+        "Nombre":  "S2-P-AD-DS-03",
+        "Estado":  "Running",
+        "CPU":  8,
+        "CPU_UsagePct":  0,
+        "RAM_MiB":  24576,
+        "RAM_Demand_MiB":  5160,
+        "RAM_UsagePct":  21,
+        "Ambiente":  null,
+        "SO":  "Windows Server 2019 Standard",
+        "Cluster":  "S-HYP-CLTR-01",
+        "VLANs":  [
+                      3075
+                  ],
+        "IPs":  [
+                    "172.21.75.4"
+                ],
+        "Discos":  [
+                       {
+                           "SizeGiB":  200,
+                           "AllocatedGiB":  28.16,
+                           "AllocatedPct":  14
+                       }
+                   ],
+        "CompatHW":  {
+                         "Version":  "12.0",
+                         "Generation":  2
+                     }
+    },
+    {
+        "HVHost":  "S-HYP-04",
+        "Nombre":  "T-SIMP-01",
+        "Estado":  "Running",
+        "CPU":  4,
+        "CPU_UsagePct":  0,
+        "RAM_MiB":  8192,
+        "RAM_Demand_MiB":  3194,
+        "RAM_UsagePct":  39,
+        "Ambiente":  "T",
+        "SO":  "Oracle Linux Server",
+        "Cluster":  "S-HYP-CLTR-01",
+        "VLANs":  [
+                      1064
+                  ],
+        "IPs":  [
+                    "172.21.64.60"
+                ],
+        "Discos":  [
+                       {
+                           "SizeGiB":  100,
+                           "AllocatedGiB":  23.5,
+                           "AllocatedPct":  24
+                       }
+                   ],
+        "CompatHW":  {
+                         "Version":  "12.0",
+                         "Generation":  2
+                     }
+    }
+]
