@@ -29,6 +29,12 @@ export default function Navbar() {
                 Usuarios
               </Link>
               <Link
+                to="/notifications"
+                className="rounded-xl bg-indigo-600/90 px-4 py-2 text-sm font-medium shadow transition hover:bg-indigo-500/90"
+              >
+                Notificaciones
+              </Link>
+              <Link
                 to="/audit"
                 className="rounded-xl bg-purple-600/90 px-4 py-2 text-sm font-medium shadow transition hover:bg-purple-500/90"
               >

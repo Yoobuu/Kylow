@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
 import UserAdminPage from "./pages/UserAdminPage";
 import AuditPage from "./pages/AuditPage";
+import NotificationsPage from "./pages/NotificationsPage";
 
 export default function App() {
   return (
@@ -102,6 +103,36 @@ function AppRoutes() {
               <Navbar />
               <KVMPage />
             </div>
+            )
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+
+      <Route
+        path="/notifications"
+        element={
+          isAuthenticated ? (
+            enforcePasswordChange ? (
+              <Navigate to="/change-password" replace />
+            ) : isSuperadmin ? (
+              <div className="min-h-screen bg-gray-50 flex flex-col">
+                <Navbar />
+                <NotificationsPage />
+              </div>
+            ) : (
+              <div className="min-h-screen bg-gray-50 flex flex-col">
+                <Navbar />
+                <div className="flex flex-1 items-center justify-center px-6 py-20">
+                  <div className="max-w-md rounded-lg border border-gray-200 bg-white p-8 text-center shadow">
+                    <h2 className="text-lg font-semibold text-gray-900">Acceso denegado</h2>
+                    <p className="mt-2 text-sm text-gray-600">
+                      Esta sección solo está disponible para usuarios con rol <strong>SUPERADMIN</strong>.
+                    </p>
+                  </div>
+                </div>
+              </div>
             )
           ) : (
             <Navigate to="/login" replace />
