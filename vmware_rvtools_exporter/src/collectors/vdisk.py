@@ -1,7 +1,10 @@
+from typing import Optional
+
 from pyVmomi import vim
 
 from .context import CollectorContext
 from ..property_fetch import fetch_vms
+from ..utils.vm_meta import apply_vm_meta, get_vi_sdk_meta, get_vm_meta
 
 
 VM_PROPERTIES = [
@@ -32,9 +35,30 @@ def _extract_datastore_name(backing, filename: str) -> str:
     return ""
 
 
+def _bool_to_rvtools(value) -> str:
+    if value is None or value == "":
+        return ""
+    return "TRUE" if bool(value) else "FALSE"
+
+
+def _is_raw_backing(backing) -> Optional[bool]:
+    if backing is None:
+        return None
+    name = backing.__class__.__name__
+    if "RawDiskMapping" in name:
+        return True
+    return False
+
+
 def collect(context: CollectorContext):
     diagnostics = context.diagnostics
     logger = context.logger
+
+    vi_meta = context.shared_data.get("vi_sdk")
+    if not vi_meta:
+        vi_meta = get_vi_sdk_meta(context.service_instance, context.config.server)
+        context.shared_data["vi_sdk"] = vi_meta
+    vm_meta_by_moid = context.shared_data.get("vm_meta_by_moid", {})
 
     try:
         vm_items = fetch_vms(context.service_instance, VM_PROPERTIES)
@@ -46,6 +70,11 @@ def collect(context: CollectorContext):
     rows = []
     for item in vm_items:
         props = item.get("props", {})
+        vm_ref = item.get("ref")
+        moid = item.get("moid") or (vm_ref._GetMoId() if vm_ref and hasattr(vm_ref, "_GetMoId") else "")
+        vm_meta = vm_meta_by_moid.get(moid)
+        if not vm_meta:
+            vm_meta = get_vm_meta(vm_ref, props, None)
         name = props.get("name") or ""
         power_state = props.get("runtime.powerState")
         template = props.get("config.template", "")
@@ -63,6 +92,21 @@ def collect(context: CollectorContext):
                 filename = getattr(backing, "fileName", "") if backing else ""
                 thin = getattr(backing, "thinProvisioned", "") if backing else ""
                 datastore_name = _extract_datastore_name(backing, filename)
+                disk_uuid = getattr(backing, "uuid", "") if backing else ""
+                disk_key = getattr(device, "key", "")
+                raw_val = _is_raw_backing(backing)
+                sharing_mode = getattr(device, "sharing", "")
+                eagerly_scrub = getattr(backing, "eagerlyScrub", None) if backing else None
+                split = getattr(backing, "split", None) if backing else None
+                write_through = getattr(backing, "writeThrough", None) if backing else None
+                storage_io = getattr(device, "storageIOAllocation", None)
+                shares_level = ""
+                shares_value = ""
+                if storage_io is not None:
+                    shares = getattr(storage_io, "shares", None)
+                    if shares is not None:
+                        shares_level = getattr(shares, "level", "") or ""
+                        shares_value = getattr(shares, "shares", "") or ""
 
                 row = {
                     "VM": name,
@@ -76,7 +120,18 @@ def collect(context: CollectorContext):
                     "Controller": getattr(device, "controllerKey", ""),
                     "UnitNumber": getattr(device, "unitNumber", ""),
                     "Type": device.__class__.__name__,
+                    "Disk UUID": disk_uuid,
+                    "Disk Path": filename,
+                    "Disk Key": disk_key,
+                    "Raw": _bool_to_rvtools(raw_val) if raw_val is not None else "",
+                    "Sharing mode": str(sharing_mode) if sharing_mode != "" else "",
+                    "Eagerly Scrub": _bool_to_rvtools(eagerly_scrub),
+                    "Split": _bool_to_rvtools(split),
+                    "Write Through": _bool_to_rvtools(write_through),
+                    "Level": shares_level,
+                    "Shares": shares_value,
                 }
+                apply_vm_meta(row, vm_meta, vi_meta, include_srm=True)
                 rows.append(row)
                 diagnostics.add_success("vDisk")
             except Exception as exc:

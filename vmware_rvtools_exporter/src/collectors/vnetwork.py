@@ -3,11 +3,13 @@ from pyVmomi import vim
 from .context import CollectorContext
 from ..property_fetch import fetch_vms
 from ..resolvers import InventoryResolver
+from ..utils.vm_meta import apply_vm_meta, get_vi_sdk_meta, get_vm_meta
 
 
 VM_PROPERTIES = [
     "name",
     "runtime.powerState",
+    "runtime.host",
     "config.template",
     "config.hardware.device",
 ]
@@ -41,6 +43,12 @@ def collect(context: CollectorContext):
     diagnostics = context.diagnostics
     logger = context.logger
 
+    vi_meta = context.shared_data.get("vi_sdk")
+    if not vi_meta:
+        vi_meta = get_vi_sdk_meta(context.service_instance, context.config.server)
+        context.shared_data["vi_sdk"] = vi_meta
+    vm_meta_by_moid = context.shared_data.get("vm_meta_by_moid", {})
+
     try:
         vm_items = fetch_vms(context.service_instance, VM_PROPERTIES)
     except Exception as exc:
@@ -53,10 +61,20 @@ def collect(context: CollectorContext):
 
     for item in vm_items:
         props = item.get("props", {})
+        vm_ref = item.get("ref")
+        moid = item.get("moid") or (vm_ref._GetMoId() if vm_ref and hasattr(vm_ref, "_GetMoId") else "")
+        vm_meta = vm_meta_by_moid.get(moid)
+        if not vm_meta:
+            vm_meta = get_vm_meta(vm_ref, props, None)
         name = props.get("name") or ""
         power_state = props.get("runtime.powerState")
+        host_ref = props.get("runtime.host")
         template = props.get("config.template", "")
         devices = props.get("config.hardware.device") or []
+
+        host_name = resolver.resolve_host_name(host_ref)
+        cluster = resolver.resolve_cluster_name(host_ref)
+        datacenter = resolver.resolve_datacenter_name(host_ref)
 
         for device in devices:
             if not isinstance(device, vim.vm.device.VirtualEthernetCard):
@@ -67,6 +85,8 @@ def collect(context: CollectorContext):
                 network_name = _resolve_network_name(device, resolver)
                 connectable = getattr(device, "connectable", None)
                 connected = getattr(connectable, "connected", "") if connectable else ""
+                start_connected = getattr(connectable, "startConnected", "") if connectable else ""
+                
                 row = {
                     "VM": name,
                     "Powerstate": str(power_state) if power_state is not None else "",
@@ -77,9 +97,14 @@ def collect(context: CollectorContext):
                     if device.deviceInfo
                     else "",
                     "MAC": getattr(device, "macAddress", ""),
-                    "Connected": connected,
+                    "Connected": str(connected),
+                    "Starts Connected": str(start_connected),
                     "Type": device.__class__.__name__,
+                    "Host": host_name,
+                    "Cluster": cluster,
+                    "Datacenter": datacenter,
                 }
+                apply_vm_meta(row, vm_meta, vi_meta, include_srm=True)
                 rows.append(row)
                 diagnostics.add_success("vNetwork")
             except Exception as exc:
