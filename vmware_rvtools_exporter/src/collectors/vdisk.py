@@ -4,12 +4,14 @@ from pyVmomi import vim
 
 from .context import CollectorContext
 from ..property_fetch import fetch_vms
+from ..resolvers import InventoryResolver
 from ..utils.vm_meta import apply_vm_meta, get_vi_sdk_meta, get_vm_meta
 
 
 VM_PROPERTIES = [
     "name",
     "runtime.powerState",
+    "runtime.host",
     "config.template",
     "config.hardware.device",
 ]
@@ -67,7 +69,9 @@ def collect(context: CollectorContext):
         logger.error("Error PropertyCollector vDisk: %s", exc)
         return []
 
+    resolver = InventoryResolver(context.service_instance, logger=logger)
     rows = []
+    sort_index = 1
     for item in vm_items:
         props = item.get("props", {})
         vm_ref = item.get("ref")
@@ -77,8 +81,19 @@ def collect(context: CollectorContext):
             vm_meta = get_vm_meta(vm_ref, props, None)
         name = props.get("name") or ""
         power_state = props.get("runtime.powerState")
+        host_ref = props.get("runtime.host")
         template = props.get("config.template", "")
         devices = props.get("config.hardware.device") or []
+
+        host_name = resolver.resolve_host_name(host_ref)
+        cluster = resolver.resolve_cluster_name(host_ref)
+        datacenter = resolver.resolve_datacenter_name(host_ref)
+
+        controller_shared_bus = {}
+        for device in devices:
+            if isinstance(device, vim.vm.device.VirtualSCSIController):
+                shared_bus = getattr(device, "sharedBus", "")
+                controller_shared_bus[getattr(device, "key", "")] = shared_bus
 
         for device in devices:
             if not isinstance(device, vim.vm.device.VirtualDisk):
@@ -102,17 +117,27 @@ def collect(context: CollectorContext):
                 storage_io = getattr(device, "storageIOAllocation", None)
                 shares_level = ""
                 shares_value = ""
+                reservation = ""
+                limit = ""
                 if storage_io is not None:
                     shares = getattr(storage_io, "shares", None)
                     if shares is not None:
                         shares_level = getattr(shares, "level", "") or ""
                         shares_value = getattr(shares, "shares", "") or ""
+                    reservation = getattr(storage_io, "reservation", "")
+                    limit = getattr(storage_io, "limit", "")
+                scsi_unit = getattr(device, "unitNumber", "")
+                shared_bus = controller_shared_bus.get(
+                    getattr(device, "controllerKey", ""), ""
+                )
+                internal_sort = f"{moid}:{disk_key}" if moid and disk_key != "" else sort_index
 
                 row = {
                     "VM": name,
                     "Powerstate": str(power_state) if power_state is not None else "",
                     "Template": template,
                     "Disk": label,
+                    "Label": label,
                     "CapacityGB": capacity_gb,
                     "Datastore": datastore_name,
                     "File": filename,
@@ -130,9 +155,18 @@ def collect(context: CollectorContext):
                     "Write Through": _bool_to_rvtools(write_through),
                     "Level": shares_level,
                     "Shares": shares_value,
+                    "Reservation": reservation,
+                    "Limit": limit,
+                    "SCSI Unit #": scsi_unit,
+                    "Shared Bus": str(shared_bus) if shared_bus != "" else "",
+                    "Internal Sort Column": internal_sort,
+                    "Host": host_name,
+                    "Cluster": cluster,
+                    "Datacenter": datacenter,
                 }
                 apply_vm_meta(row, vm_meta, vi_meta, include_srm=True)
                 rows.append(row)
+                sort_index += 1
                 diagnostics.add_success("vDisk")
             except Exception as exc:
                 diagnostics.add_error("vDisk", name or "<unknown>", exc)

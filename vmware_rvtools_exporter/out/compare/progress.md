@@ -183,3 +183,19 @@
 ## Notes
 - No timestamps invented; backup fields only filled when custom fields exist.
 - Raw/IO flags derived solely from VirtualDisk backing and storageIOAllocation; empty when not present.
+
+- Timestamp: 2025-12-23 01:52:37 -05
+- Lote: 6
+
+## vDisk additions (Lote 6)
+- Label: device.deviceInfo.label.
+- SCSI Unit #: device.unitNumber.
+- Sharing mode: device.sharing.
+- Reservation: device.storageIOAllocation.reservation.
+- Limit: device.storageIOAllocation.limit.
+- Shared Bus: controller.sharedBus from matching VirtualSCSIController (controllerKey).
+- Internal Sort Column: "<vm_moid>:<device.key>" (fallback to incremental index).
+- Host/Cluster/Datacenter: resolved from vm.runtime.host (InventoryResolver).
+
+## Notes
+- All fields degrade to empty when not present.
