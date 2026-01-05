@@ -3,26 +3,72 @@
 from __future__ import annotations
 
 import logging
-import os
 from dataclasses import dataclass, field
 from typing import List
 
 from fastapi import FastAPI
-from sqlmodel import Session
+import os
+from passlib.hash import bcrypt
+from sqlmodel import Session, select
 
 from app.db import get_engine, init_db
 from app.notifications.models import Notification  # noqa: F401
-from app.permissions.models import Permission  # noqa: F401
+from app.auth.user_model import User
+from app.permissions.models import Permission, UserPermission  # noqa: F401
 from app.permissions.service import ensure_default_permissions
 from app.vms import vm_service
+from app.settings import settings
 try:
     from app.main import TEST_MODE
 except Exception:
     TEST_MODE = False
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("uvicorn.error")
 
-REQUIRED_ENV_VARS = ("SECRET_KEY", "VCENTER_HOST", "VCENTER_USER", "VCENTER_PASS")
+REQUIRED_ENV_VARS = ("SECRET_KEY",)
+# Bootstrap admin envs:
+# - BOOTSTRAP_ADMIN_ENABLED=true
+# - BOOTSTRAP_ADMIN_USERNAME=admin
+# - BOOTSTRAP_ADMIN_PASSWORD=<required when enabled>
+
+
+def _bootstrap_admin_enabled() -> bool:
+    value = os.getenv("BOOTSTRAP_ADMIN_ENABLED", "").strip().lower()
+    return value in {"1", "true", "yes", "on"}
+
+
+def _bootstrap_admin_if_needed(session: Session) -> None:
+    if not _bootstrap_admin_enabled():
+        return
+    password = os.getenv("BOOTSTRAP_ADMIN_PASSWORD", "").strip()
+    if not password:
+        raise RuntimeError("BOOTSTRAP_ADMIN_PASSWORD is required when BOOTSTRAP_ADMIN_ENABLED=true")
+    existing = session.exec(select(User.id).limit(1)).first()
+    if existing is not None:
+        return
+
+    username = (os.getenv("BOOTSTRAP_ADMIN_USERNAME", "admin").strip() or "admin")
+    new_user = User(
+        username=username,
+        hashed_password=bcrypt.hash(password),
+        must_change_password=True,
+    )
+    new_user.mark_password_reset()
+    session.add(new_user)
+    session.flush()
+
+    rows = session.exec(select(Permission.code)).all()
+    permission_codes = [row[0] if isinstance(row, tuple) else row for row in rows]
+    for code in permission_codes:
+        session.add(
+            UserPermission(
+                user_id=new_user.id,
+                permission_code=code,
+                granted=True,
+            )
+        )
+    session.commit()
+    logger.info("Bootstrap admin created: %s", username)
 
 
 @dataclass
@@ -37,9 +83,8 @@ class StartupDiagnostics:
 def _collect_env_issues() -> List[str]:
     """Return a list of missing or empty environment variables required at runtime."""
     issues: List[str] = []
-    for name in REQUIRED_ENV_VARS:
-        if not os.getenv(name):
-            issues.append(f"Environment variable '{name}' is not set")
+    if not settings.secret_key:
+        issues.append("Environment variable 'SECRET_KEY' is not set")
     return issues
 
 
@@ -81,7 +126,7 @@ def register_startup_events(app: FastAPI) -> None:
             default=not _is_production_env(),
         )
 
-        if os.getenv("TESTING") == "1":
+        if settings.testing:
             logger.info("Skipping database initialization in testing mode")
         elif not init_db_on_startup:
             logger.info("Skipping database initialization (INIT_DB_ON_STARTUP=false)")
@@ -93,6 +138,7 @@ def register_startup_events(app: FastAPI) -> None:
 
                 with Session(get_engine()) as session:
                     ensure_default_permissions(session)
+                    _bootstrap_admin_if_needed(session)
             except Exception as exc:  # pragma: no cover - defensive
                 diagnostics.errors.append(f"Database init failed: {exc}")
                 logger.exception("Database initialization failed")
@@ -105,7 +151,7 @@ def register_startup_events(app: FastAPI) -> None:
             diagnostics.env_issues.extend(vc_issues)
             logger.error("vCenter configuration issues: %s", vc_issues)
 
-        scheduler_enabled = os.getenv("NOTIF_SCHED_ENABLED", "").strip().lower() in {"1", "true", "yes", "on"}
+        scheduler_enabled = settings.notif_sched_enabled
         notification_scheduler = None
         if scheduler_enabled:
             try:
@@ -116,7 +162,7 @@ def register_startup_events(app: FastAPI) -> None:
                 notification_scheduler.start()
                 logger.info(
                     "Notification scheduler started (dev_minutes=%s)",
-                    os.getenv("NOTIF_SCHED_DEV_MINUTES"),
+                    settings.notif_sched_dev_minutes,
                 )
             except Exception as exc:  # pragma: no cover - defensive
                 logger.exception("Failed to start notification scheduler: %s", exc)
@@ -126,6 +172,110 @@ def register_startup_events(app: FastAPI) -> None:
 
         app.state.notification_scheduler = notification_scheduler
         app.state.startup_diagnostics = diagnostics
+
+        logger.info(f"Warmup enabled: {settings.warmup_enabled}")
+        # ── Hyper-V warmup ──
+        try:
+            from app.vms.hyperv_router import _kick_scheduler, _kick_warmup
+
+            _kick_scheduler()
+            if settings.warmup_enabled:
+                if not settings.hyperv_configured:
+                    logger.info(
+                        "Warmup skipped for hyperv: not configured missing=%s",
+                        settings.hyperv_missing_envs or [],
+                    )
+                elif settings.hyperv_enabled:
+                    _kick_warmup()
+                    logger.info("Hyper-V warmup scheduled on startup")
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.exception("Failed to start Hyper-V warmup: %s", exc)
+        # ── VMware warmup ──
+        try:
+            from app.vms.vmware_router import _kick_scheduler as _kick_vmware_scheduler, _kick_warmup as _kick_vmware_warmup
+
+            _kick_vmware_scheduler()
+            if settings.warmup_enabled:
+                if not settings.vmware_configured:
+                    logger.info(
+                        "Warmup skipped for vmware: not configured missing=%s",
+                        settings.vmware_missing_envs or [],
+                    )
+                elif settings.vmware_enabled:
+                    _kick_vmware_warmup()
+                    logger.info("VMware warmup scheduled on startup")
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.exception("Failed to start VMware warmup: %s", exc)
+        # ── VMware hosts warmup ──
+        try:
+            from app.hosts.vmware_host_snapshot_router import (
+                _kick_scheduler as _kick_vmware_hosts_scheduler,
+                _kick_warmup as _kick_vmware_hosts_warmup,
+            )
+
+            _kick_vmware_hosts_scheduler()
+            if settings.warmup_enabled:
+                if not settings.vmware_configured:
+                    logger.info(
+                        "Warmup skipped for vmware-hosts: not configured missing=%s",
+                        settings.vmware_missing_envs or [],
+                    )
+                elif settings.vmware_enabled:
+                    _kick_vmware_hosts_warmup()
+                    logger.info("VMware hosts warmup scheduled on startup")
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.exception("Failed to start VMware hosts warmup: %s", exc)
+        # ── Cedia warmup ──
+        try:
+            from app.cedia.cedia_snapshot_router import _kick_scheduler as _kick_cedia_scheduler, _kick_warmup as _kick_cedia_warmup
+
+            _kick_cedia_scheduler()
+            if settings.warmup_enabled:
+                if not settings.cedia_configured:
+                    logger.info(
+                        "Warmup skipped for cedia: not configured missing=%s",
+                        settings.cedia_missing_envs or [],
+                    )
+                elif settings.cedia_enabled:
+                    _kick_cedia_warmup()
+                    logger.info("Cedia warmup scheduled on startup")
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.exception("Failed to start Cedia warmup: %s", exc)
+
+        # ── Startup config logging (no secrets) ──
+        logger.info(
+            "hyperv enabled=%s configured=%s missing=%s",
+            settings.hyperv_enabled,
+            settings.hyperv_configured,
+            settings.hyperv_missing_envs or [],
+        )
+        logger.info(
+            "vmware enabled=%s configured=%s missing=%s",
+            settings.vmware_enabled,
+            settings.vmware_configured,
+            settings.vmware_missing_envs or [],
+        )
+        logger.info(
+            "cedia enabled=%s configured=%s missing=%s",
+            settings.cedia_enabled,
+            settings.cedia_configured,
+            settings.cedia_missing_envs or [],
+        )
+        logger.info(
+            "Hyper-V hosts configured: %s",
+            len(settings.hyperv_hosts_configured),
+        )
+        logger.info(
+            "Refresh intervals (minutes): hyperv=%s vmware=%s vmware_hosts=%s cedia=%s",
+            settings.hyperv_refresh_interval_minutes,
+            settings.vmware_refresh_interval_minutes,
+            settings.vmware_hosts_refresh_interval_minutes,
+            settings.cedia_refresh_interval_minutes,
+        )
+        logger.info(
+            "CORS allow origins configured: %s",
+            len(settings.cors_allow_origins),
+        )
 
     @app.on_event("shutdown")
     async def on_shutdown() -> None:
@@ -138,3 +288,35 @@ def register_startup_events(app: FastAPI) -> None:
                 logger.info("Notification scheduler stopped")
             except Exception:  # pragma: no cover - defensive
                 logger.exception("Failed to stop notification scheduler")
+        # ── Hyper-V warmup stop ──
+        try:
+            from app.vms.hyperv_router import _stop_warmup
+
+            _stop_warmup()
+            logger.info("Hyper-V warmup stopped")
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.exception("Failed to stop Hyper-V warmup: %s", exc)
+        # ── VMware warmup stop ──
+        try:
+            from app.vms.vmware_router import _stop_warmup as _stop_vmware_warmup
+
+            _stop_vmware_warmup()
+            logger.info("VMware warmup stopped")
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.exception("Failed to stop VMware warmup: %s", exc)
+        # ── VMware hosts warmup stop ──
+        try:
+            from app.hosts.vmware_host_snapshot_router import _stop_warmup as _stop_vmware_hosts_warmup
+
+            _stop_vmware_hosts_warmup()
+            logger.info("VMware hosts warmup stopped")
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.exception("Failed to stop VMware hosts warmup: %s", exc)
+        # ── Cedia warmup stop ──
+        try:
+            from app.cedia.cedia_snapshot_router import _stop_warmup as _stop_cedia_warmup
+
+            _stop_cedia_warmup()
+            logger.info("Cedia warmup stopped")
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.exception("Failed to stop Cedia warmup: %s", exc)
