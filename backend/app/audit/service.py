@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import logging
+import os
+import sys
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -12,13 +14,16 @@ from sqlmodel import Session
 from app.audit.models import AuditLog
 from app.auth.user_model import User
 
-AUDIT_LOG_DIR = Path(__file__).resolve().parent.parent / "logs"
-AUDIT_LOG_PATH = AUDIT_LOG_DIR / "audit.log"
+_raw_audit_log_path = os.getenv("AUDIT_LOG_PATH", "").strip()
+AUDIT_LOG_PATH = Path(_raw_audit_log_path).expanduser().resolve() if _raw_audit_log_path else None
 
 _audit_logger = logging.getLogger("app.audit")
 if not _audit_logger.handlers:
-    AUDIT_LOG_DIR.mkdir(parents=True, exist_ok=True)
-    handler = logging.FileHandler(AUDIT_LOG_PATH, encoding="utf-8")
+    if AUDIT_LOG_PATH is not None:
+        AUDIT_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+        handler = logging.FileHandler(AUDIT_LOG_PATH, encoding="utf-8")
+    else:
+        handler = logging.StreamHandler(stream=sys.stdout)
     handler.setFormatter(logging.Formatter("%(message)s"))
     handler.setLevel(logging.INFO)
     _audit_logger.addHandler(handler)
@@ -73,7 +78,7 @@ def log_audit(
     corr: Optional[str] = None,
 ) -> AuditLog:
     """
-    Persist an audit record and emit the same payload to the audit file logger.
+    Persist an audit record and emit the same payload to the audit logger.
 
     The record is flushed (but not committed) so the caller can control transaction scope.
     """

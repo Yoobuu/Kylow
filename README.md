@@ -97,6 +97,50 @@ npm run dev
 
 ---
 
+## 🐳 Docker (k8s-ready minimal)
+
+### Backend (FastAPI)
+
+Construir imagen:
+
+```bash
+docker build -t vmware-inv-backend ./backend
+```
+
+Ejecutar (dev / ejemplo):
+
+```bash
+docker run --rm -p 8000:8000 \
+  -e PORT=8000 \
+  -e APP_ENV=dev \
+  -e SECRET_KEY=changeme \
+  -e VCENTER_HOST=https://vcenter.local \
+  -e VCENTER_USER=svc_vmware \
+  -e VCENTER_PASS=changeme \
+  vmware-inv-backend
+```
+
+Notas:
+- En producción (`APP_ENV=prod|production`), `DATABASE_URL` es obligatorio.
+- `INIT_DB_ON_STARTUP` controla si se ejecuta `create_all` al iniciar (default true en dev, false en prod).
+- CORS se configura con `CORS_ALLOW_ORIGINS` (CSV) o `FRONTEND_ORIGIN`.
+
+### Frontend (Vite → Nginx)
+
+Construir imagen:
+
+```bash
+docker build -t vmware-inv-frontend --build-arg VITE_API_BASE=/api ./frontend
+```
+
+Ejecutar:
+
+```bash
+docker run --rm -p 8080:80 vmware-inv-frontend
+```
+
+---
+
 ## 🔐 Acceso y autenticación
 
 1. Abre `/login` en el navegador.

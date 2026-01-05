@@ -25,6 +25,7 @@ from app.startup import register_startup_events
 
 logger = logging.getLogger(__name__)
 TEST_MODE = os.getenv("PYTEST_RUNNING") == "1"
+APP_ENV = (os.getenv("APP_ENV") or os.getenv("ENVIRONMENT") or "dev").strip().lower()
 
 # ─────────────────────────────
 # FastAPI app
@@ -46,13 +47,23 @@ def healthz():
 
 
 # CORS
-frontend_origin = os.getenv("FRONTEND_ORIGIN")  # ej. https://tu-frontend
-allow_origins = [frontend_origin] if frontend_origin else []
+def _split_origins(value: str | None) -> list[str]:
+    if not value:
+        return []
+    return [item.strip() for item in value.replace(";", ",").split(",") if item.strip()]
+
+
+allow_origins = _split_origins(os.getenv("CORS_ALLOW_ORIGINS"))
+if not allow_origins:
+    allow_origins = _split_origins(os.getenv("FRONTEND_ORIGIN"))
+if APP_ENV not in {"prod", "production"}:
+    for origin in ("http://localhost:5173", "http://127.0.0.1:5173"):
+        if origin not in allow_origins:
+            allow_origins.append(origin)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allow_origins,
-    allow_origin_regex=r"http://(localhost|127\.0\.0\.1):\d+",  # útil en dev (Vite)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

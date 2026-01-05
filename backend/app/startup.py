@@ -43,6 +43,20 @@ def _collect_env_issues() -> List[str]:
     return issues
 
 
+def _as_bool(value: str | None, default: bool = False) -> bool:
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _app_env() -> str:
+    return (os.getenv("APP_ENV") or os.getenv("ENVIRONMENT") or "dev").strip().lower()
+
+
+def _is_production_env() -> bool:
+    return _app_env() in {"prod", "production"}
+
+
 def register_startup_events(app: FastAPI) -> None:
     """Attach startup hooks that validate configuration and warm system components."""
 
@@ -59,8 +73,18 @@ def register_startup_events(app: FastAPI) -> None:
         else:
             logger.info("Environment variables validated successfully")
 
+        if _is_production_env() and not os.getenv("DATABASE_URL"):
+            raise RuntimeError("DATABASE_URL is required when APP_ENV is set to production")
+
+        init_db_on_startup = _as_bool(
+            os.getenv("INIT_DB_ON_STARTUP"),
+            default=not _is_production_env(),
+        )
+
         if os.getenv("TESTING") == "1":
             logger.info("Skipping database initialization in testing mode")
+        elif not init_db_on_startup:
+            logger.info("Skipping database initialization (INIT_DB_ON_STARTUP=false)")
         else:
             try:
                 init_db()
