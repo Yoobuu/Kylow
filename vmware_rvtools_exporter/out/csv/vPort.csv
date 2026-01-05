@@ -1,0 +1,152 @@
+Host,Datacenter,Cluster,Port Group,Switch,VLAN,Promiscuous Mode,Mac Changes,Forged Transmits,Traffic Shaping,Width,Peak,Burst,Policy,Reverse Policy,Notify Switch,Rolling Order,Offload,TSO,Zero Copy Xmit,VI SDK Server,VI SDK UUID
+p-esx-02.usfq.edu.ec,USFQ,USFQ-PRODUCCION,VMotion,VMotion,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-02.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-SRV-65,vSwitch0,1265,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-02.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-MGMT-19,vSwitch0,19,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-02.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-SRV-76,vSwitch0,1176,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-02.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-PUBLIC-192,vSwitch0,192,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-02.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-SRV-77,vSwitch0,1177,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-02.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-SRV-67,vSwitch0,1267,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-02.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-SRV-85,vSwitch0,1085,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-02.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-SRV-74,vSwitch0,1174,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-02.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-SRV-75,vSwitch0,1175,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-02.usfq.edu.ec,USFQ,USFQ-PRODUCCION,VM Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-02.usfq.edu.ec,USFQ,USFQ-PRODUCCION,Management Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-04.usfq.edu.ec,USFQ,USFQ-PRODUCCION,VMotion,VMotion,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-04.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-ACCESS-1177.,vSwitch0,1177,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-04.usfq.edu.ec,USFQ,USFQ-PRODUCCION,VM Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-04.usfq.edu.ec,USFQ,USFQ-PRODUCCION,Management Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-01.usfq.edu.ec,USFQ,USFQ-PRODUCCION,VM Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-01.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-SRV-75,vSwitch0,1175,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-01.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-SRV-76,vSwitch0,1176,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-01.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-SRV-74,vSwitch0,1174,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-01.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-SRV-65,vSwitch0,1265,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-01.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-PUBLIC-192,vSwitch0,192,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-01.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-MGMT-19,vSwitch0,19,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-01.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-SRV-67,vSwitch0,1267,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-01.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-SRV-77,vSwitch0,117,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-01.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-HUBI-79,vSwitch0,2079,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-01.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-FIN-80,vSwitch0,1180,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-01.usfq.edu.ec,USFQ,USFQ-PRODUCCION,V-SRV-161,vSwitch0,161,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-01.usfq.edu.ec,USFQ,USFQ-PRODUCCION,Management Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-03.usfq.edu.ec,USFQ,USFQ-PRODUCCION,VMotion,VMotion,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-03.usfq.edu.ec,USFQ,USFQ-PRODUCCION,VM Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+p-esx-03.usfq.edu.ec,USFQ,USFQ-PRODUCCION,Management Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3075,VM,3075,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3072,VM,3072,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3071,VM,3071,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,V-PUBLIC-190,VM,190,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,S3-CAMPUS-40,VM,40,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,S3-SRV-4085,VM,4085,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,S3-SRV-4075,VM,4075,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,S3-SRV-4074,VM,4074,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,S1-SRV-2085,VM,2085,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,S1-SRV-2075,VM,2075,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,S1-SRV-2074,VM,2074,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3076,VM,3076,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3073,VM,3073,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3079,VM,3079,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3077,VM,3077,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3074,VM,3074,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3085,VM,3085,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,VMotion,VMotion,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,VM Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-02.usfq.edu.ec,USFQ,USFQ-SANDBOX,Management Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S3-SRV-4075,VM,4075,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3074,VM,3074,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3072,VM,3072,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3071,VM,3070,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S3-SRV-4085,VM,4085,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3085,VM,3085,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3079,VM,3079,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3077,VM,3077,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3076,VM,3076,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S1-SRV-2085,VM,2085,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S1-SRV-2075,VM,2075,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S1-SRV-2074,VM,2074,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3073,VM,3073,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S3-CAMPUS-40,VM,40,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S3-SRV-4074,VM,4074,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-SRV-3075,VM,3075,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,TRUNK,VM,4095,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S2-VLAN-3010,VM,3010,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,V-PUBLIC-190,VM,190,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S3-VLAN-4051,VM,4051,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,S3-VLAN-4066,VM,4066,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,VMotion,VMotion,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,VM Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+s-esx-01.usfq.edu.ec,USFQ,USFQ-SANDBOX,Management Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-AISLADA-210,VM,210,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-TI-10,VM,10,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-SWTICH-21,VM,21,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,228,VM,228,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-LAB-224,VM,224,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-CAMPUS-11,VM,11,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-CAMPUS-12,VM,12,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-CAMPUS-26,VM,26,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-USR-26,VM,26,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-TEST-103,VM,103,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-TEST-102,VM,102,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-ACCESS-77,VM,1177,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-P2P-PA-1070,VM,1070,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-USR-212,VM,212,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-CAMPUS-17,VM,17,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-CAMPUS-7,VM,7,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-SRV-TERCEROS-65,VM,1265,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-SRV-75,VM,1175,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-TEST-FIN-1280,VM,1280,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-SRV-78,VM,1078,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-PUBLIC-208,VM,208,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-PUBLIC-191,VM,191,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-PUBLIC-190,VM,190,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-MGMT-19,VM,19,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,T-SRV-1010,VM,1010,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-ESTUDIANTES-100,VM,100,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-SRV-BAN-85,VM,1085,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-SRV-64,VM,1064,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,V-HUBI-JAIL-79,VM,2079,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,VMotion,VMotion,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,VM Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-01.usfq.edu.ec,USFQ,USFQ-TEST,Management Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,V-SRV-BAN-85,VM,1085,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,V-SWTICH-21,VM,21,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,V-SRV-TERCEROS-65,VM,1265,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,V-P2P-PA-1070,VM,1070,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,V-PUBLIC-208,VM,208,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,V-SWITCH-40,VM,40,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,V-SRV-75,VM,1175,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,V-TEST-FIN-1280,VM,1280,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,V-TI-10,VM,10,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,V-SRV-78,VM,1078,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,V-SRV-64,VM,1064,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,V-PUBLIC-190,VM,190,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,V-MGMT-19,VM,19,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,V-HUBI-JAIL-79,VM,2079,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,V-ESTUDIANTES-100,VM,100,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,V-AISLADA-210,VM,210,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,VMotion,VMotion,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,VM Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-03.usfq.edu.ec,USFQ,USFQ-TEST,Management Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-SWTICH-21,VM,21,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,228,VM,228,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,224,VM,224,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-AISLADA-210,VM,210,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-ESTUDIANTES-100,VM,100,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-MGMT-19,VM,19,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-T-KUBERNET-63,VM,1063,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,T-SRV-1010,VM,1010,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-SRV-TERCEROS-65,VM,1265,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-ACCESS-77,VM,1177,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-SRV-78,VM,1078,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-TI-10,VM,10,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-SRV-64,VM,1064,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-SRV-BAN-85,VM,1085,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-TEST-FIN-1280,VM,1280,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-HUBI-JAIL-79,VM,2079,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-PUBLIC-190,VM,190,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-P2P-PA-1070,VM,1070,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-TEST-102,VM,102,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-TEST-103,VM,103,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,V-SRV-75,VM,1175,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,VMotion,VMotion,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,VM Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba
+t-esx-02.usfq.edu.ec,USFQ,USFQ-TEST,Management Network,vSwitch0,0,None,None,None,,,,,,,,,,,,p-vc-01.usfq.edu.ec,b4509789-2388-4298-aee8-97cf83caf1ba

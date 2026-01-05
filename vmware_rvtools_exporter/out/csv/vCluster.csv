@@ -1,0 +1,4 @@
+Name,Config status,OverallStatus,NumHosts,numEffectiveHosts,TotalCpu,NumCpuCores,NumCpuThreads,Effective Cpu,TotalMemory,Effective Memory,Num VMotions,HA enabled,Failover Level,AdmissionControlEnabled,Host monitoring,HB Datastore Candidate Policy,Isolation Response,Restart Priority,Cluster Settings,Max Failures,Max Failure Window,Failure Interval,Min Up Time,VM Monitoring,DRS enabled,DRS default VM behavior,DRS vmotion rate,DPM enabled,DPM default behavior,DPM Host Power Action Rate,Object ID,Backup status,ClusterInvariantVMMId,com.vmware.vcenter.cluster.edrs.upgradeHostAdded,Last backup,VI SDK Server,VI SDK UUID
+USFQ-TEST,,,3,,163080,,,,1897687.04,,,True,,,,,,,,,,,,,False,,,,,,,,,,,,
+USFQ-SANDBOX,,,2,,105360,,,,655144.96,,,False,,,,,,,,,,,,,False,,,,,,,,,,,,
+USFQ-PRODUCCION,,,4,,331200,,,,3139911.68,,,True,,,,,,,,,,,,,False,,,,,,,,,,,,

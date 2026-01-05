@@ -1,0 +1,3513 @@
+{
+  "generated": "out/export.xlsx",
+  "reference": "RVTOOLEX.xlsx",
+  "sheets": {
+    "dvPort": [
+      {
+        "column": "Speed",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Full Duplex",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Blocked",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Standby Uplink",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "In Traffic Shaping",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "In Avg",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "In Peak",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "In Burst",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Out Traffic Shaping",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Out Avg",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Out Peak",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Out Burst",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Notify Switch",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Check Beacon",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Live Port Moving",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Check Duplex",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Check Error %",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Check Speed",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Percentage",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Block Override",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Config Reset",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Shaping Override",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Vendor Config Override",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Sec. Policy Override",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Teaming Override",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Vlan Override",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Object ID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 19,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      }
+    ],
+    "dvSwitch": [
+      {
+        "column": "Name",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Vendor",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Description",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Created",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Max Ports",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "# VMs",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "In Traffic Shaping",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "In Avg",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "In Peak",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "In Burst",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Out Traffic Shaping",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Out Avg",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Out Peak",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Out Burst",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "CDP Type",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "CDP Operation",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "LACP Name",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "LACP Mode",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "LACP Load Balance Alg.",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Max MTU",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Contact",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Admin Name",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Object ID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Backup status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "ClusterInvariantVMMId",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      },
+      {
+        "column": "Last backup",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "distributedVirtualSwitch"
+      }
+    ],
+    "vCD": [
+      {
+        "column": "Powerstate",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 118,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Template",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 118,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "SRM Placeholder",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 118,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Annotation",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 14,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Backup status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 100,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "ClusterInvariantVMMId",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 118,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Last backup",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 100,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Datacenter",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 118,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Cluster",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 118,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Host",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 118,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Folder",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 118,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "OS according to the configuration file",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 118,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "OS according to the VMware Tools",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 107,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.* / runtime.tools"
+      },
+      {
+        "column": "VMRef",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 118,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "VM ID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 118,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "VM UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 118,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "VI SDK Server",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 118,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "VI SDK UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 118,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      }
+    ],
+    "vCPU": [
+      {
+        "column": "SRM Placeholder",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Max",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Overall",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Level",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Entitlement",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "DRS Entitlement",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Hot Add",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Hot Remove",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Numa Hotadd Exposed",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Annotation",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Backup status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 107,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "ClusterInvariantVMMId",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Last backup",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 107,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Datacenter",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Cluster",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Host",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Folder",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "OS according to the configuration file",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "OS according to the VMware Tools",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 121,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.* / runtime.tools"
+      },
+      {
+        "column": "VM ID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "VM UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "VI SDK Server",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "VI SDK UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      }
+    ],
+    "vCluster": [
+      {
+        "column": "Config status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "OverallStatus",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "numEffectiveHosts",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "NumCpuCores",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "NumCpuThreads",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Effective Cpu",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Effective Memory",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Num VMotions",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "Failover Level",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "AdmissionControlEnabled",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Permissions/privileges required (posible pero puede fallar por roles)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "Host monitoring",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "HB Datastore Candidate Policy",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device / summary.storage / datastore.summary"
+      },
+      {
+        "column": "Isolation Response",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "Restart Priority",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "Cluster Settings",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "Max Failures",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "Max Failure Window",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "Failure Interval",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "Min Up Time",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "VM Monitoring",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "DRS default VM behavior",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "DRS vmotion rate",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "DPM enabled",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "DPM default behavior",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "DPM Host Power Action Rate",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "Object ID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "Backup status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "ClusterInvariantVMMId",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "com.vmware.vcenter.cluster.edrs.upgradeHostAdded",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "Last backup",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "VI SDK Server",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      },
+      {
+        "column": "VI SDK UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "cluster.summary / configurationEx"
+      }
+    ],
+    "vDatastore": [
+      {
+        "column": "Config status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "Address",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "# VMs total",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "# VMs",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "Provisioned MiB",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device / summary.storage / datastore.summary"
+      },
+      {
+        "column": "Free %",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device / summary.storage / datastore.summary"
+      },
+      {
+        "column": "SIOC enabled",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "SIOC Threshold",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "# Hosts",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "Hosts",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "Cluster name",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "Cluster capacity MiB",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device / summary.storage / datastore.summary"
+      },
+      {
+        "column": "Cluster free space MiB",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device / summary.storage / datastore.summary"
+      },
+      {
+        "column": "Block size",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "Max Blocks",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "# Extents",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "Major Version",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "Version",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "VMFS Upgradeable",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "MHA",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "Object ID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "Backup status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "ClusterInvariantVMMId",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "Last backup",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "VI SDK Server",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      },
+      {
+        "column": "VI SDK UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "datastore.summary"
+      }
+    ],
+    "vDisk": [
+      {
+        "column": "Raw LUN ID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device / summary.storage"
+      },
+      {
+        "column": "Raw Comp. Mode",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device / summary.storage"
+      }
+    ],
+    "vFileInfo": [
+      {
+        "column": "Friendly Path Name",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "datastoreBrowser"
+      },
+      {
+        "column": "File Name",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "datastoreBrowser"
+      },
+      {
+        "column": "File Type",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "datastoreBrowser"
+      },
+      {
+        "column": "File Size in bytes",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "datastoreBrowser"
+      },
+      {
+        "column": "Path",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "datastoreBrowser"
+      },
+      {
+        "column": "Internal Sort Column",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "datastoreBrowser"
+      },
+      {
+        "column": "VI SDK Server",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "datastoreBrowser"
+      },
+      {
+        "column": "VI SDK UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "datastoreBrowser"
+      }
+    ],
+    "vHBA": [
+      {
+        "column": "VI SDK Server",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 26,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.storageDevice"
+      },
+      {
+        "column": "VI SDK UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 26,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.storageDevice"
+      }
+    ],
+    "vHealth": [],
+    "vHost": [
+      {
+        "column": "Config status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "Compliance Check State",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "vSAN Fault Domain Name",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "HT Active",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "Cores per CPU",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Console",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "# VMs total",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "# VMs",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "# vCPUs",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "VM Used memory",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "VM Memory Swapped",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "VM Memory Ballooned",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Storage VMotion support",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "Current EVC",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "Max EVC",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "Assigned License(s)",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "licenseManager"
+      },
+      {
+        "column": "ATS Heartbeat",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.* / runtime.tools"
+      },
+      {
+        "column": "ATS Locking",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "DNS Servers",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.net / config.network"
+      },
+      {
+        "column": "DHCP",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "Domain",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "Domain List",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "DNS Search Order",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.net / config.network"
+      },
+      {
+        "column": "NTPD running",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "GMT Offset",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "BIOS Vendor",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "BIOS Version",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "BIOS Date",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "Certificate Issuer",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "Certificate Start Date",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "Certificate Expiry Date",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "Certificate Status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "Certificate Subject",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 9,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "AutoDeploy.MachineIdentity",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "Backup status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "ClusterInvariantVMMId",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      },
+      {
+        "column": "Last backup",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "host.summary / host.config / host.hardware"
+      }
+    ],
+    "vInfo": [
+      {
+        "column": "SRM Placeholder",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Config status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "DNS Name",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 122,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.net / config.network"
+      },
+      {
+        "column": "Heartbeat",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.* / runtime.tools"
+      },
+      {
+        "column": "Suspended To Memory",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Suspend time",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Overall Cpu Readiness",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 116,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Fixed Passthru HotPlug",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "min Required EVC Mode Key",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 116,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Latency Sensitivity",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Op Notification Timeout",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 90,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "EnableUUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 15,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "CBT",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 106,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Network #5",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 6,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Network #6",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 2,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Network #7",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Network #8",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Num Monitors",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Video Ram KiB",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "vApp",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "DAS protection",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 108,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "FT Role",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Permissions/privileges required (posible pero puede fallar por roles)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "FT Latency",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "FT Bandwidth",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "FT Sec. Latency",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Vm Failover In Progress",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "HA Restart Priority",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "HA Isolation Response",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "HA VM Monitoring",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Cluster rule(s)",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Cluster rule name(s)",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Boot Required",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "HW upgrade status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "HW upgrade policy",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "HW target",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Backup status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 107,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "ClusterInvariantVMMId",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Last backup",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 107,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "OS according to the VMware Tools",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 121,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.* / runtime.tools"
+      },
+      {
+        "column": "Customization Info",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 126,
+        "status": "empty_in_generated",
+        "suggested_location": "summary / config / guest / runtime"
+      },
+      {
+        "column": "Guest Detailed Data",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 103,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.* / runtime.tools"
+      }
+    ],
+    "vLicense": [
+      {
+        "column": "Labels",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "licenseManager"
+      },
+      {
+        "column": "Cost Unit",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 10,
+        "status": "empty_in_generated",
+        "suggested_location": "licenseManager"
+      },
+      {
+        "column": "Features",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 10,
+        "status": "empty_in_generated",
+        "suggested_location": "licenseManager"
+      },
+      {
+        "column": "VI SDK Server",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 10,
+        "status": "empty_in_generated",
+        "suggested_location": "licenseManager"
+      },
+      {
+        "column": "VI SDK UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 10,
+        "status": "empty_in_generated",
+        "suggested_location": "licenseManager"
+      }
+    ],
+    "vMemory": [
+      {
+        "column": "SRM Placeholder",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Memory Reservation Locked To Max",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Overhead",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Max",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Consumed",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Consumed Overhead",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Private",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Shared",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Swapped",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Ballooned",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Active",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Entitlement",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "DRS Entitlement",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Level",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Hot Add",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Annotation",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Backup status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 107,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "ClusterInvariantVMMId",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Last backup",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 107,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Datacenter",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Cluster",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Host",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Folder",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "OS according to the configuration file",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "OS according to the VMware Tools",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 121,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.* / runtime.tools"
+      },
+      {
+        "column": "VM ID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "VM UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "VI SDK Server",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "VI SDK UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      }
+    ],
+    "vMetaData": [],
+    "vMultiPath": [
+      {
+        "column": "Datastore",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 55,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device / summary.storage / datastore.summary"
+      },
+      {
+        "column": "Display name",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 55,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.storageDevice.multipathInfo"
+      },
+      {
+        "column": "Oper. State",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 55,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.storageDevice.multipathInfo"
+      },
+      {
+        "column": "vStorage",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 55,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.storageDevice.multipathInfo"
+      },
+      {
+        "column": "Queue depth",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 55,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.storageDevice.multipathInfo"
+      },
+      {
+        "column": "Vendor",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 55,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.storageDevice.multipathInfo"
+      },
+      {
+        "column": "Model",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 55,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.storageDevice.multipathInfo"
+      },
+      {
+        "column": "Revision",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 55,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.storageDevice.multipathInfo"
+      },
+      {
+        "column": "Level",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 55,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.storageDevice.multipathInfo"
+      },
+      {
+        "column": "Serial #",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 55,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.storageDevice.multipathInfo"
+      },
+      {
+        "column": "UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 55,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.storageDevice.multipathInfo"
+      },
+      {
+        "column": "Object ID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 55,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.storageDevice.multipathInfo"
+      },
+      {
+        "column": "VI SDK Server",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 55,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.storageDevice.multipathInfo"
+      },
+      {
+        "column": "VI SDK UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 55,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.storageDevice.multipathInfo"
+      }
+    ],
+    "vNIC": [
+      {
+        "column": "Datacenter",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 54,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Cluster",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 54,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Duplex",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 54,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Switch",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 50,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Uplink port",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 4,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "WakeOn",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 54,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "VI SDK Server",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 54,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "VI SDK UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 54,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      }
+    ],
+    "vNetwork": [
+      {
+        "column": "Switch",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 173,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.net / config.hardware.device"
+      },
+      {
+        "column": "IPv4 Address",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 115,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.net / config.network"
+      },
+      {
+        "column": "IPv6 Address",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 84,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.net / config.network"
+      },
+      {
+        "column": "Direct Path IO",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 179,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.net / config.hardware.device"
+      },
+      {
+        "column": "Internal Sort Column",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 179,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.net / config.hardware.device"
+      },
+      {
+        "column": "Backup status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 125,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.net / config.hardware.device"
+      },
+      {
+        "column": "Last backup",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 125,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.net / config.hardware.device"
+      }
+    ],
+    "vPartition": [],
+    "vPort": [
+      {
+        "column": "Traffic Shaping",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 151,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Width",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 151,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Peak",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 151,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Burst",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 151,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Policy",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 151,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Reverse Policy",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 151,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Notify Switch",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 151,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Rolling Order",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 151,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Offload",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 151,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "TSO",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 151,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Zero Copy Xmit",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 151,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      }
+    ],
+    "vRP": [
+      {
+        "column": "CPU overheadLimit",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "CPU reservationUsed",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "CPU reservationUsedForVm",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "CPU unreservedForPool",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "CPU unreservedForVm",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Mem overheadLimit",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "resourcePool / summary"
+      },
+      {
+        "column": "Mem level",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "resourcePool / summary"
+      },
+      {
+        "column": "Mem expandableReservation",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "resourcePool / summary"
+      },
+      {
+        "column": "Mem maxUsage",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "resourcePool / summary"
+      },
+      {
+        "column": "Mem overallUsage",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "resourcePool / summary"
+      },
+      {
+        "column": "Mem reservationUsed",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device / summary.storage / datastore.summary"
+      },
+      {
+        "column": "Mem reservationUsedForVm",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device / summary.storage / datastore.summary"
+      },
+      {
+        "column": "Mem unreservedForPool",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "resourcePool / summary"
+      },
+      {
+        "column": "Mem unreservedForVm",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "resourcePool / summary"
+      },
+      {
+        "column": "QS overallCpuDemand",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "QS overallCpuUsage",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "QS staticCpuEntitlement",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "QS distributedCpuEntitlement",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "QS balloonedMemory",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "QS compressedMemory",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "QS consumedOverheadMemory",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "QS distributedMemoryEntitlement",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "QS guestMemoryUsage",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.* / runtime.tools"
+      },
+      {
+        "column": "QS hostMemoryUsage",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "QS overheadMemory",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "QS privateMemory",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "QS sharedMemory",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "QS staticMemoryEntitlement",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "QS swappedMemory",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware / summary"
+      },
+      {
+        "column": "Object ID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "resourcePool / summary"
+      },
+      {
+        "column": "VI SDK Server",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "resourcePool / summary"
+      },
+      {
+        "column": "VI SDK UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 3,
+        "status": "empty_in_generated",
+        "suggested_location": "resourcePool / summary"
+      }
+    ],
+    "vSC_VMK": [
+      {
+        "column": "Datacenter",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 17,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network.vnic"
+      },
+      {
+        "column": "Cluster",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 17,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network.vnic"
+      },
+      {
+        "column": "DHCP",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 17,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network.vnic"
+      },
+      {
+        "column": "IP 6 Address",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 13,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network.vnic"
+      },
+      {
+        "column": "Gateway",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 17,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network.vnic"
+      },
+      {
+        "column": "IP 6 Gateway",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network.vnic"
+      },
+      {
+        "column": "VI SDK Server",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 17,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network.vnic"
+      },
+      {
+        "column": "VI SDK UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 17,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network.vnic"
+      }
+    ],
+    "vSnapshot": [
+      {
+        "column": "Filename",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 201,
+        "status": "empty_in_generated",
+        "suggested_location": "snapshot / layoutEx"
+      },
+      {
+        "column": "Size MiB (vmsn)",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 201,
+        "status": "empty_in_generated",
+        "suggested_location": "snapshot / layoutEx"
+      },
+      {
+        "column": "Size MiB (total)",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 201,
+        "status": "empty_in_generated",
+        "suggested_location": "snapshot / layoutEx"
+      }
+    ],
+    "vSource": [
+      {
+        "column": "Patch level",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "serviceInstance.content.about"
+      },
+      {
+        "column": "Fullname",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "serviceInstance.content.about"
+      },
+      {
+        "column": "Product name",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "serviceInstance.content.about"
+      },
+      {
+        "column": "Product version",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "serviceInstance.content.about"
+      },
+      {
+        "column": "Product line",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "serviceInstance.content.about"
+      },
+      {
+        "column": "Vendor",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 1,
+        "status": "empty_in_generated",
+        "suggested_location": "serviceInstance.content.about"
+      }
+    ],
+    "vSwitch": [
+      {
+        "column": "Free Ports",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device / summary.storage / datastore.summary"
+      },
+      {
+        "column": "Traffic Shaping",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Width",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Peak",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Burst",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Policy",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Reverse Policy",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Notify Switch",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Rolling Order",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Offload",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "TSO",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "Zero Copy Xmit",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "VI SDK Server",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      },
+      {
+        "column": "VI SDK UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Host/Cluster/Datastore inventory (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "host.config.network"
+      }
+    ],
+    "vTools": [
+      {
+        "column": "SRM Placeholder",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "VM Version",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "Tools Version",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.* / runtime.tools"
+      },
+      {
+        "column": "Required Version",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "Upgradeable",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "Upgrade Policy",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "Sync time",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "App status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 126,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "Heartbeat status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 132,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.* / runtime.tools"
+      },
+      {
+        "column": "Kernel Crash state",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "Operation Ready",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "State change support",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "Interactive Guest",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.* / runtime.tools"
+      },
+      {
+        "column": "Annotation",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 22,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "Backup status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 107,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "ClusterInvariantVMMId",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "Last backup",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 107,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "Folder",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "OS according to the configuration file",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "OS according to the VMware Tools",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 121,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.* / runtime.tools"
+      },
+      {
+        "column": "VMRef",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "VM ID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "VM UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "VI SDK Server",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      },
+      {
+        "column": "VI SDK UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 133,
+        "status": "empty_in_generated",
+        "suggested_location": "guest / runtime.tools"
+      }
+    ],
+    "vUSB": [
+      {
+        "column": "VM",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Powerstate",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Template",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "SRM Placeholder",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Device Node",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Device Type",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Connected",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Family",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Speed",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "EHCI enabled",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Auto connect",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Bus number",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Unit number",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Annotation",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Backup status",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "ClusterInvariantVMMId",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Last backup",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Datacenter",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Cluster",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Host",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "Folder",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "OS according to the configuration file",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "OS according to the VMware tools",
+        "generated_non_empty_count": 0,
+        "origin_hint": "Guest/Tools required (posible pero depende de VMware Tools)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "guest.* / runtime.tools"
+      },
+      {
+        "column": "VMRef",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "VM ID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "VM UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "VI SDK Server",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      },
+      {
+        "column": "VI SDK UUID",
+        "generated_non_empty_count": 0,
+        "origin_hint": "VM config/runtime/summary (probable)",
+        "reference_non_empty_count": 0,
+        "status": "empty_in_generated",
+        "suggested_location": "config.hardware.device"
+      }
+    ]
+  }
+}

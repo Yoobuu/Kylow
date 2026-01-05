@@ -1,0 +1,4903 @@
+{
+  "sheets": {
+    "vInfo": {
+      "rows_ref": 133,
+      "rows_gen": 0,
+      "columns": {
+        "VM": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Powerstate": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Template": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "SRM Placeholder": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Config status": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "DNS Name": {
+          "filled_ref": 0.9173,
+          "filled_gen": 0.0,
+          "delta": 0.9173
+        },
+        "Connection state": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Guest state": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Heartbeat": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Consolidation Needed": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "PowerOn": {
+          "filled_ref": 0.8722,
+          "filled_gen": 0.0,
+          "delta": 0.8722
+        },
+        "Suspended To Memory": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Suspend time": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Suspend Interval": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Creation date": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Change Version": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "CPUs": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Overall Cpu Readiness": {
+          "filled_ref": 0.8722,
+          "filled_gen": 0.0,
+          "delta": 0.8722
+        },
+        "Memory": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Active Memory": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "NICs": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Disks": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Total disk capacity MiB": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Fixed Passthru HotPlug": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "min Required EVC Mode Key": {
+          "filled_ref": 0.8722,
+          "filled_gen": 0.0,
+          "delta": 0.8722
+        },
+        "Latency Sensitivity": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Op Notification Timeout": {
+          "filled_ref": 0.6767,
+          "filled_gen": 0.0,
+          "delta": 0.6767
+        },
+        "EnableUUID": {
+          "filled_ref": 0.1128,
+          "filled_gen": 0.0,
+          "delta": 0.1128
+        },
+        "CBT": {
+          "filled_ref": 0.797,
+          "filled_gen": 0.0,
+          "delta": 0.797
+        },
+        "Primary IP Address": {
+          "filled_ref": 0.8421,
+          "filled_gen": 0.0,
+          "delta": 0.8421
+        },
+        "Network #1": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Network #2": {
+          "filled_ref": 0.1353,
+          "filled_gen": 0.0,
+          "delta": 0.1353
+        },
+        "Network #3": {
+          "filled_ref": 0.0827,
+          "filled_gen": 0.0,
+          "delta": 0.0827
+        },
+        "Network #4": {
+          "filled_ref": 0.0677,
+          "filled_gen": 0.0,
+          "delta": 0.0677
+        },
+        "Network #5": {
+          "filled_ref": 0.0451,
+          "filled_gen": 0.0,
+          "delta": 0.0451
+        },
+        "Network #6": {
+          "filled_ref": 0.015,
+          "filled_gen": 0.0,
+          "delta": 0.015
+        },
+        "Network #7": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Network #8": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Num Monitors": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Video Ram KiB": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Resource pool": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Folder ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Folder": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "vApp": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "DAS protection": {
+          "filled_ref": 0.812,
+          "filled_gen": 0.0,
+          "delta": 0.812
+        },
+        "FT State": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "FT Role": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "FT Latency": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "FT Bandwidth": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "FT Sec. Latency": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Vm Failover In Progress": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Provisioned MiB": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "In Use MiB": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Unshared MiB": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "HA Restart Priority": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "HA Isolation Response": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "HA VM Monitoring": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Cluster rule(s)": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Cluster rule name(s)": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Boot Required": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Boot delay": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Boot retry delay": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Boot retry enabled": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Boot BIOS setup": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Reboot PowerOff": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "EFI Secure boot": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Firmware": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "HW version": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "HW upgrade status": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "HW upgrade policy": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "HW target": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Path": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Log directory": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Snapshot directory": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Suspend directory": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Annotation": {
+          "filled_ref": 0.1654,
+          "filled_gen": 0.0,
+          "delta": 0.1654
+        },
+        "Backup status": {
+          "filled_ref": 0.8045,
+          "filled_gen": 0.0,
+          "delta": 0.8045
+        },
+        "ClusterInvariantVMMId": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Last backup": {
+          "filled_ref": 0.8045,
+          "filled_gen": 0.0,
+          "delta": 0.8045
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Cluster": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Host": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the configuration file": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the VMware Tools": {
+          "filled_ref": 0.9098,
+          "filled_gen": 0.0,
+          "delta": 0.9098
+        },
+        "Customization Info": {
+          "filled_ref": 0.9474,
+          "filled_gen": 0.0,
+          "delta": 0.9474
+        },
+        "Guest Detailed Data": {
+          "filled_ref": 0.7744,
+          "filled_gen": 0.0,
+          "delta": 0.7744
+        },
+        "VM ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "SMBIOS UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server type": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK API Version": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vCPU": {
+      "rows_ref": 133,
+      "rows_gen": 129,
+      "columns": {
+        "VM": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Powerstate": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Template": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "SRM Placeholder": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "CPUs": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Sockets": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Cores p/s": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Max": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Overall": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Level": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Shares": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Reservation": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Entitlement": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "DRS Entitlement": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Limit": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Hot Add": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Hot Remove": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Numa Hotadd Exposed": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Annotation": {
+          "filled_ref": 0.1654,
+          "filled_gen": 0.0,
+          "delta": 0.1654
+        },
+        "Backup status": {
+          "filled_ref": 0.8045,
+          "filled_gen": 0.0,
+          "delta": 0.8045
+        },
+        "ClusterInvariantVMMId": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Last backup": {
+          "filled_ref": 0.8045,
+          "filled_gen": 0.0,
+          "delta": 0.8045
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Cluster": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Host": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Folder": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "OS according to the configuration file": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the VMware Tools": {
+          "filled_ref": 0.9098,
+          "filled_gen": 0.0,
+          "delta": 0.9098
+        },
+        "VM ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vMemory": {
+      "rows_ref": 133,
+      "rows_gen": 129,
+      "columns": {
+        "VM": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Powerstate": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Template": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "SRM Placeholder": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Size MiB": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Memory Reservation Locked To Max": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Overhead": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Max": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Consumed": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Consumed Overhead": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Private": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Shared": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Swapped": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Ballooned": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Active": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Entitlement": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "DRS Entitlement": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Level": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Shares": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Reservation": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Limit": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Hot Add": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Annotation": {
+          "filled_ref": 0.1654,
+          "filled_gen": 0.0,
+          "delta": 0.1654
+        },
+        "Backup status": {
+          "filled_ref": 0.8045,
+          "filled_gen": 0.0,
+          "delta": 0.8045
+        },
+        "ClusterInvariantVMMId": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Last backup": {
+          "filled_ref": 0.8045,
+          "filled_gen": 0.0,
+          "delta": 0.8045
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Cluster": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Host": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Folder": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the configuration file": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the VMware Tools": {
+          "filled_ref": 0.9098,
+          "filled_gen": 0.0,
+          "delta": 0.9098
+        },
+        "VM ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vDisk": {
+      "rows_ref": 246,
+      "rows_gen": 243,
+      "columns": {
+        "VM": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Powerstate": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Template": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "SRM Placeholder": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Disk": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Disk Key": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Disk UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Disk Path": {
+          "filled_ref": 0.6626,
+          "filled_gen": 0.0,
+          "delta": 0.6626
+        },
+        "Capacity MiB": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Raw": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Disk Mode": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Sharing mode": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Thin": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Eagerly Scrub": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Split": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Write Through": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Level": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Shares": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Reservation": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Limit": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Controller": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Label": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "SCSI Unit #": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Unit #": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Shared Bus": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Path": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Raw LUN ID": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Raw Comp. Mode": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Internal Sort Column": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Annotation": {
+          "filled_ref": 0.2561,
+          "filled_gen": 0.0,
+          "delta": 0.2561
+        },
+        "Backup status": {
+          "filled_ref": 0.7805,
+          "filled_gen": 0.0,
+          "delta": 0.7805
+        },
+        "ClusterInvariantVMMId": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Last backup": {
+          "filled_ref": 0.7805,
+          "filled_gen": 0.0,
+          "delta": 0.7805
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Cluster": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Host": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Folder": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the configuration file": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the VMware Tools": {
+          "filled_ref": 0.9187,
+          "filled_gen": 0.0,
+          "delta": 0.9187
+        },
+        "VM ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vPartition": {
+      "rows_ref": 682,
+      "rows_gen": 693,
+      "columns": {
+        "VM": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Powerstate": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Template": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "SRM Placeholder": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Disk Key": {
+          "filled_ref": 0.8123,
+          "filled_gen": 0.0,
+          "delta": 0.8123
+        },
+        "Disk": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Capacity MiB": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Consumed MiB": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Free MiB": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Free %": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Internal Sort Column": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Annotation": {
+          "filled_ref": 0.1789,
+          "filled_gen": 0.0,
+          "delta": 0.1789
+        },
+        "Backup status": {
+          "filled_ref": 0.8284,
+          "filled_gen": 0.0,
+          "delta": 0.8284
+        },
+        "ClusterInvariantVMMId": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Last backup": {
+          "filled_ref": 0.8284,
+          "filled_gen": 0.0,
+          "delta": 0.8284
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Cluster": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Host": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Folder": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the configuration file": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the VMware Tools": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vNetwork": {
+      "rows_ref": 179,
+      "rows_gen": 175,
+      "columns": {
+        "VM": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Powerstate": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Template": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "SRM Placeholder": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "NIC label": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Adapter": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Network": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Switch": {
+          "filled_ref": 0.9665,
+          "filled_gen": 0.0,
+          "delta": 0.9665
+        },
+        "Connected": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Starts Connected": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Mac Address": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Type": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "IPv4 Address": {
+          "filled_ref": 0.6425,
+          "filled_gen": 0.0,
+          "delta": 0.6425
+        },
+        "IPv6 Address": {
+          "filled_ref": 0.4693,
+          "filled_gen": 0.0,
+          "delta": 0.4693
+        },
+        "Direct Path IO": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Internal Sort Column": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Annotation": {
+          "filled_ref": 0.2626,
+          "filled_gen": 0.0,
+          "delta": 0.2626
+        },
+        "Backup status": {
+          "filled_ref": 0.6983,
+          "filled_gen": 0.0,
+          "delta": 0.6983
+        },
+        "ClusterInvariantVMMId": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Last backup": {
+          "filled_ref": 0.6983,
+          "filled_gen": 0.0,
+          "delta": 0.6983
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Cluster": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Host": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Folder": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the configuration file": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the VMware Tools": {
+          "filled_ref": 0.9274,
+          "filled_gen": 0.0,
+          "delta": 0.9274
+        },
+        "VM ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vCD": {
+      "rows_ref": 118,
+      "rows_gen": 114,
+      "columns": {
+        "VM": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Powerstate": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Template": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "SRM Placeholder": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Device Node": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Connected": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Starts Connected": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Device Type": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.2105,
+          "delta": 0.7895
+        },
+        "Annotation": {
+          "filled_ref": 0.1186,
+          "filled_gen": 0.0,
+          "delta": 0.1186
+        },
+        "Backup status": {
+          "filled_ref": 0.8475,
+          "filled_gen": 0.0,
+          "delta": 0.8475
+        },
+        "ClusterInvariantVMMId": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Last backup": {
+          "filled_ref": 0.8475,
+          "filled_gen": 0.0,
+          "delta": 0.8475
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Cluster": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Host": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Folder": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the configuration file": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the VMware Tools": {
+          "filled_ref": 0.9068,
+          "filled_gen": 0.0,
+          "delta": 0.9068
+        },
+        "VMRef": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vUSB": {
+      "rows_ref": 0,
+      "rows_gen": 0,
+      "columns": {
+        "VM": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Powerstate": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Template": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "SRM Placeholder": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Device Node": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Device Type": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Connected": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Family": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Speed": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "EHCI enabled": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Auto connect": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Bus number": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Unit number": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Annotation": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Backup status": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "ClusterInvariantVMMId": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Last backup": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Datacenter": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Cluster": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Host": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Folder": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "OS according to the configuration file": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "OS according to the VMware tools": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "VMRef": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "VM ID": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "VM UUID": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        }
+      }
+    },
+    "vSnapshot": {
+      "rows_ref": 201,
+      "rows_gen": 199,
+      "columns": {
+        "VM": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Powerstate": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Name": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Description": {
+          "filled_ref": 0.2239,
+          "filled_gen": 0.2211,
+          "delta": 0.0028
+        },
+        "Date / time": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Filename": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Size MiB (vmsn)": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Size MiB (total)": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Quiesced": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "State": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Annotation": {
+          "filled_ref": 0.0647,
+          "filled_gen": 0.0,
+          "delta": 0.0647
+        },
+        "Backup status": {
+          "filled_ref": 0.9851,
+          "filled_gen": 0.0,
+          "delta": 0.9851
+        },
+        "ClusterInvariantVMMId": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Last backup": {
+          "filled_ref": 0.9851,
+          "filled_gen": 0.0,
+          "delta": 0.9851
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Cluster": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Host": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Folder": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the configuration file": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the VMware Tools": {
+          "filled_ref": 0.9801,
+          "filled_gen": 0.0,
+          "delta": 0.9801
+        },
+        "VM ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vTools": {
+      "rows_ref": 133,
+      "rows_gen": 129,
+      "columns": {
+        "VM": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Powerstate": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Template": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "SRM Placeholder": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM Version": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Tools": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Tools Version": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Required Version": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Upgradeable": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Upgrade Policy": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Sync time": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "App status": {
+          "filled_ref": 0.9474,
+          "filled_gen": 0.0,
+          "delta": 0.9474
+        },
+        "Heartbeat status": {
+          "filled_ref": 0.9925,
+          "filled_gen": 0.0,
+          "delta": 0.9925
+        },
+        "Kernel Crash state": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Operation Ready": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "State change support": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Interactive Guest": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Annotation": {
+          "filled_ref": 0.1654,
+          "filled_gen": 0.0,
+          "delta": 0.1654
+        },
+        "Backup status": {
+          "filled_ref": 0.8045,
+          "filled_gen": 0.0,
+          "delta": 0.8045
+        },
+        "ClusterInvariantVMMId": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Last backup": {
+          "filled_ref": 0.8045,
+          "filled_gen": 0.0,
+          "delta": 0.8045
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Cluster": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Host": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Folder": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the configuration file": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OS according to the VMware Tools": {
+          "filled_ref": 0.9098,
+          "filled_gen": 0.0,
+          "delta": 0.9098
+        },
+        "VMRef": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vSource": {
+      "rows_ref": 1,
+      "rows_gen": 1,
+      "columns": {
+        "Name": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "OS type": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "API type": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "API version": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Version": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Patch level": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Build": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Fullname": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Product name": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Product version": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Product line": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Vendor": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        }
+      }
+    },
+    "vRP": {
+      "rows_ref": 3,
+      "rows_gen": 3,
+      "columns": {
+        "Resource Pool name": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Resource Pool path": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Status": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "# VMs total": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "# VMs": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "# vCPUs": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "CPU limit": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "CPU overheadLimit": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "CPU reservation": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "CPU level": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "CPU shares": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "CPU expandableReservation": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "CPU maxUsage": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "CPU overallUsage": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "CPU reservationUsed": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "CPU reservationUsedForVm": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "CPU unreservedForPool": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "CPU unreservedForVm": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Mem Configured": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Mem limit": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Mem overheadLimit": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Mem reservation": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Mem level": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Mem shares": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Mem expandableReservation": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Mem maxUsage": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Mem overallUsage": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Mem reservationUsed": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Mem reservationUsedForVm": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Mem unreservedForPool": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Mem unreservedForVm": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "QS overallCpuDemand": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "QS overallCpuUsage": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "QS staticCpuEntitlement": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "QS distributedCpuEntitlement": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "QS balloonedMemory": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "QS compressedMemory": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "QS consumedOverheadMemory": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "QS distributedMemoryEntitlement": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "QS guestMemoryUsage": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "QS hostMemoryUsage": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "QS overheadMemory": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "QS privateMemory": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "QS sharedMemory": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "QS staticMemoryEntitlement": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "QS swappedMemory": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Object ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vCluster": {
+      "rows_ref": 3,
+      "rows_gen": 3,
+      "columns": {
+        "Name": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Config status": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OverallStatus": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "NumHosts": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "numEffectiveHosts": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "TotalCpu": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "NumCpuCores": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "NumCpuThreads": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Effective Cpu": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "TotalMemory": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Effective Memory": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Num VMotions": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "HA enabled": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Failover Level": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "AdmissionControlEnabled": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Host monitoring": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "HB Datastore Candidate Policy": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Isolation Response": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Restart Priority": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Cluster Settings": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Max Failures": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Max Failure Window": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Failure Interval": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Min Up Time": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM Monitoring": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "DRS enabled": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "DRS default VM behavior": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "DRS vmotion rate": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "DPM enabled": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "DPM default behavior": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "DPM Host Power Action Rate": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Object ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Backup status": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "ClusterInvariantVMMId": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "com.vmware.vcenter.cluster.edrs.upgradeHostAdded": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Last backup": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vHost": {
+      "rows_ref": 9,
+      "rows_gen": 9,
+      "columns": {
+        "Host": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Cluster": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Config status": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Compliance Check State": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "in Maintenance Mode": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "in Quarantine Mode": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "vSAN Fault Domain Name": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "CPU Model": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Speed": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "HT Available": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "HT Active": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "# CPU": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Cores per CPU": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "# Cores": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "CPU usage %": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "# Memory": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Memory Tiering Type": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Memory usage %": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Console": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "# NICs": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "# HBAs": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "# VMs total": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "# VMs": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VMs per Core": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "# vCPUs": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "vCPUs per Core": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "vRAM": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM Used memory": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM Memory Swapped": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VM Memory Ballooned": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VMotion support": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Storage VMotion support": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Current EVC": {
+          "filled_ref": 0.3333,
+          "filled_gen": 0.0,
+          "delta": 0.3333
+        },
+        "Max EVC": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Assigned License(s)": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "ATS Heartbeat": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "ATS Locking": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Current CPU power man. policy": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Supported CPU power man.": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Host Power Policy": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "ESX Version": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Boot time": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "DNS Servers": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "DHCP": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Domain": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Domain List": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "DNS Search Order": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "NTP Server(s)": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "NTPD running": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Time Zone": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Time Zone Name": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "GMT Offset": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Vendor": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Model": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Serial number": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Service tag": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "OEM specific string": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "BIOS Vendor": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "BIOS Version": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "BIOS Date": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Certificate Issuer": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Certificate Start Date": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Certificate Expiry Date": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Certificate Status": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Certificate Subject": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Object ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "AutoDeploy.MachineIdentity": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Backup status": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "ClusterInvariantVMMId": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Last backup": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vHBA": {
+      "rows_ref": 26,
+      "rows_gen": 26,
+      "columns": {
+        "Host": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Cluster": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Device": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Type": {
+          "filled_ref": 0.9231,
+          "filled_gen": 1.0,
+          "delta": -0.0769
+        },
+        "Status": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Bus": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Pci": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Driver": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Model": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "WWN": {
+          "filled_ref": 0.6923,
+          "filled_gen": 0.6923,
+          "delta": 0.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vNIC": {
+      "rows_ref": 54,
+      "rows_gen": 54,
+      "columns": {
+        "Host": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Cluster": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Network Device": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Driver": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Speed": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Duplex": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "MAC": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Switch": {
+          "filled_ref": 0.9259,
+          "filled_gen": 0.0,
+          "delta": 0.9259
+        },
+        "Uplink port": {
+          "filled_ref": 0.0741,
+          "filled_gen": 0.0,
+          "delta": 0.0741
+        },
+        "PCI": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "WakeOn": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vSwitch": {
+      "rows_ref": 22,
+      "rows_gen": 22,
+      "columns": {
+        "Host": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Cluster": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Switch": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "# Ports": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Free Ports": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Promiscuous Mode": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Mac Changes": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Forged Transmits": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Traffic Shaping": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Width": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Peak": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Burst": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Policy": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Reverse Policy": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Notify Switch": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Rolling Order": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Offload": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "TSO": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Zero Copy Xmit": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "MTU": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vPort": {
+      "rows_ref": 151,
+      "rows_gen": 151,
+      "columns": {
+        "Host": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Cluster": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Port Group": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Switch": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "VLAN": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Promiscuous Mode": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Mac Changes": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Forged Transmits": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Traffic Shaping": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Width": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Peak": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Burst": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Policy": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Reverse Policy": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Notify Switch": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Rolling Order": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Offload": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "TSO": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Zero Copy Xmit": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "dvSwitch": {
+      "rows_ref": 1,
+      "rows_gen": 1,
+      "columns": {
+        "Switch": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Name": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Vendor": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Version": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Description": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Created": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Host members": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Max Ports": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "# Ports": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "# VMs": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "In Traffic Shaping": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "In Avg": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "In Peak": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "In Burst": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Out Traffic Shaping": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Out Avg": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Out Peak": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Out Burst": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "CDP Type": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "CDP Operation": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "LACP Name": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "LACP Mode": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "LACP Load Balance Alg.": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Max MTU": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Contact": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Admin Name": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Object ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Backup status": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "ClusterInvariantVMMId": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Last backup": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "dvPort": {
+      "rows_ref": 19,
+      "rows_gen": 19,
+      "columns": {
+        "Port": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Switch": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Type": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "# Ports": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "VLAN": {
+          "filled_ref": 0.9474,
+          "filled_gen": 1.0,
+          "delta": -0.0526
+        },
+        "Speed": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Full Duplex": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Blocked": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Allow Promiscuous": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Mac Changes": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Active Uplink": {
+          "filled_ref": 0.9474,
+          "filled_gen": 0.0,
+          "delta": 0.9474
+        },
+        "Standby Uplink": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Policy": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Forged Transmits": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "In Traffic Shaping": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "In Avg": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "In Peak": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "In Burst": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Out Traffic Shaping": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Out Avg": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Out Peak": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Out Burst": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Reverse Policy": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Notify Switch": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Rolling Order": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Check Beacon": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Live Port Moving": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Check Duplex": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Check Error %": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Check Speed": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Percentage": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Block Override": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Config Reset": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Shaping Override": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Vendor Config Override": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Sec. Policy Override": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Teaming Override": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Vlan Override": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Object ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vSC_VMK": {
+      "rows_ref": 17,
+      "rows_gen": 17,
+      "columns": {
+        "Host": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Cluster": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Port Group": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Device": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Mac Address": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "DHCP": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "IP Address": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "IP 6 Address": {
+          "filled_ref": 0.7647,
+          "filled_gen": 0.0,
+          "delta": 0.7647
+        },
+        "Subnet mask": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Gateway": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "IP 6 Gateway": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "MTU": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vDatastore": {
+      "rows_ref": 15,
+      "rows_gen": 15,
+      "columns": {
+        "Name": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Config status": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Address": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Accessible": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Type": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "# VMs total": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "# VMs": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Capacity MiB": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Provisioned MiB": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "In Use MiB": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Free MiB": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Free %": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "SIOC enabled": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "SIOC Threshold": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "# Hosts": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Hosts": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Cluster name": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Cluster capacity MiB": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Cluster free space MiB": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Block size": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Max Blocks": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "# Extents": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Major Version": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Version": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VMFS Upgradeable": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "MHA": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "URL": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Object ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Backup status": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "ClusterInvariantVMMId": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Last backup": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vMultiPath": {
+      "rows_ref": 55,
+      "rows_gen": 71,
+      "columns": {
+        "Host": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Cluster": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Datacenter": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Datastore": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Disk": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Display name": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Policy": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Oper. State": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Path 1": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Path 1 state": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Path 2": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Path 2 state": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Path 3": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Path 3 state": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Path 4": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.9859,
+          "delta": 0.0141
+        },
+        "Path 4 state": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.9859,
+          "delta": 0.0141
+        },
+        "Path 5": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.9014,
+          "delta": 0.0986
+        },
+        "Path 5 state": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.9014,
+          "delta": 0.0986
+        },
+        "Path 6": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.9014,
+          "delta": 0.0986
+        },
+        "Path 6 state": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.9014,
+          "delta": 0.0986
+        },
+        "Path 7": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.9014,
+          "delta": 0.0986
+        },
+        "Path 7 state": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.9014,
+          "delta": 0.0986
+        },
+        "Path 8": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.9014,
+          "delta": 0.0986
+        },
+        "Path 8 state": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.9014,
+          "delta": 0.0986
+        },
+        "vStorage": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Queue depth": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Vendor": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Model": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Revision": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Level": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Serial #": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Object ID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vLicense": {
+      "rows_ref": 10,
+      "rows_gen": 11,
+      "columns": {
+        "Name": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Key": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Labels": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Cost Unit": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "Total": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Used": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.9091,
+          "delta": 0.0909
+        },
+        "Expiration Date": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.6364,
+          "delta": 0.3636
+        },
+        "Features": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vFileInfo": {
+      "rows_ref": 1,
+      "rows_gen": 0,
+      "columns": {
+        "Friendly Path Name": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "File Name": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "File Type": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "File Size in bytes": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Path": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "Internal Sort Column": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 0.0,
+          "filled_gen": 0.0,
+          "delta": 0.0
+        }
+      }
+    },
+    "vHealth": {
+      "rows_ref": 239,
+      "rows_gen": 9,
+      "columns": {
+        "Name": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Message": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Message type": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "VI SDK Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        },
+        "VI SDK UUID": {
+          "filled_ref": 1.0,
+          "filled_gen": 0.0,
+          "delta": 1.0
+        }
+      }
+    },
+    "vMetaData": {
+      "rows_ref": 1,
+      "rows_gen": 1,
+      "columns": {
+        "RVTools major version": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "RVTools version": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "xlsx creation datetime": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        },
+        "Server": {
+          "filled_ref": 1.0,
+          "filled_gen": 1.0,
+          "delta": 0.0
+        }
+      }
+    }
+  },
+  "top_deltas": [
+    {
+      "sheet": "vInfo",
+      "column": "VM",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "D-CUSTOM-01",
+        "D-CUSTOM-02",
+        "D-HUBI-LNX-02",
+        "P-ACR-CLOUD-01",
+        "P-ACR-CLOUD-02"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Powerstate",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "poweredOn",
+        "poweredOn",
+        "poweredOn",
+        "poweredOn",
+        "poweredOn"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Template",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "False",
+        "False",
+        "False",
+        "False",
+        "False"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "SRM Placeholder",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "False",
+        "False",
+        "False",
+        "False",
+        "False"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Config status",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "green",
+        "green",
+        "green",
+        "green",
+        "green"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Connection state",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "connected",
+        "connected",
+        "connected",
+        "connected",
+        "connected"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Guest state",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "running",
+        "running",
+        "running",
+        "running",
+        "running"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Heartbeat",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "green",
+        "green",
+        "green",
+        "green",
+        "green"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Consolidation Needed",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "False",
+        "False",
+        "False",
+        "False",
+        "False"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Suspend Interval",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Creation date",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "2023-03-06 10:30:00",
+        "2024-01-31 11:02:34",
+        "2023-01-16 09:06:19",
+        "2025-02-06 09:08:22",
+        "2025-04-15 05:14:03"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Change Version",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "2025-12-16 23:03:06",
+        "2025-12-16 23:03:06",
+        "2025-12-16 23:21:03",
+        "2025-12-17 15:06:46",
+        "2025-12-17 02:07:07"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "CPUs",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "8",
+        "4",
+        "8",
+        "4",
+        "4"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Memory",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "12288",
+        "4096",
+        "16384",
+        "16384",
+        "16384"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Active Memory",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "1105",
+        "1105",
+        "2949",
+        "163",
+        "163"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "NICs",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Disks",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "2",
+        "1",
+        "1",
+        "10",
+        "3"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Total disk capacity MiB",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "368654",
+        "204800",
+        "519175",
+        "742449",
+        "25600"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Fixed Passthru HotPlug",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "False",
+        "False",
+        "False",
+        "False",
+        "False"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Latency Sensitivity",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "normal",
+        "normal",
+        "normal",
+        "normal",
+        "normal"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Network #1",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "V-HUBI-JAIL-79",
+        "V-HUBI-JAIL-79",
+        "V-HUBI-JAIL-79",
+        "VM Network",
+        "VM Network"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Num Monitors",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Video Ram KiB",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "8192",
+        "8192",
+        "8192",
+        "4096",
+        "4096"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Resource pool",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "/USFQ/USFQ-TEST/Resources",
+        "/USFQ/USFQ-TEST/Resources",
+        "/USFQ/USFQ-TEST/Resources",
+        "/USFQ/USFQ-PRODUCCION/Resources",
+        "/USFQ/USFQ-PRODUCCION/Resources"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Folder ID",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "group-v26",
+        "group-v26",
+        "group-v4",
+        "group-v4",
+        "group-v4"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "FT State",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "notConfigured",
+        "notConfigured",
+        "notConfigured",
+        "notConfigured",
+        "notConfigured"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "FT Latency",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "FT Bandwidth",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "-1",
+        "-1",
+        "-1",
+        "-1",
+        "-1"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "FT Sec. Latency",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "-1",
+        "-1",
+        "-1",
+        "-1",
+        "-1"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Provisioned MiB",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "484603",
+        "208985",
+        "1059824",
+        "1275793",
+        "42087"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "In Use MiB",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "130728",
+        "208985",
+        "546344",
+        "558945",
+        "42087"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Unshared MiB",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "81459",
+        "204800",
+        "480693",
+        "542457",
+        "25600"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "HA Restart Priority",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "medium",
+        "medium",
+        "medium",
+        "medium",
+        "medium"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "HA Isolation Response",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "none",
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "HA VM Monitoring",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "vmMonitoringDisabled",
+        "vmMonitoringDisabled",
+        "vmMonitoringDisabled",
+        "vmMonitoringDisabled",
+        "vmMonitoringDisabled"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Boot Required",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "False",
+        "False",
+        "False",
+        "False",
+        "False"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Boot delay",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Boot retry delay",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "10000",
+        "10000",
+        "10000",
+        "10000",
+        "10000"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Boot retry enabled",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "False",
+        "False",
+        "False",
+        "False",
+        "False"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Boot BIOS setup",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "False",
+        "False",
+        "False",
+        "False",
+        "False"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Reboot PowerOff",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "False",
+        "False",
+        "False",
+        "False",
+        "False"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "EFI Secure boot",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "False",
+        "True",
+        "False",
+        "False",
+        "False"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Firmware",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "bios",
+        "efi",
+        "bios",
+        "bios",
+        "bios"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "HW version",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "21",
+        "21",
+        "21",
+        "14",
+        "21"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "HW upgrade status",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "none",
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "HW upgrade policy",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "never",
+        "never",
+        "never",
+        "never",
+        "never"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Path",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "[FS1-T-ESX-VM-01] D-CUSTOM-01/D-CUSTOM-01.vmx",
+        "[FS1-T-ESX-VM-02] D-CUSTOM-02/D-CUSTOM-02.vmx",
+        "[FS1-T-ESX-VM-03] D-HUBI-LNX-02/D-HUBI-LNX-02.vmx",
+        "[FS1-P-ESX-VM-03] P-ACR-CLOUD-01/P-ACR-CLOUD-01.vmx",
+        "[FS1-P-ESX-VM-07] P-ACR-CLOUD-02_1/P-ACR-CLOUD-02.vmx"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Log directory",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "[FS1-T-ESX-VM-01] D-CUSTOM-01/",
+        "[FS1-T-ESX-VM-02] D-CUSTOM-02/",
+        "[FS1-T-ESX-VM-03] D-HUBI-LNX-02/",
+        "[FS1-P-ESX-VM-03] P-ACR-CLOUD-01/",
+        "[FS1-P-ESX-VM-07] P-ACR-CLOUD-02_1/"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Snapshot directory",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "[FS1-T-ESX-VM-01] D-CUSTOM-01/",
+        "[FS1-T-ESX-VM-02] D-CUSTOM-02/",
+        "[FS1-T-ESX-VM-03] D-HUBI-LNX-02/",
+        "[FS1-P-ESX-VM-03] P-ACR-CLOUD-01/",
+        "[FS1-P-ESX-VM-07] P-ACR-CLOUD-02_1/"
+      ],
+      "gen_empty_examples": []
+    },
+    {
+      "sheet": "vInfo",
+      "column": "Suspend directory",
+      "ref_filled": 1.0,
+      "gen_filled": 0.0,
+      "delta": 1.0,
+      "ref_examples": [
+        "[FS1-T-ESX-VM-01] D-CUSTOM-01/",
+        "[FS1-T-ESX-VM-02] D-CUSTOM-02/",
+        "[FS1-T-ESX-VM-03] D-HUBI-LNX-02/",
+        "[FS1-P-ESX-VM-03] P-ACR-CLOUD-01/",
+        "[FS1-P-ESX-VM-07] P-ACR-CLOUD-02_1/"
+      ],
+      "gen_empty_examples": []
+    }
+  ]
+}

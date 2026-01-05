@@ -1,0 +1,13 @@
+HVHost,PSVersion,OS,HyperVModuleAvailable,ClusterModuleAvailable,CmdletsFound,StrategyChosen,CollectedAt,Errors
+S-HYP-03,5.1.26100.7019,Microsoft Windows Server 2025 Datacenter (10.0.26100),True,True,"Get-VM, Get-VMHost, Get-VMNetworkAdapter, Get-VMHardDiskDrive, Get-VHD, Get-Cluster",HyperVModule,2025-12-23T12:13:59Z,
+S-HYP-01,5.1.26100.7019,Microsoft Windows Server 2025 Datacenter (10.0.26100),True,True,"Get-VM, Get-VMHost, Get-VMNetworkAdapter, Get-VMHardDiskDrive, Get-VHD, Get-Cluster",HyperVModule,2025-12-23T12:13:59Z,
+S-HYP-02,5.1.26100.7019,Microsoft Windows Server 2025 Datacenter (10.0.26100),True,True,"Get-VM, Get-VMHost, Get-VMNetworkAdapter, Get-VMHardDiskDrive, Get-VHD, Get-Cluster",HyperVModule,2025-12-23T12:14:00Z,
+S-HYP-04,5.1.26100.7019,Microsoft Windows Server 2025 Datacenter (10.0.26100),True,True,"Get-VM, Get-VMHost, Get-VMNetworkAdapter, Get-VMHardDiskDrive, Get-VHD, Get-Cluster",HyperVModule,2025-12-23T12:14:01Z,
+T-HYP-01,5.1.26100.7462,Microsoft Windows Server 2025 Datacenter (10.0.26100),True,True,"Get-VM, Get-VMHost, Get-VMNetworkAdapter, Get-VMHardDiskDrive, Get-VHD, Get-Cluster",HyperVModule,2025-12-23T12:14:10Z,
+T-HYP-02,5.1.26100.7462,Microsoft Windows Server 2025 Datacenter (10.0.26100),True,True,"Get-VM, Get-VMHost, Get-VMNetworkAdapter, Get-VMHardDiskDrive, Get-VHD, Get-Cluster",HyperVModule,2025-12-23T12:14:10Z,
+T-HYP-03,5.1.26100.7462,Microsoft Windows Server 2025 Datacenter (10.0.26100),True,True,"Get-VM, Get-VMHost, Get-VMNetworkAdapter, Get-VMHardDiskDrive, Get-VHD, Get-Cluster",HyperVModule,2025-12-23T12:14:12Z,
+P-HYP-01,5.1.17763.8146,Microsoft Windows Server 2019 Datacenter (10.0.17763),True,True,"Get-VM, Get-VMHost, Get-VMNetworkAdapter, Get-VMHardDiskDrive, Get-VHD, Get-Cluster",HyperVModule,2025-12-23T12:14:10Z,
+P-HYP-04,5.1.17763.8146,Microsoft Windows Server 2019 Datacenter (10.0.17763),True,True,"Get-VM, Get-VMHost, Get-VMNetworkAdapter, Get-VMHardDiskDrive, Get-VHD, Get-Cluster",HyperVModule,2025-12-23T12:14:19Z,
+P-HYP-05,5.1.17763.8146,Microsoft Windows Server 2019 Datacenter (10.0.17763),True,True,"Get-VM, Get-VMHost, Get-VMNetworkAdapter, Get-VMHardDiskDrive, Get-VHD, Get-Cluster",HyperVModule,2025-12-23T12:14:20Z,
+P-HYP-02,5.1.17763.8146,Microsoft Windows Server 2019 Datacenter (10.0.17763),True,True,"Get-VM, Get-VMHost, Get-VMNetworkAdapter, Get-VMHardDiskDrive, Get-VHD, Get-Cluster",HyperVModule,2025-12-23T12:14:20Z,
+P-HYP-03,5.1.17763.8146,Microsoft Windows Server 2019 Datacenter (10.0.17763),True,True,"Get-VM, Get-VMHost, Get-VMNetworkAdapter, Get-VMHardDiskDrive, Get-VHD, Get-Cluster",HyperVModule,2025-12-23T12:14:23Z,

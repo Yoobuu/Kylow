@@ -1,0 +1,960 @@
+# RVTools-style Audit Report
+- Generated at: 2025-12-23T18:41:37.607532+00:00
+- XLSX: out/rvtools_hyperv.xlsx
+- CSV dir: out
+- Sheets: total=27 with_rows=7 zero_rows=20 avg_nonempty_cols% (nonzero sheets)=38.65
+
+## vInfo
+Rows: 129 | Cols: 93 | Non-empty cols: 13 | Empty cols: 80 | Source: csv
+- Warnings:
+  - Memory: max 103079215104.0 (>1e9) possible units mismatch (bytes vs MiB)
+- Non-empty columns:
+  - VM: 129/129 (100.0%)
+  - Powerstate: 129/129 (100.0%)
+  - CPUs: 129/129 (100.0%)
+  - Memory: 129/129 (100.0%)
+  - NICs: 129/129 (100.0%)
+  - Disks: 129/129 (100.0%)
+  - Primary IP Address: 117/129 (90.7%)
+  - Path: 129/129 (100.0%)
+  - Log directory: 129/129 (100.0%)
+  - Snapshot directory: 129/129 (100.0%)
+  - Cluster: 129/129 (100.0%)
+  - Host: 129/129 (100.0%)
+  - VM ID: 129/129 (100.0%)
+- Empty columns (0%):
+  - Template
+  - SRM Placeholder
+  - Config status
+  - DNS Name
+  - Connection state
+  - Guest state
+  - Heartbeat
+  - Consolidation Needed
+  - PowerOn
+  - Suspended To Memory
+  - Suspend time
+  - Suspend Interval
+  - Creation date
+  - Change Version
+  - Overall Cpu Readiness
+  - Active Memory
+  - Total disk capacity MiB
+  - Fixed Passthru HotPlug
+  - min Required EVC Mode Key
+  - Latency Sensitivity
+  - Op Notification Timeout
+  - EnableUUID
+  - CBT
+  - Network #1
+  - Network #2
+  - Network #3
+  - Network #4
+  - Network #5
+  - Network #6
+  - Network #7
+  - Network #8
+  - Num Monitors
+  - Video Ram KiB
+  - Resource pool
+  - Folder ID
+  - Folder
+  - vApp
+  - DAS protection
+  - FT State
+  - FT Role
+  - FT Latency
+  - FT Bandwidth
+  - FT Sec. Latency
+  - Vm Failover In Progress
+  - Provisioned MiB
+  - In Use MiB
+  - Unshared MiB
+  - HA Restart Priority
+  - HA Isolation Response
+  - HA VM Monitoring
+  - Cluster rule(s)
+  - Cluster rule name(s)
+  - Boot Required
+  - Boot delay
+  - Boot retry delay
+  - Boot retry enabled
+  - Boot BIOS setup
+  - Reboot PowerOff
+  - EFI Secure boot
+  - Firmware
+  - HW version
+  - HW upgrade status
+  - HW upgrade policy
+  - HW target
+  - Suspend directory
+  - Annotation
+  - Backup status
+  - ClusterInvariantVMMId
+  - Last backup
+  - Datacenter
+  - OS according to the configuration file
+  - OS according to the VMware Tools
+  - Customization Info
+  - Guest Detailed Data
+  - SMBIOS UUID
+  - VM UUID
+  - VI SDK Server type
+  - VI SDK API Version
+  - VI SDK Server
+  - VI SDK UUID
+
+## vCPU
+Rows: 129 | Cols: 32 | Non-empty cols: 6 | Empty cols: 26 | Source: csv
+- Non-empty columns:
+  - VM: 129/129 (100.0%)
+  - Powerstate: 129/129 (100.0%)
+  - CPUs: 129/129 (100.0%)
+  - Cluster: 129/129 (100.0%)
+  - Host: 129/129 (100.0%)
+  - VM ID: 129/129 (100.0%)
+- Empty columns (0%):
+  - Template
+  - SRM Placeholder
+  - Sockets
+  - Cores p/s
+  - Max
+  - Overall
+  - Level
+  - Shares
+  - Reservation
+  - Entitlement
+  - DRS Entitlement
+  - Limit
+  - Hot Add
+  - Hot Remove
+  - Numa Hotadd Exposed
+  - Annotation
+  - Backup status
+  - ClusterInvariantVMMId
+  - Last backup
+  - Datacenter
+  - Folder
+  - OS according to the configuration file
+  - OS according to the VMware Tools
+  - VM UUID
+  - VI SDK Server
+  - VI SDK UUID
+
+## vMemory
+Rows: 129 | Cols: 36 | Non-empty cols: 6 | Empty cols: 30 | Source: csv
+- Non-empty columns:
+  - VM: 129/129 (100.0%)
+  - Powerstate: 129/129 (100.0%)
+  - Hot Add: 13/129 (10.08%)
+  - Cluster: 129/129 (100.0%)
+  - Host: 129/129 (100.0%)
+  - VM ID: 129/129 (100.0%)
+- Empty columns (0%):
+  - Template
+  - SRM Placeholder
+  - Size MiB
+  - Memory Reservation Locked To Max
+  - Overhead
+  - Max
+  - Consumed
+  - Consumed Overhead
+  - Private
+  - Shared
+  - Swapped
+  - Ballooned
+  - Active
+  - Entitlement
+  - DRS Entitlement
+  - Level
+  - Shares
+  - Reservation
+  - Limit
+  - Annotation
+  - Backup status
+  - ClusterInvariantVMMId
+  - Last backup
+  - Datacenter
+  - Folder
+  - OS according to the configuration file
+  - OS according to the VMware Tools
+  - VM UUID
+  - VI SDK Server
+  - VI SDK UUID
+
+## vDisk
+Rows: 0 | Cols: 43 | Non-empty cols: 0 | Empty cols: 43 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - VM
+  - Powerstate
+  - Template
+  - SRM Placeholder
+  - Disk
+  - Disk Key
+  - Disk UUID
+  - Disk Path
+  - Capacity MiB
+  - Raw
+  - Disk Mode
+  - Sharing mode
+  - Thin
+  - Eagerly Scrub
+  - Split
+  - Write Through
+  - Level
+  - Shares
+  - Reservation
+  - Limit
+  - Controller
+  - Label
+  - SCSI Unit #
+  - Unit #
+  - Shared Bus
+  - Path
+  - Raw LUN ID
+  - Raw Comp. Mode
+  - Internal Sort Column
+  - Annotation
+  - Backup status
+  - ClusterInvariantVMMId
+  - Last backup
+  - Datacenter
+  - Cluster
+  - Host
+  - Folder
+  - OS according to the configuration file
+  - OS according to the VMware Tools
+  - VM ID
+  - VM UUID
+  - VI SDK Server
+  - VI SDK UUID
+
+## vPartition
+Rows: 0 | Cols: 25 | Non-empty cols: 0 | Empty cols: 25 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - VM
+  - Powerstate
+  - Template
+  - SRM Placeholder
+  - Disk Key
+  - Disk
+  - Capacity MiB
+  - Consumed MiB
+  - Free MiB
+  - Free %
+  - Internal Sort Column
+  - Annotation
+  - Backup status
+  - ClusterInvariantVMMId
+  - Last backup
+  - Datacenter
+  - Cluster
+  - Host
+  - Folder
+  - OS according to the configuration file
+  - OS according to the VMware Tools
+  - VM ID
+  - VM UUID
+  - VI SDK Server
+  - VI SDK UUID
+
+## vNetwork
+Rows: 149 | Cols: 30 | Non-empty cols: 10 | Empty cols: 20 | Source: csv
+- Non-empty columns:
+  - VM: 149/149 (100.0%)
+  - Powerstate: 149/149 (100.0%)
+  - NIC label: 149/149 (100.0%)
+  - Switch: 149/149 (100.0%)
+  - Connected: 149/149 (100.0%)
+  - Mac Address: 149/149 (100.0%)
+  - IPv4 Address: 131/149 (87.92%)
+  - IPv6 Address: 98/149 (65.77%)
+  - Host: 149/149 (100.0%)
+  - VM ID: 149/149 (100.0%)
+- Empty columns (0%):
+  - Template
+  - SRM Placeholder
+  - Adapter
+  - Network
+  - Starts Connected
+  - Type
+  - Direct Path IO
+  - Internal Sort Column
+  - Annotation
+  - Backup status
+  - ClusterInvariantVMMId
+  - Last backup
+  - Datacenter
+  - Cluster
+  - Folder
+  - OS according to the configuration file
+  - OS according to the VMware Tools
+  - VM UUID
+  - VI SDK Server
+  - VI SDK UUID
+
+## vCD
+Rows: 0 | Cols: 23 | Non-empty cols: 0 | Empty cols: 23 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - VM
+  - Powerstate
+  - Template
+  - SRM Placeholder
+  - Device Node
+  - Connected
+  - Starts Connected
+  - Device Type
+  - Annotation
+  - Backup status
+  - ClusterInvariantVMMId
+  - Last backup
+  - Datacenter
+  - Cluster
+  - Host
+  - Folder
+  - OS according to the configuration file
+  - OS according to the VMware Tools
+  - VMRef
+  - VM ID
+  - VM UUID
+  - VI SDK Server
+  - VI SDK UUID
+
+## vUSB
+Rows: 0 | Cols: 28 | Non-empty cols: 0 | Empty cols: 28 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - VM
+  - Powerstate
+  - Template
+  - SRM Placeholder
+  - Device Node
+  - Device Type
+  - Connected
+  - Family
+  - Speed
+  - EHCI enabled
+  - Auto connect
+  - Bus number
+  - Unit number
+  - Annotation
+  - Backup status
+  - ClusterInvariantVMMId
+  - Last backup
+  - Datacenter
+  - Cluster
+  - Host
+  - Folder
+  - OS according to the configuration file
+  - OS according to the VMware tools
+  - VMRef
+  - VM ID
+  - VM UUID
+  - VI SDK Server
+  - VI SDK UUID
+
+## vSnapshot
+Rows: 0 | Cols: 24 | Non-empty cols: 0 | Empty cols: 24 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - VM
+  - Powerstate
+  - Name
+  - Description
+  - Date / time
+  - Filename
+  - Size MiB (vmsn)
+  - Size MiB (total)
+  - Quiesced
+  - State
+  - Annotation
+  - Backup status
+  - ClusterInvariantVMMId
+  - Last backup
+  - Datacenter
+  - Cluster
+  - Host
+  - Folder
+  - OS according to the configuration file
+  - OS according to the VMware Tools
+  - VM ID
+  - VM UUID
+  - VI SDK Server
+  - VI SDK UUID
+
+## vTools
+Rows: 0 | Cols: 32 | Non-empty cols: 0 | Empty cols: 32 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - VM
+  - Powerstate
+  - Template
+  - SRM Placeholder
+  - VM Version
+  - Tools
+  - Tools Version
+  - Required Version
+  - Upgradeable
+  - Upgrade Policy
+  - Sync time
+  - App status
+  - Heartbeat status
+  - Kernel Crash state
+  - Operation Ready
+  - State change support
+  - Interactive Guest
+  - Annotation
+  - Backup status
+  - ClusterInvariantVMMId
+  - Last backup
+  - Datacenter
+  - Cluster
+  - Host
+  - Folder
+  - OS according to the configuration file
+  - OS according to the VMware Tools
+  - VMRef
+  - VM ID
+  - VM UUID
+  - VI SDK Server
+  - VI SDK UUID
+
+## vSource
+Rows: 1 | Cols: 14 | Non-empty cols: 7 | Empty cols: 7 | Source: csv
+- Non-empty columns:
+  - Name: 1/1 (100.0%)
+  - OS type: 1/1 (100.0%)
+  - API type: 1/1 (100.0%)
+  - Version: 1/1 (100.0%)
+  - Fullname: 1/1 (100.0%)
+  - Product name: 1/1 (100.0%)
+  - Vendor: 1/1 (100.0%)
+- Empty columns (0%):
+  - API version
+  - Patch level
+  - Build
+  - Product version
+  - Product line
+  - VI SDK Server
+  - VI SDK UUID
+
+## vRP
+Rows: 0 | Cols: 49 | Non-empty cols: 0 | Empty cols: 49 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - Resource Pool name
+  - Resource Pool path
+  - Status
+  - # VMs total
+  - # VMs
+  - # vCPUs
+  - CPU limit
+  - CPU overheadLimit
+  - CPU reservation
+  - CPU level
+  - CPU shares
+  - CPU expandableReservation
+  - CPU maxUsage
+  - CPU overallUsage
+  - CPU reservationUsed
+  - CPU reservationUsedForVm
+  - CPU unreservedForPool
+  - CPU unreservedForVm
+  - Mem Configured
+  - Mem limit
+  - Mem overheadLimit
+  - Mem reservation
+  - Mem level
+  - Mem shares
+  - Mem expandableReservation
+  - Mem maxUsage
+  - Mem overallUsage
+  - Mem reservationUsed
+  - Mem reservationUsedForVm
+  - Mem unreservedForPool
+  - Mem unreservedForVm
+  - QS overallCpuDemand
+  - QS overallCpuUsage
+  - QS staticCpuEntitlement
+  - QS distributedCpuEntitlement
+  - QS balloonedMemory
+  - QS compressedMemory
+  - QS consumedOverheadMemory
+  - QS distributedMemoryEntitlement
+  - QS guestMemoryUsage
+  - QS hostMemoryUsage
+  - QS overheadMemory
+  - QS privateMemory
+  - QS sharedMemory
+  - QS staticMemoryEntitlement
+  - QS swappedMemory
+  - Object ID
+  - VI SDK Server
+  - VI SDK UUID
+
+## vCluster
+Rows: 0 | Cols: 38 | Non-empty cols: 0 | Empty cols: 38 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - Name
+  - Config status
+  - OverallStatus
+  - NumHosts
+  - numEffectiveHosts
+  - TotalCpu
+  - NumCpuCores
+  - NumCpuThreads
+  - Effective Cpu
+  - TotalMemory
+  - Effective Memory
+  - Num VMotions
+  - HA enabled
+  - Failover Level
+  - AdmissionControlEnabled
+  - Host monitoring
+  - HB Datastore Candidate Policy
+  - Isolation Response
+  - Restart Priority
+  - Cluster Settings
+  - Max Failures
+  - Max Failure Window
+  - Failure Interval
+  - Min Up Time
+  - VM Monitoring
+  - DRS enabled
+  - DRS default VM behavior
+  - DRS vmotion rate
+  - DPM enabled
+  - DPM default behavior
+  - DPM Host Power Action Rate
+  - Object ID
+  - Backup status
+  - ClusterInvariantVMMId
+  - com.vmware.vcenter.cluster.edrs.upgradeHostAdded
+  - Last backup
+  - VI SDK Server
+  - VI SDK UUID
+
+## vHost
+Rows: 12 | Cols: 74 | Non-empty cols: 28 | Empty cols: 46 | Source: csv
+- Non-empty columns:
+  - Host: 12/12 (100.0%)
+  - Cluster: 12/12 (100.0%)
+  - Config status: 12/12 (100.0%)
+  - CPU Model: 12/12 (100.0%)
+  - Speed: 12/12 (100.0%)
+  - HT Available: 12/12 (100.0%)
+  - HT Active: 12/12 (100.0%)
+  - # CPU: 12/12 (100.0%)
+  - Cores per CPU: 12/12 (100.0%)
+  - # Cores: 12/12 (100.0%)
+  - # Memory: 12/12 (100.0%)
+  - # NICs: 12/12 (100.0%)
+  - # VMs total: 9/12 (75.0%)
+  - # VMs: 9/12 (75.0%)
+  - Boot time: 12/12 (100.0%)
+  - DNS Servers: 12/12 (100.0%)
+  - Domain: 12/12 (100.0%)
+  - Time Zone: 12/12 (100.0%)
+  - Time Zone Name: 12/12 (100.0%)
+  - GMT Offset: 12/12 (100.0%)
+  - Vendor: 12/12 (100.0%)
+  - Model: 12/12 (100.0%)
+  - Serial number: 12/12 (100.0%)
+  - Service tag: 12/12 (100.0%)
+  - BIOS Vendor: 12/12 (100.0%)
+  - BIOS Version: 12/12 (100.0%)
+  - BIOS Date: 12/12 (100.0%)
+  - UUID: 12/12 (100.0%)
+- Empty columns (0%):
+  - Datacenter
+  - Compliance Check State
+  - in Maintenance Mode
+  - in Quarantine Mode
+  - vSAN Fault Domain Name
+  - CPU usage %
+  - Memory Tiering Type
+  - Memory usage %
+  - Console
+  - # HBAs
+  - VMs per Core
+  - # vCPUs
+  - vCPUs per Core
+  - vRAM
+  - VM Used memory
+  - VM Memory Swapped
+  - VM Memory Ballooned
+  - VMotion support
+  - Storage VMotion support
+  - Current EVC
+  - Max EVC
+  - Assigned License(s)
+  - ATS Heartbeat
+  - ATS Locking
+  - Current CPU power man. policy
+  - Supported CPU power man.
+  - Host Power Policy
+  - ESX Version
+  - DHCP
+  - Domain List
+  - DNS Search Order
+  - NTP Server(s)
+  - NTPD running
+  - OEM specific string
+  - Certificate Issuer
+  - Certificate Start Date
+  - Certificate Expiry Date
+  - Certificate Status
+  - Certificate Subject
+  - Object ID
+  - AutoDeploy.MachineIdentity
+  - Backup status
+  - ClusterInvariantVMMId
+  - Last backup
+  - VI SDK Server
+  - VI SDK UUID
+
+## vHBA
+Rows: 0 | Cols: 13 | Non-empty cols: 0 | Empty cols: 13 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - Host
+  - Datacenter
+  - Cluster
+  - Device
+  - Type
+  - Status
+  - Bus
+  - Pci
+  - Driver
+  - Model
+  - WWN
+  - VI SDK Server
+  - VI SDK UUID
+
+## vNIC
+Rows: 0 | Cols: 14 | Non-empty cols: 0 | Empty cols: 14 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - Host
+  - Datacenter
+  - Cluster
+  - Network Device
+  - Driver
+  - Speed
+  - Duplex
+  - MAC
+  - Switch
+  - Uplink port
+  - PCI
+  - WakeOn
+  - VI SDK Server
+  - VI SDK UUID
+
+## vSwitch
+Rows: 0 | Cols: 23 | Non-empty cols: 0 | Empty cols: 23 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - Host
+  - Datacenter
+  - Cluster
+  - Switch
+  - # Ports
+  - Free Ports
+  - Promiscuous Mode
+  - Mac Changes
+  - Forged Transmits
+  - Traffic Shaping
+  - Width
+  - Peak
+  - Burst
+  - Policy
+  - Reverse Policy
+  - Notify Switch
+  - Rolling Order
+  - Offload
+  - TSO
+  - Zero Copy Xmit
+  - MTU
+  - VI SDK Server
+  - VI SDK UUID
+
+## vPort
+Rows: 0 | Cols: 22 | Non-empty cols: 0 | Empty cols: 22 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - Host
+  - Datacenter
+  - Cluster
+  - Port Group
+  - Switch
+  - VLAN
+  - Promiscuous Mode
+  - Mac Changes
+  - Forged Transmits
+  - Traffic Shaping
+  - Width
+  - Peak
+  - Burst
+  - Policy
+  - Reverse Policy
+  - Notify Switch
+  - Rolling Order
+  - Offload
+  - TSO
+  - Zero Copy Xmit
+  - VI SDK Server
+  - VI SDK UUID
+
+## dvSwitch
+Rows: 0 | Cols: 33 | Non-empty cols: 0 | Empty cols: 33 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - Switch
+  - Datacenter
+  - Name
+  - Vendor
+  - Version
+  - Description
+  - Created
+  - Host members
+  - Max Ports
+  - # Ports
+  - # VMs
+  - In Traffic Shaping
+  - In Avg
+  - In Peak
+  - In Burst
+  - Out Traffic Shaping
+  - Out Avg
+  - Out Peak
+  - Out Burst
+  - CDP Type
+  - CDP Operation
+  - LACP Name
+  - LACP Mode
+  - LACP Load Balance Alg.
+  - Max MTU
+  - Contact
+  - Admin Name
+  - Object ID
+  - Backup status
+  - ClusterInvariantVMMId
+  - Last backup
+  - VI SDK Server
+  - VI SDK UUID
+
+## dvPort
+Rows: 0 | Cols: 41 | Non-empty cols: 0 | Empty cols: 41 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - Port
+  - Switch
+  - Type
+  - # Ports
+  - VLAN
+  - Speed
+  - Full Duplex
+  - Blocked
+  - Allow Promiscuous
+  - Mac Changes
+  - Active Uplink
+  - Standby Uplink
+  - Policy
+  - Forged Transmits
+  - In Traffic Shaping
+  - In Avg
+  - In Peak
+  - In Burst
+  - Out Traffic Shaping
+  - Out Avg
+  - Out Peak
+  - Out Burst
+  - Reverse Policy
+  - Notify Switch
+  - Rolling Order
+  - Check Beacon
+  - Live Port Moving
+  - Check Duplex
+  - Check Error %
+  - Check Speed
+  - Percentage
+  - Block Override
+  - Config Reset
+  - Shaping Override
+  - Vendor Config Override
+  - Sec. Policy Override
+  - Teaming Override
+  - Vlan Override
+  - Object ID
+  - VI SDK Server
+  - VI SDK UUID
+
+## vSC_VMK
+Rows: 0 | Cols: 15 | Non-empty cols: 0 | Empty cols: 15 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - Host
+  - Datacenter
+  - Cluster
+  - Port Group
+  - Device
+  - Mac Address
+  - DHCP
+  - IP Address
+  - IP 6 Address
+  - Subnet mask
+  - Gateway
+  - IP 6 Gateway
+  - MTU
+  - VI SDK Server
+  - VI SDK UUID
+
+## vDatastore
+Rows: 0 | Cols: 33 | Non-empty cols: 0 | Empty cols: 33 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - Name
+  - Config status
+  - Address
+  - Accessible
+  - Type
+  - # VMs total
+  - # VMs
+  - Capacity MiB
+  - Provisioned MiB
+  - In Use MiB
+  - Free MiB
+  - Free %
+  - SIOC enabled
+  - SIOC Threshold
+  - # Hosts
+  - Hosts
+  - Cluster name
+  - Cluster capacity MiB
+  - Cluster free space MiB
+  - Block size
+  - Max Blocks
+  - # Extents
+  - Major Version
+  - Version
+  - VMFS Upgradeable
+  - MHA
+  - URL
+  - Object ID
+  - Backup status
+  - ClusterInvariantVMMId
+  - Last backup
+  - VI SDK Server
+  - VI SDK UUID
+
+## vMultiPath
+Rows: 0 | Cols: 35 | Non-empty cols: 0 | Empty cols: 35 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - Host
+  - Cluster
+  - Datacenter
+  - Datastore
+  - Disk
+  - Display name
+  - Policy
+  - Oper. State
+  - Path 1
+  - Path 1 state
+  - Path 2
+  - Path 2 state
+  - Path 3
+  - Path 3 state
+  - Path 4
+  - Path 4 state
+  - Path 5
+  - Path 5 state
+  - Path 6
+  - Path 6 state
+  - Path 7
+  - Path 7 state
+  - Path 8
+  - Path 8 state
+  - vStorage
+  - Queue depth
+  - Vendor
+  - Model
+  - Revision
+  - Level
+  - Serial #
+  - UUID
+  - Object ID
+  - VI SDK Server
+  - VI SDK UUID
+
+## vLicense
+Rows: 0 | Cols: 10 | Non-empty cols: 0 | Empty cols: 10 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - Name
+  - Key
+  - Labels
+  - Cost Unit
+  - Total
+  - Used
+  - Expiration Date
+  - Features
+  - VI SDK Server
+  - VI SDK UUID
+
+## vFileInfo
+Rows: 0 | Cols: 8 | Non-empty cols: 0 | Empty cols: 8 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - Friendly Path Name
+  - File Name
+  - File Type
+  - File Size in bytes
+  - Path
+  - Internal Sort Column
+  - VI SDK Server
+  - VI SDK UUID
+
+## vHealth
+Rows: 0 | Cols: 5 | Non-empty cols: 0 | Empty cols: 5 | Source: none
+- Non-empty columns:
+  - None
+- Empty columns (0%):
+  - Name
+  - Message
+  - Message type
+  - VI SDK Server
+  - VI SDK UUID
+
+## vMetaData
+Rows: 1 | Cols: 4 | Non-empty cols: 4 | Empty cols: 0 | Source: csv
+- Non-empty columns:
+  - RVTools major version: 1/1 (100.0%)
+  - RVTools version: 1/1 (100.0%)
+  - xlsx creation datetime: 1/1 (100.0%)
+  - Server: 1/1 (100.0%)
+- Empty columns (0%):
+  - None

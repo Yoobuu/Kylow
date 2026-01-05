@@ -1,0 +1,12 @@
+Name,Key,Labels,Cost Unit,Total,Used,Expiration Date,Features,VI SDK Server,VI SDK UUID
+Product Evaluation,00000-00000-00000-00000-00000,,,0,,,,,
+vSphere 8 Standard (Subscription),AH0Z8-TD2DQ-Q8UN0-LPGU6-8XM64,,,120,96,2026-08-29 00:00:00+00:00,,,
+vCenter Server 8 Standard,L14G0-LDK84-38PN1-LCKK4-9M46F,,,144,0,2026-08-29 00:00:00+00:00,,,
+Tanzu Standard Runtime (Subscription),QM45N-ND181-68HN9-L2JA4-AX921,,,144,0,2026-08-29 00:00:00+00:00,,,
+vSphere 8 Enterprise Plus for vSphere Foundation,KM422-XDL8J-38LN9-L8K80-9140D,,,144,140,2026-08-29 00:00:00+00:00,,,
+vSphere 8 Standard (Subscription),H02V3-JDLDQ-68NN1-LTGRP-AR551,,,64,0,2025-08-29 00:00:00+00:00,,,
+vCenter Server 8 Standard,JH094-FCH57-N80NC-0J9HP-ARX3N,,,1,0,,,,
+vSphere 8 Enterprise Plus,046X7-6EL07-18969-LE88M-3TQNN,,,8,0,,,,
+vCenter Server 8 Standard,ZH6KU-VDK4P-38YN1-LD6H2-A4W4A,,,120,1,2026-08-29 00:00:00+00:00,,,
+vSphere 8 Enterprise Plus for vSphere Foundation,KM0YJ-LDJDH-28WN8-L0M2M-9EZ3G,,,208,0,2025-08-29 00:00:00+00:00,,,
+vSphere 8 Enterprise Plus,HN25Q-8E355-N8R6X-LP904-8H35U,,,14,4,,,,
