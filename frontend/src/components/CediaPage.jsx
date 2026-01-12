@@ -13,15 +13,44 @@ const STATUS_COLORS = {
   POWERED_OFF: "text-rose-600 bg-rose-50 border-rose-200",
   SUSPENDED: "text-amber-600 bg-amber-50 border-amber-200",
   "4": "text-emerald-600 bg-emerald-50 border-emerald-200",
+  UNKNOWN: "text-gray-700 bg-gray-50 border-gray-200",
+};
+
+const STATUS_LABELS = {
+  POWERED_ON: "Encendida",
+  POWERED_OFF: "Apagada",
+  SUSPENDED: "Suspendida",
+  RESOLVED: "Resuelta",
+  DEPLOYED: "Desplegada",
+  MIXED: "Mixta",
+  UNKNOWN: "Desconocido",
 };
 
 function normalizeStatus(raw) {
   if (!raw) return "UNKNOWN";
   const upper = String(raw).toUpperCase();
+  if (upper === "8") return "POWERED_OFF";
+  if (upper === "3") return "SUSPENDED";
   if (upper.includes("ON") || upper === "4") return "POWERED_ON";
   if (upper.includes("OFF")) return "POWERED_OFF";
   if (upper.includes("SUSP")) return "SUSPENDED";
+  if (upper === "2") return "DEPLOYED";
+  if (upper === "1") return "RESOLVED";
   return upper;
+}
+
+function formatDateTime(value) {
+  if (!value) return "—";
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return "—";
+  return parsed.toLocaleString();
+}
+
+function formatNumber(value, options = {}) {
+  if (value === null || value === undefined) return "—";
+  const num = Number(value);
+  if (!Number.isFinite(num)) return "—";
+  return num.toLocaleString(undefined, options);
 }
 
 function normalizeCediaRecord(vm, idx = 0) {
@@ -34,6 +63,15 @@ function normalizeCediaRecord(vm, idx = 0) {
         .map((p) => p.trim())
         .filter(Boolean)
     : [];
+  const cpuMetricRaw = extractMetricValue(vm?.metrics, "cpu.usage.average");
+  const ramMetricRaw = extractMetricValue(vm?.metrics, "mem.usage.average");
+  const cpuPctRaw =
+    sanitizeMetricNumber(vm?.cpu_pct ?? vm?.cpu_usage_pct) ??
+    sanitizeMetricNumber(cpuMetricRaw === "—" ? undefined : cpuMetricRaw);
+  const ramPctRaw =
+    sanitizeMetricNumber(vm?.mem_pct ?? vm?.ram_usage_pct) ??
+    sanitizeMetricNumber(ramMetricRaw === "—" ? undefined : ramMetricRaw);
+  const diskBars = buildDiskBarsFromSnapshot(vm?.disks);
 
   return {
     id,
@@ -43,12 +81,14 @@ function normalizeCediaRecord(vm, idx = 0) {
     host: vm?.vdcName || "—",
     cluster: vm?.containerName || vm?.vdcName || "—",
     cpu_count: vm?.numberOfCpus,
+    cpu_usage_pct: Number.isFinite(cpuPctRaw) ? cpuPctRaw : undefined,
     memory_size_MiB: vm?.memoryMB,
+    ram_usage_pct: Number.isFinite(ramPctRaw) ? ramPctRaw : undefined,
     guest_os: vm?.detectedGuestOs || vm?.guestOs || "—",
     networks: [],
     vlans: [],
     ip_addresses: ipList,
-    disks: Array.isArray(vm?.disks) ? vm.disks : [],
+    disks: diskBars,
     nics: [],
     status_raw: vm?.status,
     _rowId: id,
@@ -109,6 +149,36 @@ function buildDiskBars(detail, metrics) {
       provisionedKiB: capacityKiB,
       usedKiB: usedKiB,
       capacityDisplay: Number.isFinite(capacityKiB) ? formatStorageKiB(capacityKiB) : "—",
+      usedDisplay: Number.isFinite(usedKiB) ? formatStorageKiB(usedKiB) : "—",
+      label,
+    };
+  });
+}
+
+function buildDiskBarsFromSnapshot(disks) {
+  if (!Array.isArray(disks) || disks.length === 0) return [];
+  return disks.map((disk, idx) => {
+    const usedKiB = pickNumber(disk?.used_kb ?? disk?.used_kib ?? disk?.usedKiB);
+    const provisionedKiB = pickNumber(
+      disk?.provisioned_kb ?? disk?.provisioned_kib ?? disk?.provisionedKiB
+    );
+    const pct =
+      Number.isFinite(usedKiB) && Number.isFinite(provisionedKiB) && provisionedKiB > 0
+        ? (usedKiB / provisionedKiB) * 100
+        : undefined;
+    const displayIndex =
+      Number.isFinite(Number(disk?.index)) ? Number(disk.index) + 1 : idx + 1;
+    const label = disk?.label || disk?.name || disk?.id || `Disco ${displayIndex}`;
+    const parts = [label];
+    if (Number.isFinite(provisionedKiB)) parts.push(formatStorageKiB(provisionedKiB));
+    if (Number.isFinite(usedKiB)) parts.push(`Usado ${formatStorageKiB(usedKiB)}`);
+    if (Number.isFinite(pct)) parts.push(`${pct.toFixed(1)}%`);
+    return {
+      text: parts.join(" · "),
+      pct,
+      provisionedKiB,
+      usedKiB,
+      capacityDisplay: Number.isFinite(provisionedKiB) ? formatStorageKiB(provisionedKiB) : "—",
       usedDisplay: Number.isFinite(usedKiB) ? formatStorageKiB(usedKiB) : "—",
       label,
     };
@@ -176,6 +246,73 @@ function pickMetricValue(raw) {
     }
   }
   return undefined;
+}
+
+function sanitizeMetricNumber(value) {
+  const num = pickNumber(value);
+  if (!Number.isFinite(num)) return undefined;
+  if (num <= -0.0001) return undefined;
+  return num;
+}
+
+function collectMetricEntries(metrics) {
+  if (!metrics) return [];
+  if (Array.isArray(metrics.metric)) return metrics.metric;
+  if (metrics.metricSeries?.entry) return metrics.metricSeries.entry;
+  if (Array.isArray(metrics.metricSeries)) return metrics.metricSeries;
+  if (Array.isArray(metrics.metricSeries?.entry)) return metrics.metricSeries.entry;
+  if (Array.isArray(metrics.metricSeries?.metric)) return metrics.metricSeries.metric;
+  return [];
+}
+
+function normalizeMetrics(metrics) {
+  const result = {
+    cpuUsageAvg: undefined,
+    cpuUsageMax: undefined,
+    cpuUsageMhzAvg: undefined,
+    memUsageAvg: undefined,
+    memUsageMax: undefined,
+    diskUsedLatest: undefined,
+    diskProvisionedLatest: undefined,
+    diskUnsharedLatest: undefined,
+    diskLatencyAvg: undefined,
+    netReceivedAvg: undefined,
+    netTransmittedAvg: undefined,
+    diskUsedByIndex: {},
+    diskProvisionedByIndex: {},
+  };
+
+  const read = (key) => sanitizeMetricNumber(extractMetricValue(metrics, key));
+  result.cpuUsageAvg = read("cpu.usage.average");
+  result.cpuUsageMax = read("cpu.usage.maximum");
+  result.cpuUsageMhzAvg = read("cpu.usagemhz.average");
+  result.memUsageAvg = read("mem.usage.average");
+  result.memUsageMax = read("mem.usage.maximum");
+  result.diskUsedLatest = read("disk.used.latest");
+  result.diskProvisionedLatest = read("disk.provisioned.latest");
+  result.diskUnsharedLatest = read("disk.unshared.latest");
+  result.diskLatencyAvg = read("disk.latency.total.average");
+  result.netReceivedAvg = read("net.received.average");
+  result.netTransmittedAvg = read("net.transmitted.average");
+
+  const entries = collectMetricEntries(metrics);
+  entries.forEach((entry) => {
+    const name = entry?.name;
+    if (!name) return;
+    const value = sanitizeMetricNumber(entry?.value ?? entry?.values ?? entry?.sample ?? entry?.samples ?? entry?.data);
+    if (value === undefined) return;
+    const usedMatch = String(name).match(/^disk\.used\.latest\.(\d+)$/);
+    if (usedMatch) {
+      result.diskUsedByIndex[Number(usedMatch[1])] = value;
+      return;
+    }
+    const provMatch = String(name).match(/^disk\.provisioned\.latest\.(\d+)$/);
+    if (provMatch) {
+      result.diskProvisionedByIndex[Number(provMatch[1])] = value;
+    }
+  });
+
+  return result;
 }
 
 function extractMetricValue(metrics, key) {
@@ -296,6 +433,54 @@ function coerceBool(value) {
   return undefined;
 }
 
+function normalizeSizeToMB(value, unit) {
+  const num = pickNumber(value);
+  if (!Number.isFinite(num)) return undefined;
+  const unitLower = String(unit || "").toLowerCase();
+  if (unitLower.includes("byte") && !unitLower.includes("kilo") && !unitLower.includes("mega") && !unitLower.includes("giga")) {
+    return num / 1024 / 1024;
+  }
+  if (unitLower.includes("kb") || unitLower.includes("kilo")) return num / 1024;
+  if (unitLower.includes("gb") || unitLower.includes("giga")) return num * 1024;
+  if (unitLower.includes("mb") || unitLower.includes("mega")) return num;
+  return num;
+}
+
+function formatGiBFromMB(value) {
+  if (value === null || value === undefined) return "—";
+  const num = Number(value);
+  if (!Number.isFinite(num) || num < 0) return "—";
+  const gib = num / 1024;
+  if (!Number.isFinite(gib)) return "—";
+  return `${gib.toLocaleString(undefined, { maximumFractionDigits: 2 })} GiB`;
+}
+
+function extractDiskSettings(detail) {
+  if (!detail) return [];
+  const sections = [];
+  if (Array.isArray(detail.section)) sections.push(...detail.section);
+  if (detail.section && !Array.isArray(detail.section)) sections.push(detail.section);
+
+  const diskSections = sections
+    .map((sec) => sec?.diskSection || sec?.DiskSection || sec?.disksection)
+    .filter(Boolean);
+
+  const settings = diskSections
+    .flatMap((sec) => sec?.diskSettings || sec?.diskSetting || sec?.DiskSettings || [])
+    .flat()
+    .filter(Boolean);
+
+  const directSettings = [
+    detail.diskSettings,
+    detail?.virtualHardwareSection?.diskSettings,
+    detail?.hardware?.diskSettings,
+  ]
+    .filter(Array.isArray)
+    .flat();
+
+  return [...settings, ...directSettings];
+}
+
 function extractDisks(detail) {
   if (!detail) return [];
 
@@ -355,6 +540,7 @@ function extractDisks(detail) {
     detail?.virtualHardwareSection?.diskSettings,
     detail?.hardware?.disks,
     detail?.hardware?.diskSettings,
+    extractDiskSettings(detail),
   ].filter(Array.isArray).flat();
   if (candidates.length > 0) return candidates;
 
@@ -412,11 +598,13 @@ function deriveCpuInfo(detail) {
   const cpuHotAdd =
     coerceBool(detail?.cpuHotAddEnabled) ??
     coerceBool(detail?.CpuHotAddEnabled) ??
+    coerceBool(detail?.vmCapabilities?.cpuHotAddEnabled) ??
     coerceBool(detail?.hardware?.cpuHotAddEnabled) ??
     coerceBool(detail?.hardware?.CpuHotAddEnabled);
   const memHotAdd =
     coerceBool(detail?.memoryHotAddEnabled) ??
     coerceBool(detail?.MemoryHotAddEnabled) ??
+    coerceBool(detail?.vmCapabilities?.memoryHotAddEnabled) ??
     coerceBool(detail?.hardware?.memoryHotAddEnabled) ??
     coerceBool(detail?.hardware?.MemoryHotAddEnabled);
 
@@ -466,11 +654,149 @@ function deriveCpuInfo(detail) {
   return { totalCpus, coresPerSocket, cpuHotAdd, memHotAdd };
 }
 
+function normalizeDiskHardware(detail, metricsNormalized) {
+  const disksRaw = extractDisks(detail);
+  const disks = disksRaw.map((disk, idx) => {
+    const unitNumber =
+      pickNumber(disk?.unitNumber) ??
+      pickNumber(disk?.unit) ??
+      pickNumber(disk?.AddressOnParent) ??
+      pickNumber(disk?.["rasd:AddressOnParent"]);
+    const busNumber = pickNumber(disk?.busNumber) ?? pickNumber(disk?.bus);
+    const adapterType = disk?.adapterType || disk?.busSubType || disk?.busType;
+    const provisionedMB =
+      normalizeSizeToMB(
+        disk?.sizeMb ??
+          disk?.sizeMB ??
+          disk?.provisionedSizeMB ??
+          disk?.provisionedSize ??
+          disk?.capacityMB ??
+          disk?.capacity ??
+          disk?.provisionedSize ??
+          disk?.VirtualQuantity ??
+          disk?.["rasd:VirtualQuantity"],
+        disk?.allocationUnits ?? disk?.AllocationUnits ?? disk?.allocationUnit
+      ) ?? normalizeSizeToMB(disk?.virtualQuantity, disk?.allocationUnits);
+
+    const index =
+      pickNumber(disk?.diskIndex) ??
+      pickNumber(disk?.index) ??
+      pickNumber(disk?.diskId) ??
+      (Number.isFinite(unitNumber) ? unitNumber : undefined) ??
+      idx;
+
+    const usedMetric = metricsNormalized?.diskUsedByIndex?.[index];
+    const provMetric = metricsNormalized?.diskProvisionedByIndex?.[index];
+
+    return {
+      id: disk?.id || disk?.diskId || disk?.InstanceID || disk?.["rasd:InstanceID"],
+      name: disk?.name || disk?.label || disk?.ElementName || disk?.Description,
+      index,
+      unitNumber,
+      busNumber,
+      adapterType,
+      provisionedMB,
+      usedKiB: usedMetric,
+      provisionedKiB: provMetric,
+      controller: disk?.controller || disk?.Parent || disk?.["rasd:Parent"],
+    };
+  });
+  return disks;
+}
+
+function normalizeVMDetails(rawDetail, rawMetrics) {
+  const detail = rawDetail || {};
+  let metrics =
+    rawMetrics ||
+    detail?.metricsNormalized ||
+    detail?.metrics ||
+    detail?.metricSeries ||
+    detail?.metric;
+  if (Array.isArray(detail?.metric)) {
+    metrics = { metric: detail.metric };
+  }
+  const metricsNormalized = normalizeMetrics(metrics);
+  const cpuInfo = deriveCpuInfo(detail);
+  const coresPerSocket =
+    pickNumber(detail?.numCoresPerSocket) ??
+    pickNumber(detail?.coresPerSocket) ??
+    pickNumber(detail?.vmCapabilities?.numCoresPerSocket) ??
+    cpuInfo.coresPerSocket;
+
+  const createdAt =
+    detail?.dateCreated ??
+    detail?.createdDate ??
+    detail?.created_at ??
+    detail?.createdAt ??
+    detail?.creationDate ??
+    null;
+
+  const osSectionFromArray = Array.isArray(detail?.section)
+    ? detail.section.find(
+        (sec) => sec?.operatingSystemSection || sec?.OperatingSystemSection
+      )
+    : null;
+  const osDeclared =
+    osSectionFromArray?.operatingSystemSection?.description?.value ??
+    osSectionFromArray?.OperatingSystemSection?.description?.value ??
+    detail?.section?.operatingSystemSection?.description?.value ??
+    detail?.operatingSystemSection?.description?.value ??
+    detail?.guestOs ??
+    detail?.guestOS ??
+    detail?.osType ??
+    null;
+
+  const osDetected =
+    detail?.detectedGuestOs ??
+    detail?.detectedGuestOS ??
+    detail?.guest?.os ??
+    detail?.guestOsDetected ??
+    null;
+
+  const status = normalizeStatus(detail?.status ?? detail?.power_state);
+  const statusLabel = STATUS_LABELS[status] || status;
+  const disks = normalizeDiskHardware(detail, metricsNormalized);
+  const nics = extractNics(detail);
+
+  return {
+    raw: detail,
+    metricsNormalized,
+    cpuInfo: {
+      totalCpus: cpuInfo.totalCpus,
+      coresPerSocket,
+      cpuHotAdd:
+        coerceBool(detail?.vmCapabilities?.cpuHotAddEnabled) ??
+        cpuInfo.cpuHotAdd ??
+        coerceBool(detail?.cpuHotAddEnabled),
+      memHotAdd:
+        coerceBool(detail?.vmCapabilities?.memoryHotAddEnabled) ??
+        cpuInfo.memHotAdd ??
+        coerceBool(detail?.memoryHotAddEnabled),
+    },
+    createdAt,
+    osDeclared,
+    osDetected,
+    status,
+    statusLabel,
+    disks,
+    nics,
+  };
+}
+
+function formatPercentValue(value) {
+  if (value === null || value === undefined) return "—";
+  const num = Number(value);
+  if (!Number.isFinite(num) || num < 0) return "—";
+  return `${num.toFixed(2)}%`;
+}
+
 function StatusBadge({ status }) {
-  const tone = STATUS_COLORS[status] || "text-gray-700 bg-gray-50 border-gray-200";
+  const normalized = normalizeStatus(status);
+  const tone = STATUS_COLORS[normalized] || "text-gray-700 bg-gray-50 border-gray-200";
+  const label = STATUS_LABELS[normalized] || normalized || "—";
   return (
     <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${tone}`}>
-      {status || "—"}
+      {label}
     </span>
   );
 }
@@ -484,13 +810,25 @@ function DetailModal({ vmId, baseVm, detail, metrics, onClose, loading, error })
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
 
+  useEffect(() => {
+    if (import.meta?.env?.MODE === "production") return;
+    if (!detail && !metrics && !baseVm) return;
+    const merged = { ...(baseVm || {}), ...(detail || {}) };
+    const normalized = normalizeVMDetails(merged, metrics);
+    // eslint-disable-next-line no-console
+    console.debug("cedia:vm-details", normalized);
+  }, [baseVm, detail, metrics]);
+
   if (!vmId) return null;
 
   const normalizedId = normalizeVmId(vmId);
-  const detailData = { ...(baseVm || {}), ...(detail || {}) };
-  const cpuInfo = deriveCpuInfo(detailData);
-  const disks = extractDisks(detailData);
-  const nics = extractNics(detailData);
+  const mergedDetail = { ...(baseVm || {}), ...(detail || {}) };
+  const normalizedDetail = normalizeVMDetails(mergedDetail, metrics);
+  const detailData = normalizedDetail.raw;
+  const cpuInfo = normalizedDetail.cpuInfo;
+  const disks = normalizedDetail.disks;
+  const nics = normalizedDetail.nics;
+  const metricsNormalized = normalizedDetail.metricsNormalized;
   const shortId =
     normalizedId && typeof normalizedId === "string" && normalizedId.startsWith("urn:")
       ? normalizedId.split(":").pop()
@@ -548,13 +886,13 @@ function DetailModal({ vmId, baseVm, detail, metrics, onClose, loading, error })
                 <h3 className="text-sm font-semibold text-gray-800">Hardware</h3>
                 <dl className="mt-2 grid grid-cols-2 gap-y-2 text-sm text-gray-700">
                   <DetailItem label="CPU" value={cpuInfo.totalCpus ?? detailData.cpu ?? detailData.numberOfCpus} />
-                  <DetailItem label="RAM (MB)" value={detailData.memoryMB} />
-                  <DetailItem label="Cores/socket" value={detailData.coresPerSocket ?? cpuInfo.coresPerSocket} />
+                  <DetailItem label="RAM (MB)" value={formatNumber(detailData.memoryMB)} />
+                  <DetailItem label="Cores/socket" value={cpuInfo.coresPerSocket} />
                   <DetailItem label="Hot add CPU" value={cpuInfo.cpuHotAdd ? "Sí" : cpuInfo.cpuHotAdd === false ? "No" : "—"} />
                   <DetailItem label="Hot add RAM" value={cpuInfo.memHotAdd ? "Sí" : cpuInfo.memHotAdd === false ? "No" : "—"} />
-                  <DetailItem label="Estado" value={<StatusBadge status={detailData.status} />} />
-                  <DetailItem label="OS declarado" value={detailData.guestOs || detailData.guestOS} />
-                  <DetailItem label="OS detectado" value={detailData.detectedGuestOs || detailData.detectedGuestOS} />
+                  <DetailItem label="Estado" value={<StatusBadge status={normalizedDetail.status} />} />
+                  <DetailItem label="OS declarado" value={normalizedDetail.osDeclared} />
+                  <DetailItem label="OS detectado" value={normalizedDetail.osDetected} />
                 </dl>
               </section>
 
@@ -569,13 +907,12 @@ function DetailModal({ vmId, baseVm, detail, metrics, onClose, loading, error })
                       </div>
                       <div className="text-xs text-gray-500">
                         Provisionado:{" "}
-                        {disk?.provisionedSizeMB ??
-                          disk?.provisionedSize ??
-                          disk?.capacityMB ??
-                          disk?.capacity ??
-                          disk?.sizeMB ??
-                          "—"}{" "}
-                        MB · Usado: {disk?.usedMB ?? disk?.consumedMB ?? "—"} MB
+                        {Number.isFinite(disk?.provisionedMB)
+                          ? formatGiBFromMB(disk.provisionedMB)
+                          : Number.isFinite(disk?.provisionedKiB)
+                          ? formatStorageKiB(disk.provisionedKiB)
+                          : "—"}{" "}
+                        · Usado: {Number.isFinite(disk?.usedKiB) ? formatStorageKiB(disk.usedKiB) : "—"}
                       </div>
                       <div className="text-xs text-gray-500">Controlador: {disk?.controller ?? disk?.busSubType ?? disk?.busType ?? "—"}</div>
                     </div>
@@ -631,24 +968,24 @@ function DetailModal({ vmId, baseVm, detail, metrics, onClose, loading, error })
                   <DetailItem label="VDC" value={detailData.vdcName || detailData.vdc?.name} stacked />
                   <DetailItem label="vApp" value={detailData.containerName || detailData.vAppParent || "—"} stacked />
                   <DetailItem label="Owner" value={detailData.ownerName || detailData.owner?.name} stacked />
-                  <DetailItem label="Creada" value={detailData.createdDate || "—"} stacked />
+                  <DetailItem label="Creada" value={formatDateTime(normalizedDetail.createdAt)} stacked />
                 </dl>
               </section>
 
               <section className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
                 <h3 className="text-sm font-semibold text-gray-800">Métricas actuales</h3>
                 <dl className="mt-2 grid grid-cols-2 gap-y-2 text-sm text-gray-700">
-                  <DetailItem label="CPU uso avg" value={extractMetricValue(metrics, "cpu.usage.average")} />
-                  <DetailItem label="CPU uso max" value={extractMetricValue(metrics, "cpu.usage.maximum")} />
-                  <DetailItem label="CPU MHz avg" value={extractMetricValue(metrics, "cpu.usagemhz.average")} />
-                  <DetailItem label="RAM uso avg" value={extractMetricValue(metrics, "mem.usage.average")} />
-                  <DetailItem label="RAM uso max" value={extractMetricValue(metrics, "mem.usage.maximum")} />
-                  <DetailItem label="Disco usado" value={extractMetricValue(metrics, "disk.used.latest")} />
-                  <DetailItem label="Disco prov." value={extractMetricValue(metrics, "disk.provisioned.latest")} />
-                  <DetailItem label="Disco unshared" value={extractMetricValue(metrics, "disk.unshared.latest")} />
-                  <DetailItem label="Disk latency" value={extractMetricValue(metrics, "disk.latency.total.average")} />
-                  <DetailItem label="Red RX avg" value={extractMetricValue(metrics, "net.received.average")} />
-                  <DetailItem label="Red TX avg" value={extractMetricValue(metrics, "net.transmitted.average")} />
+                  <DetailItem label="CPU uso avg" value={formatPercentValue(metricsNormalized.cpuUsageAvg)} />
+                  <DetailItem label="CPU uso max" value={formatPercentValue(metricsNormalized.cpuUsageMax)} />
+                  <DetailItem label="CPU MHz avg" value={formatNumber(metricsNormalized.cpuUsageMhzAvg)} />
+                  <DetailItem label="RAM uso avg" value={formatPercentValue(metricsNormalized.memUsageAvg)} />
+                  <DetailItem label="RAM uso max" value={formatPercentValue(metricsNormalized.memUsageMax)} />
+                  <DetailItem label="Disco usado" value={formatStorageKiB(metricsNormalized.diskUsedLatest)} />
+                  <DetailItem label="Disco prov." value={formatStorageKiB(metricsNormalized.diskProvisionedLatest)} />
+                  <DetailItem label="Disco unshared" value={formatStorageKiB(metricsNormalized.diskUnsharedLatest)} />
+                  <DetailItem label="Disk latency" value={formatNumber(metricsNormalized.diskLatencyAvg)} />
+                  <DetailItem label="Red RX avg" value={formatNumber(metricsNormalized.netReceivedAvg)} />
+                  <DetailItem label="Red TX avg" value={formatNumber(metricsNormalized.netTransmittedAvg)} />
                 </dl>
               </section>
             </div>
@@ -757,21 +1094,13 @@ export default function CediaPage() {
           const vm = queue.pop();
           if (!vm || enriched[vm.id]) continue;
           try {
-            const [detailResp, metricsResp] = await Promise.allSettled([
-              getCediaVm(vm.id),
-              getCediaVmMetrics(vm.id),
-            ]);
-            const detail = detailResp.status === "fulfilled" ? detailResp.value.data : {};
-            const metrics = metricsResp.status === "fulfilled" ? metricsResp.value.data : {};
+            const detailResp = await getCediaVm(vm.id);
+            const detail = detailResp?.data || {};
 
-            const diskBars = buildDiskBars(detail, metrics);
+            const diskBars = buildDiskBars(detail, vm?._raw?.metrics);
             const networks = summarizeNetworks(detail);
-            const cpuPct = extractMetricValue(metrics, "cpu.usage.average");
-            const ramPct = extractMetricValue(metrics, "mem.usage.average");
 
             results[vm.id] = {
-              cpu_usage_pct: Number.isFinite(Number(cpuPct)) ? Number(cpuPct) : undefined,
-              ram_usage_pct: Number.isFinite(Number(ramPct)) ? Number(ramPct) : undefined,
               disks: diskBars,
               nics: extractNics(detail).map((nic) => nic?.network || nic?.networkName || nic?.ip || nic?.ipAddress).filter(Boolean),
               networks,

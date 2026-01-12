@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vmware-inv-backend
+  labels:
+    app: vmware-inv-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: vmware-inv-backend
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000

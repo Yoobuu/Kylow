@@ -181,6 +181,7 @@ export function useInventoryState(options = {}) {
     provider = 'vmware',
     cacheTtlMs,
     autoRefreshMs,
+    keepPreviousOnEmpty = false,
   } = options
 
   const providerKey = provider || 'vmware'
@@ -227,15 +228,27 @@ export function useInventoryState(options = {}) {
         // 1. pedir datos al backend usando el fetcher actual
         const rawItems = await fetcher(fetchOptions)
         if (rawItems?.empty) {
-          setVms([])
+          const cachedEntry = keepPreviousOnEmpty ? inventoryCache.get(providerKey) : null
+          const cachedList = Array.isArray(cachedEntry?.data) ? cachedEntry.data : null
+          if (!(keepPreviousOnEmpty && cachedList && cachedList.length)) {
+            setVms([])
+            setEmptyMessage('Esperando snapshot')
+          }
           setLastFetchTs(Date.now())
-          setEmptyMessage('Esperando snapshot')
-          return []
+          return cachedList || []
         }
 
         // 2. normalizar cada item
         console.log('RAW ITEMS', rawItems)
         const safeItems = Array.isArray(rawItems) ? rawItems : []
+        if (safeItems.length === 0 && keepPreviousOnEmpty) {
+          const cachedEntry = inventoryCache.get(providerKey)
+          const cachedList = Array.isArray(cachedEntry?.data) ? cachedEntry.data : null
+          if (cachedList && cachedList.length) {
+            setLastFetchTs(Date.now())
+            return cachedList
+          }
+        }
         let dropped = 0
         const normalized = []
 
@@ -305,7 +318,7 @@ export function useInventoryState(options = {}) {
         }
       }
     },
-    [fetcher, normalizeRecord, providerKey]
+    [fetcher, normalizeRecord, providerKey, keepPreviousOnEmpty]
   )
 
   const fetchVm = useCallback(

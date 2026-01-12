@@ -7,11 +7,14 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
+from sqlmodel import Session
 
 # Cargar .env si existe, sin sobrescribir variables ya definidas (K8s-friendly).
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
+from app.db import get_engine
 from app.audit import router as audit_router  # /api/audit
 from app.auth import auth_router, user_admin_router  # /api/auth/...
 from app.middleware import install_audit_middleware
@@ -55,6 +58,19 @@ def health():
 def healthz():
     if is_restarting():
         return JSONResponse(status_code=503, content={"ok": False, "restarting": True})
+    return {"ok": True}
+
+
+@app.get("/ready")
+def ready():
+    if is_restarting():
+        return JSONResponse(status_code=503, content={"ok": False, "restarting": True})
+    try:
+        with Session(get_engine()) as session:
+            session.exec(text("SELECT 1"))
+    except Exception as exc:
+        logger.warning("Readiness check failed: %s", exc)
+        return JSONResponse(status_code=503, content={"ok": False, "db": "unavailable"})
     return {"ok": True}
 
 

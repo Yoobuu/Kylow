@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { formatSnapshotTimes } from "../../lib/snapshotTime";
+import { formatLocalDateTime, formatSnapshotTimes } from "../../lib/snapshotTime";
 
 const SOURCE_LABELS = {
   memory: "MEMORIA",
@@ -23,6 +23,10 @@ export default function InventoryMetaBar({
     () => formatSnapshotTimes(generatedAt),
     [generatedAt]
   );
+  const browserLoadedAt = useMemo(
+    () => formatLocalDateTime(lastFetchTs),
+    [lastFetchTs]
+  );
   const sourceLabel =
     source && SOURCE_LABELS[source] ? SOURCE_LABELS[source] : "—";
 
@@ -43,7 +47,7 @@ export default function InventoryMetaBar({
       </div>
       <div className={textClassName}>
         {snapshotTimes
-          ? `Ultima informacion (snapshot): ${snapshotTimes.guayaquil} · ${snapshotTimes.utc}`
+          ? `Ultima informacion (snapshot): ${snapshotTimes.guayaquil}`
           : source === "cache"
             ? "Datos cacheados (sin timestamp de snapshot)"
             : source === "legacy"
@@ -52,7 +56,7 @@ export default function InventoryMetaBar({
       </div>
       {lastFetchTs ? (
         <div className={textClassName}>
-          Cargado en tu navegador: {new Date(lastFetchTs).toLocaleString()}
+          Cargado en tu navegador: {browserLoadedAt}
         </div>
       ) : null}
     </div>

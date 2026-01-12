@@ -1,9 +1,0 @@
-VM,Powerstate,Template,SRM Placeholder,Disk Key,Disk,Capacity MiB,Consumed MiB,Free MiB,Free %,Internal Sort Column,Annotation,Backup status,ClusterInvariantVMMId,Last backup,Datacenter,Cluster,Host,Folder,OS according to the configuration file,OS according to the VMware Tools,VM ID,VM UUID,VI SDK Server,VI SDK UUID
-P-SDNS-04,Off,,,,,,,,,,,,,,,,P-HYP-01,,,,4aca5fd9-4b62-4093-b702-9803d269c797,,,
-P-SQL-ALW-B2,Off,,,,,,,,,,,,,,,,P-HYP-01,,,,bda0d98b-1b95-427d-bd84-b9477e79ebd6,,,
-P-SQL-ALW-B1,Off,,,,,,,,,,,,,,,,P-HYP-01,,,,f16d1720-3de1-4f3e-9247-6dcaed8b64e5,,,
-T-THALES-01,Off,,,,,,,,,,,,,,,,T-HYP-02,,,,2b849064-7c42-434d-bbe6-d04f859db44d,,,
-T-MBA-01,Off,,,,,,,,,,,,,,,,T-HYP-02,,,,fb1b56a5-8faf-4e04-89b5-627cb1da2f0a,,,
-P-EXCH-02,Off,,,,,,,,,,,,,,,,P-HYP-03,,,,3bb26b74-3abd-46a2-861f-6aa267134cfe,,,
-P-SCAN-VM-02,Off,,,,,,,,,,,,,,,,P-HYP-03,,,,4244c7f1-7905-4193-b364-5ef6a12b07bb,,,
-P-SCAN-VM-01,Off,,,,,,,,,,,,,,,,P-HYP-03,,,,6b8efb9c-f6ef-436e-a748-6ad076473161,,,

@@ -1,2 +1,0 @@
-Name,OS type,API type,API version,Version,Patch level,Build,Fullname,Product name,Product version,Product line,Vendor,VI SDK Server,VI SDK UUID
-Hyper-V Exporter,Hyper-V (offline placeholder),WinRM (not probed),,1.0,,,Hyper-V Exporter (offline),Hyper-V,,,Microsoft,,

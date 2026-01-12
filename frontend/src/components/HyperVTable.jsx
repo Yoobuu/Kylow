@@ -72,6 +72,7 @@ export default function HyperVTable({
   snapshotSource = null,
   snapshotStale = false,
   snapshotStaleReason = null,
+  refreshNotice = null,
 }) {
   const { state, actions } = useInventoryState({
     fetcher,
@@ -80,6 +81,7 @@ export default function HyperVTable({
     provider: 'hyperv',
     cacheTtlMs: 5 * 60 * 1000,
     autoRefreshMs: 5 * 60 * 1000,
+    keepPreviousOnEmpty: true,
   })
 
   const {
@@ -289,6 +291,11 @@ export default function HyperVTable({
           {refreshing && (
             <div className="text-xs text-blue-600 animate-pulse text-right">
               Actualizando&hellip;
+            </div>
+          )}
+          {refreshNotice && (
+            <div className="text-[11px] text-amber-700 text-right">
+              {refreshNotice}
             </div>
           )}
           <InventoryMetaBar

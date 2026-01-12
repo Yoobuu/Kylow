@@ -1,2 +1,0 @@
-SourceName,SourceType,ApiVersion,ApiBuild,InstanceUuid,ServerTime,User,Client,ConnectedAt
-https://p-vc-01.usfq.edu.ec,VirtualCenter,8.0.2.0,24321653,b4509789-2388-4298-aee8-97cf83caf1ba,2025-12-22T21:05:25.746965+00:00,api-inventory@vsphere.local,vmware_rvtools_exporter,2025-12-22T21:05:19.963482+00:00

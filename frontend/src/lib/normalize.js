@@ -97,6 +97,9 @@ const normalizeDiskEntry = (disk) => {
   }
 }
 
+const DEBUG_HYPERV_DISKS = false
+let loggedHyperVDisks = false
+
 function normalizeHyperV(vm) {
   const rawState = vm.Estado ?? vm.State ?? vm.state
   const powerState = rawState === 'Running'
@@ -192,19 +195,24 @@ function normalizeHyperV(vm) {
       entry.percent,
       entry.pct
     )
-
-    const parts = []
-    if (alloc !== undefined) parts.push(`${alloc} GiB`)
-    if (size !== undefined) parts.push(`${size} GiB`)
-    if (pct !== undefined) parts.push(`(${pct}%)`)
-
-    if (!parts.length) return null
-
-    if (parts.length === 3) {
-      return `${parts[0]} / ${parts[1]} ${parts[2]}`
+    const allocNumber = toNumber(alloc)
+    const sizeNumber = toNumber(size)
+    let pctNumber = toNumber(pct)
+    if (pctNumber == null && allocNumber != null && sizeNumber != null && sizeNumber > 0) {
+      pctNumber = Math.round((allocNumber / sizeNumber) * 100 * 100) / 100
     }
 
-    return parts.join(' / ')
+    if (allocNumber != null && sizeNumber != null) {
+      const pctText = pctNumber != null ? ` (${pctNumber}%)` : ''
+      return `${allocNumber} GiB / ${sizeNumber} GiB${pctText}`
+    }
+    if (allocNumber != null) {
+      return `Usado: ${allocNumber} GiB`
+    }
+    if (sizeNumber != null) {
+      return `Tamano: ${sizeNumber} GiB`
+    }
+    return null
   }
 
   const disks = disksArray
@@ -214,9 +222,20 @@ function normalizeHyperV(vm) {
       const text = formatDiskEntry(disk)
       if (!text) return null
       const pct = disk.allocatedPct ?? disk.AllocatedPct ?? null
+      const allocatedGiB = disk.allocatedGiB ?? disk.AllocatedGiB ?? null
+      const sizeGiB = disk.sizeGiB ?? disk.SizeGiB ?? null
+      if (DEBUG_HYPERV_DISKS && !loggedHyperVDisks && disksArray.length > 0) {
+        loggedHyperVDisks = true
+        console.log('sample hyperv vm disks', {
+          raw: disksArray,
+          normalized: { text, pct, allocatedGiB, sizeGiB },
+        })
+      }
       return {
         text,
         pct: pct != null && Number.isFinite(Number(pct)) ? Number(pct) : null,
+        allocatedGiB,
+        sizeGiB,
       }
     })
     .filter((disk) => disk && disk.text)

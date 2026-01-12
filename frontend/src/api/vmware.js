@@ -7,3 +7,13 @@ export async function getVmwareSnapshot() {
   }
   return response.data;
 }
+
+export async function postVmwareRefresh(body = { force: false }) {
+  const { data } = await api.post("/vmware/refresh", body);
+  return data;
+}
+
+export async function getVmwareJob(jobId) {
+  const { data } = await api.get(`/vmware/jobs/${jobId}`);
+  return data;
+}

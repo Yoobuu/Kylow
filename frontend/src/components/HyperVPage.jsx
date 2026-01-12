@@ -62,6 +62,8 @@ export default function HyperVPage() {
   const [cooldownUntil, setCooldownUntil] = useState(null)
   const [cooldownTick, setCooldownTick] = useState(0)
   const [refreshRequested, setRefreshRequested] = useState(false)
+  const [refreshNotice, setRefreshNotice] = useState(null)
+  const lastGoodRef = useRef({ data: null, level: null })
 
   const discoverHosts = useCallback(async () => {
     if (hosts.length) return hosts
@@ -137,89 +139,152 @@ export default function HyperVPage() {
     async (useRefreshLegacy = false) => {
       const hs = await discoverHosts()
       if (!hs.length) throw new Error('No se encontraron hosts para Hyper-V')
-      setStatus({ kind: 'info', text: 'Cargando snapshot...' })
-      try {
-        const snap = await getHypervSnapshot('vms', hs, 'summary')
-        if (!snap || typeof snap !== 'object') {
-          const err = new Error('snapshot_empty')
-          err.response = { status: 204 }
-          throw err
-        }
-        const flattened =
-          snap && snap.data && typeof snap.data === 'object'
-            ? Object.values(snap.data).flat()
-            : []
-        const errors = []
-        Object.entries(snap.hosts_status || {}).forEach(([h, st]) => {
-          if (!st || !st.state) return
-          if (st.state !== 'ok') errors.push(`${h}: ${st.state}`)
-        })
-        setSnapshotMeta({
-          generated_at: snap.generated_at,
-          source: snap.source || null,
-          stale: snap.stale,
-          stale_reason: snap.stale_reason,
-          hosts_status: snap.hosts_status || {},
-        })
-        console.log('[HyperVPage] snapshot loaded', { hosts: hs.length, vms: flattened.length })
-        if (snap.stale || errors.length) {
-          setBanner({
-            kind: 'warning',
-            title: 'Inventario parcial',
-            details: errors,
+      setRefreshNotice(null)
+      const getLastGood = () => {
+        const cached = lastGoodRef.current?.data
+        return Array.isArray(cached) && cached.length ? cached : null
+      }
+      const rememberLastGood = (rows, level) => {
+        if (!Array.isArray(rows) || rows.length === 0) return
+        lastGoodRef.current = { data: rows, level }
+      }
+
+      const attemptSnapshot = async (level, allowSummaryFallback) => {
+        const loadingLabel =
+          level === 'detail' ? 'Cargando snapshot (detalles)...' : 'Cargando snapshot...'
+        setStatus({ kind: 'info', text: loadingLabel })
+        try {
+          const snap = await getHypervSnapshot('vms', hs, level)
+          if (!snap || typeof snap !== 'object') {
+            const err = new Error('snapshot_empty')
+            err.response = { status: 204 }
+            throw err
+          }
+          const flattened =
+            snap && snap.data && typeof snap.data === 'object'
+              ? Object.values(snap.data).flat()
+              : []
+          const errors = []
+          Object.entries(snap.hosts_status || {}).forEach(([h, st]) => {
+            if (!st || !st.state) return
+            if (st.state !== 'ok') errors.push(`${h}: ${st.state}`)
           })
-          setStatus({ kind: 'warning', text: 'Snapshot parcial' })
-        } else {
-          setBanner(null)
-          setStatus({ kind: 'success', text: `Snapshot actualizado ${new Date(snap.generated_at).toLocaleTimeString()}` })
-        }
-        return flattened
-      } catch (err) {
-        const status = err?.response?.status
-        if (status === 401) throw err
-        if (status === 204 || useRefreshLegacy) {
-          if (isSuperadmin && !initialRefreshRef.current) {
-            initialRefreshRef.current = true
-            setStatus({ kind: 'info', text: 'Snapshot no disponible: generando snapshot inicial...' })
-            try {
-              const resp = await postHypervRefresh({ scope: 'vms', hosts: hs, level: 'summary', force: false })
-              if (resp?.job_id) {
-                setJobId(resp.job_id)
-                setPolling(true)
-                return []
-              }
-            } catch (e) {
-              setStatus({ kind: 'error', text: 'No se pudo generar snapshot inicial' })
-            }
-          } else if (!isSuperadmin && !useLegacyRef.current) {
-            setStatus({ kind: 'warning', text: 'Snapshot aún no generado; espera al refresh del superadmin' })
-            throw new Error('Snapshot no disponible')
-          }
-          if (useLegacyRef.current && isSuperadmin) {
-            setStatus({ kind: 'info', text: 'Snapshot no disponible: usando modo legacy...' })
-            console.log('[HyperVPage] snapshot 204, using legacy')
-            const { data } = await api.get('/hyperv/vms/batch', {
-              params: refreshRef.current ? { refresh: true } : {},
-              timeout: 8000,
+          setSnapshotMeta({
+            generated_at: snap.generated_at,
+            source: snap.source || null,
+            stale: snap.stale,
+            stale_reason: snap.stale_reason,
+            hosts_status: snap.hosts_status || {},
+          })
+          console.log('[HyperVPage] snapshot loaded', { hosts: hs.length, vms: flattened.length })
+          if (snap.stale || errors.length) {
+            setBanner({
+              kind: 'warning',
+              title: 'Inventario parcial',
+              details: errors,
             })
-            const payload = data
-            if (payload?.results && typeof payload.results === 'object') {
-              setSnapshotMeta(null)
-              setBanner(null)
-              const flattened = Object.values(payload.results).flat()
-              console.log('[HyperVPage] legacy data loaded', { vms: flattened.length })
-              setStatus({ kind: 'info', text: `Modo legacy (${flattened.length} VMs)` })
-              return flattened
+            setStatus({ kind: 'warning', text: 'Snapshot parcial' })
+          } else {
+            setBanner(null)
+            setStatus({ kind: 'success', text: `Snapshot actualizado ${new Date(snap.generated_at).toLocaleTimeString()}` })
+          }
+          setRefreshNotice(null)
+          if (flattened.length) {
+            rememberLastGood(flattened, level)
+            return flattened
+          }
+          const cached = getLastGood()
+          if (cached) {
+            setRefreshNotice('No se pudo actualizar; mostrando datos anteriores.')
+            return cached
+          }
+          return flattened
+        } catch (err) {
+          const status = err?.response?.status
+          if (status === 401) throw err
+          if (status === 204 || useRefreshLegacy) {
+            if (isSuperadmin && !initialRefreshRef.current) {
+              initialRefreshRef.current = true
+              const message =
+                level === 'detail'
+                  ? 'Snapshot no disponible: generando snapshot con detalles...'
+                  : 'Snapshot no disponible: generando snapshot inicial...'
+              setStatus({ kind: 'info', text: message })
+              try {
+                const resp = await postHypervRefresh({ scope: 'vms', hosts: hs, level, force: false })
+                if (resp?.job_id) {
+                  setJobId(resp.job_id)
+                  setPolling(true)
+                  const cached = getLastGood()
+                  if (cached) {
+                    setRefreshNotice('Actualizando en segundo plano; mostrando datos anteriores.')
+                    return cached
+                  }
+                  return []
+                }
+              } catch (e) {
+                setStatus({ kind: 'error', text: 'No se pudo generar snapshot inicial' })
+              }
+            } else if (!isSuperadmin && !useLegacyRef.current) {
+              setStatus({ kind: 'warning', text: 'Snapshot aún no generado; espera al refresh del superadmin' })
+              const cached = getLastGood()
+              if (cached) {
+                setRefreshNotice('No se pudo actualizar; mostrando datos anteriores.')
+                return cached
+              }
+              if (allowSummaryFallback && level === 'detail') {
+                setRefreshNotice('Detalles no disponibles; mostrando resumen.')
+                return attemptSnapshot('summary', false)
+              }
+              throw new Error('Snapshot no disponible')
+            }
+            if (useLegacyRef.current && isSuperadmin) {
+              setStatus({ kind: 'info', text: 'Snapshot no disponible: usando modo legacy...' })
+              console.log('[HyperVPage] snapshot 204, using legacy')
+              const { data } = await api.get('/hyperv/vms/batch', {
+                params: refreshRef.current ? { refresh: true } : {},
+                timeout: 8000,
+              })
+              const payload = data
+              if (payload?.results && typeof payload.results === 'object') {
+                setSnapshotMeta(null)
+                setBanner(null)
+                const flattened = Object.values(payload.results).flat()
+                console.log('[HyperVPage] legacy data loaded', { vms: flattened.length })
+                const cached = getLastGood()
+                if (cached) {
+                  setRefreshNotice('No se pudo actualizar; mostrando datos anteriores.')
+                  return cached
+                }
+                if (level === 'detail') {
+                  setRefreshNotice('Detalles no disponibles en modo legacy; mostrando resumen.')
+                }
+                setStatus({ kind: 'info', text: `Modo legacy (${flattened.length} VMs)` })
+                return flattened
+              }
             }
           }
+          const cached = getLastGood()
+          if (cached) {
+            setRefreshNotice('No se pudo actualizar; mostrando datos anteriores.')
+            return cached
+          }
+          if (allowSummaryFallback && level === 'detail') {
+            setRefreshNotice('Detalles no disponibles; mostrando resumen.')
+            return attemptSnapshot('summary', false)
+          }
+          setStatus({ kind: 'error', text: err?.message || 'Error cargando snapshot' })
+          throw new Error('Ocurrió un error al obtener las VMs. Intenta nuevamente.')
         }
-        setStatus({ kind: 'error', text: err?.message || 'Error cargando snapshot' })
-        throw new Error('Ocurrió un error al obtener las VMs. Intenta nuevamente.')
+      }
+
+      try {
+        return await attemptSnapshot('detail', true)
       } finally {
         refreshRef.current = false
       }
     },
-    [discoverHosts]
+    [discoverHosts, isSuperadmin]
   )
 
   const fetcher = useCallback(() => fetchSnapshot(), [fetchSnapshot])
@@ -251,7 +316,7 @@ export default function HyperVPage() {
       return
     }
     try {
-      const resp = await postHypervRefresh({ scope: 'vms', hosts: hs, level: 'summary', force: false })
+      const resp = await postHypervRefresh({ scope: 'vms', hosts: hs, level: 'detail', force: false })
       if (resp?.message === 'cooldown_active') {
         const cooldownAt = formatLocalTimestamp(resp.cooldown_until)
         const cooldownLabel = cooldownAt ? `Proximo refresh: ${cooldownAt}` : 'Proximo refresh: intervalo minimo'
@@ -461,6 +526,7 @@ export default function HyperVPage() {
         snapshotSource={snapshotMeta?.source || null}
         snapshotStale={Boolean(snapshotMeta?.stale)}
         snapshotStaleReason={snapshotMeta?.stale_reason || null}
+        refreshNotice={refreshNotice}
       />
     </div>
   )

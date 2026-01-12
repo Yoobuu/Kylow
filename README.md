@@ -7,6 +7,12 @@ Aplicación web para extraer, clasificar y mostrar información de máquinas vir
 * 🎨 **Frontend**: React + Vite + Tailwind.
 * 🧪 **Entornos** soportados: Producción, Test, Sandbox y Desarrollo.
 
+## 📚 Documentación
+
+- [Setup y Arranque](docs/SETUP.md)
+- [Arquitectura y Flujos](docs/ARCHITECTURE.md)
+- [API Reference](docs/API.md)
+
 ---
 
 ## 🚀 Estructura del proyecto

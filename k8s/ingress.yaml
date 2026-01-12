@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vmware-inv-ingress
+  annotations:
+    # Ensure your ingress controller matches this class name.
+    # nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    # nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+    # nginx.ingress.kubernetes.io/proxy-send-timeout: "120"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - inventario-ti-test.usfq.edu.ec
+      secretName: inventario-ti-test-tls
+  rules:
+    - host: inventario-ti-test.usfq.edu.ec
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: vmware-inv-backend
+                port:
+                  number: 8000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: vmware-inv-frontend
+                port:
+                  number: 80

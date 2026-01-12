@@ -1,12 +1,13 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { IoServerSharp, IoPulse, IoSwapHorizontalSharp } from 'react-icons/io5'
 import { MdOutlinePower } from 'react-icons/md'
-import { getVmwareHostsSnapshot } from '../api/hosts'
+import { getVmwareHostsJob, getVmwareHostsSnapshot, postVmwareHostsRefresh } from '../api/hosts'
 import { normalizeHostSummary } from '../lib/normalizeHost'
 import { useInventoryState } from './VMTable/useInventoryState'
 import HostDetailModal from './HostDetailModal'
 import DeepExpertModal from './DeepExpertModal'
 import InventoryMetaBar from './common/InventoryMetaBar'
+import { useAuth } from '../context/AuthContext'
 
 const AUTO_REFRESH_MS = 5 * 60 * 1000
 const gradientBg = 'bg-gradient-to-br from-neutral-900 via-black to-neutral-950'
@@ -56,11 +57,18 @@ const typeBadge = (type) => (
 )
 
 export default function HostTable() {
+  const { hasPermission } = useAuth()
+  const isSuperadmin = hasPermission('jobs.trigger')
   const [snapshotGeneratedAt, setSnapshotGeneratedAt] = useState(null)
   const [snapshotSource, setSnapshotSource] = useState(null)
   const [snapshotStale, setSnapshotStale] = useState(false)
   const [snapshotStaleReason, setSnapshotStaleReason] = useState(null)
   const [showDeep, setShowDeep] = useState(false)
+  const [refreshJobId, setRefreshJobId] = useState(null)
+  const [refreshPolling, setRefreshPolling] = useState(false)
+  const [refreshRequested, setRefreshRequested] = useState(false)
+  const [refreshNotice, setRefreshNotice] = useState(null)
+  const pollRef = useRef(null)
   const hostFetcher = useCallback(async () => {
     const snapshot = await getVmwareHostsSnapshot()
     if (snapshot?.empty) {
@@ -132,6 +140,7 @@ export default function HostTable() {
     () => Array.from(new Set(hosts.map((h) => h.server_type).filter(Boolean))).sort(),
     [hosts]
   )
+  const refreshBusy = refreshPolling || refreshRequested || refreshing || loading
 
   const handleFilterChange = useCallback(
     (field, value) => {
@@ -157,6 +166,71 @@ export default function HostTable() {
     setSelectedRecord(null)
     setShowDeep(false)
   }, [setSelectedVm, setSelectedRecord, setShowDeep])
+
+  const handleRefresh = useCallback(async () => {
+    if (!isSuperadmin) {
+      setRefreshNotice({ kind: 'error', text: 'Sin permisos para refrescar hosts VMware.' })
+      return
+    }
+    setRefreshNotice(null)
+    setRefreshRequested(true)
+    try {
+      const resp = await postVmwareHostsRefresh({ force: true })
+      if (resp?.message === 'cooldown_active') {
+        const until = resp?.cooldown_until ? `hasta ${resp.cooldown_until}` : 'intervalo mínimo'
+        setRefreshNotice({ kind: 'warning', text: `Cooldown activo (${until}).` })
+        return
+      }
+      if (resp?.job_id) {
+        setRefreshJobId(resp.job_id)
+        setRefreshPolling(true)
+      } else {
+        setRefreshNotice({ kind: 'warning', text: 'No se pudo iniciar el refresh.' })
+      }
+    } catch (err) {
+      const status = err?.response?.status
+      if (status === 403) {
+        setRefreshNotice({ kind: 'error', text: 'Sin permisos para refrescar hosts VMware.' })
+        return
+      }
+      setRefreshNotice({ kind: 'error', text: 'Error iniciando refresh de hosts VMware.' })
+    } finally {
+      setRefreshRequested(false)
+    }
+  }, [isSuperadmin])
+
+  useEffect(() => {
+    if (!refreshJobId || !refreshPolling) return undefined
+    const tick = async () => {
+      try {
+        const job = await getVmwareHostsJob(refreshJobId)
+        const terminal = ['succeeded', 'failed', 'expired'].includes(job.status)
+        const isPartial = job.message === 'partial'
+        if (terminal) {
+          setRefreshPolling(false)
+          setRefreshJobId(null)
+          if (job.status === 'succeeded') {
+            setRefreshNotice(
+              isPartial
+                ? { kind: 'warning', text: 'Refresh parcial: algunos hosts no respondieron.' }
+                : null
+            )
+          } else {
+            setRefreshNotice({ kind: 'error', text: 'No se pudo completar el refresh de hosts VMware.' })
+          }
+          await fetchVm({ refresh: false, showLoading: false })
+        }
+      } catch (err) {
+        setRefreshPolling(false)
+        setRefreshJobId(null)
+        setRefreshNotice({ kind: 'error', text: 'Error durante el refresh de hosts VMware.' })
+      }
+    }
+    tick()
+    const id = setInterval(tick, 2500)
+    pollRef.current = id
+    return () => clearInterval(id)
+  }, [refreshJobId, refreshPolling, fetchVm])
 
   const kpiCards = [
     { label: 'Hosts totales', value: resumen.total || 0, icon: IoServerSharp },
@@ -214,7 +288,7 @@ export default function HostTable() {
             <p className="text-sm text-neutral-300">Inventario en vivo por cluster y estado.</p>
           </div>
           <div className="flex flex-col items-end gap-2 text-xs text-neutral-300">
-            {refreshing && <span className="text-cyan-300">Actualizando…</span>}
+            {refreshBusy && <span className="text-cyan-300 animate-pulse">Actualizando…</span>}
             <InventoryMetaBar
               generatedAt={snapshotGeneratedAt}
               source={snapshotSource}
@@ -225,9 +299,24 @@ export default function HostTable() {
               textClassName="text-xs text-neutral-300"
               badgeClassName="border-amber-400/60 text-amber-200 bg-amber-500/10"
             />
+            {refreshNotice ? (
+              <span
+                className={`text-xs ${
+                  refreshNotice.kind === 'error'
+                    ? 'text-rose-300'
+                    : refreshNotice.kind === 'warning'
+                      ? 'text-amber-200'
+                      : 'text-cyan-200'
+                }`}
+              >
+                {refreshNotice.text}
+              </span>
+            ) : null}
             <button
-              onClick={() => fetchVm({ refresh: true, showLoading: false })}
-              className="rounded-lg border border-yellow-400/60 px-3 py-1.5 text-sm font-semibold text-yellow-200 hover:bg-yellow-400/10"
+              onClick={handleRefresh}
+              disabled={refreshBusy}
+              aria-busy={refreshBusy}
+              className="rounded-lg border border-yellow-400/60 px-3 py-1.5 text-sm font-semibold text-yellow-200 hover:bg-yellow-400/10 disabled:cursor-not-allowed disabled:opacity-60"
             >
               Refrescar
             </button>

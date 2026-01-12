@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+import os
+import re
 from concurrent.futures import ThreadPoolExecutor, as_completed, Future, TimeoutError as FuturesTimeout
 from datetime import datetime, timedelta
 from pathlib import Path as FsPath
@@ -68,6 +70,15 @@ HYPERV_INVENTORY_RETRIES = settings.hyperv_inventory_retries
 HYPERV_INVENTORY_BACKOFF_SEC = settings.hyperv_inventory_backoff_sec
 HYPERV_POWER_READ_TIMEOUT = settings.hyperv_power_read_timeout
 REFRESH_INTERVAL_MINUTES = settings.hyperv_refresh_interval_minutes
+HOSTS_JOB_TIMEOUT_SECONDS = int(os.getenv("HYPERV_HOSTS_JOB_HOST_TIMEOUT", HOST_TIMEOUT_SECONDS))
+
+if HOSTS_JOB_TIMEOUT_SECONDS < HYPERV_INVENTORY_READ_TIMEOUT:
+    logger.warning(
+        "Hyper-V hosts job timeout (%s) is lower than inventory read timeout (%s); "
+        "hosts may be marked timeout before WinRM completes.",
+        HOSTS_JOB_TIMEOUT_SECONDS,
+        HYPERV_INVENTORY_READ_TIMEOUT,
+    )
 
 # Ruta al script PowerShell (puedes overridear con HYPERV_PS_PATH)
 # Usamos Path(__file__) para anclar la ruta al propio módulo sin depender del cwd.
@@ -84,11 +95,29 @@ def _load_ps_content() -> str:
             return fh.read()
     except FileNotFoundError:
         logger.error("Hyper-V PowerShell script not found at '%s'", ps_path)
-        raise HTTPException(
-            status_code=500,
-            detail=f"No se encontró el script PowerShell en '{ps_path}'. "
-            f"Define HYPERV_PS_PATH o crea el archivo.",
-        )
+    raise HTTPException(
+        status_code=500,
+        detail=f"No se encontró el script PowerShell en '{ps_path}'. "
+        f"Define HYPERV_PS_PATH o crea el archivo.",
+    )
+
+
+def _sanitize_error_message(value: Optional[str]) -> Optional[str]:
+    if not value:
+        return None
+    msg = str(value).strip()
+    if not msg:
+        return None
+    msg = re.sub(
+        r"Authorization:\s*Bearer\s+\S+",
+        "Authorization: Bearer [redacted]",
+        msg,
+        flags=re.IGNORECASE,
+    )
+    msg = re.sub(r"Bearer\s+[A-Za-z0-9\-_.]+", "Bearer [redacted]", msg)
+    if len(msg) > 200:
+        msg = f"{msg[:200]}..."
+    return msg
 
 
 def _build_inventory_creds(host: str) -> RemoteCreds:
@@ -448,7 +477,7 @@ def get_hyperv_snapshot(
     if not settings.hyperv_enabled or not settings.hyperv_configured:
         return Response(status_code=204)
     scope_name = _parse_scope(scope)
-    lvl = _normalize_level(level, {"summary"})
+    lvl = _normalize_level(level, {"summary", "detail"})
     if hosts:
         host_list = _parse_hosts_env(hosts)
     else:
@@ -495,7 +524,7 @@ def trigger_hyperv_refresh(
     current_user = get_current_user(token=token, session=session)
     _REQUIRE_SUPERADMIN(current_user=current_user, session=session)
     scope_name = payload.scope
-    lvl = _normalize_level(payload.level, {"summary"})
+    lvl = _normalize_level(payload.level, {"summary", "detail"})
     raw_hosts = payload.hosts or settings.hyperv_hosts_configured
     host_list = _parse_hosts_env(",".join(raw_hosts)) if raw_hosts else []
     if not host_list:
@@ -678,11 +707,14 @@ def _run_job_scope_vms_inner(job: JobStatus) -> None:
         with lock:
             try:
                 creds = _build_inventory_creds(host)
+                level = (job.level or "summary").lower()
+                if level not in {"summary", "detail"}:
+                    level = "summary"
                 items = collect_hyperv_inventory_for_host(
                     creds,
                     ps_content=ps_content,
                     use_cache=False,
-                    level="summary",
+                    level=level,
                 )
                 data = [i.model_dump() for i in items]
                 elapsed = (datetime.utcnow() - started).total_seconds()
@@ -839,11 +871,14 @@ def _run_job_scope_hosts_inner(job: JobStatus) -> None:
                 last_error_at=health.last_error_at,
                 cooldown_until=health.cooldown_until,
                 last_job_id=job.job_id,
+                last_error_type=health.last_error_type,
+                last_error_message=_sanitize_error_message(health.last_error_message),
             )
+            data_for_store = existing_data if existing_data is not None else {"host": host}
             _SNAPSHOT_STORE.upsert_host(
                 scope_key,
                 host,
-                data=existing_data,
+                data=data_for_store,
                 status=status,
                 generated_at=datetime.utcnow(),
             )
@@ -865,7 +900,7 @@ def _run_job_scope_hosts_inner(job: JobStatus) -> None:
                 )
                 data = info
                 elapsed = (datetime.utcnow() - started).total_seconds()
-                if elapsed > HOST_TIMEOUT_SECONDS:
+                if elapsed > HOSTS_JOB_TIMEOUT_SECONDS:
                     state = SnapshotHostState.TIMEOUT
                     error_msg = "host_timeout_exceeded"
                     hosts_error_this_job += 1
@@ -894,11 +929,14 @@ def _run_job_scope_hosts_inner(job: JobStatus) -> None:
             last_error_at=health_after.last_error_at,
             cooldown_until=health_after.cooldown_until,
             last_job_id=job.job_id,
+            last_error_type=health_after.last_error_type,
+            last_error_message=_sanitize_error_message(health_after.last_error_message),
         )
+        data_for_store = data if data is not None else {"host": host}
         _SNAPSHOT_STORE.upsert_host(
             scope_key,
             host,
-            data=data,
+            data=data_for_store,
             status=status,
             generated_at=datetime.utcnow(),
         )

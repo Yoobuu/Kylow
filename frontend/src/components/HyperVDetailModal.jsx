@@ -402,6 +402,17 @@ export default function HyperVDetailModal({ record, selectorKey = '', onClose })
     if (!entry) return ''
     if (typeof entry === 'string') return entry
     if (typeof entry === 'number') return `${entry}`
+    const toNumber = (value) => {
+      if (value == null || value === '') return null
+      if (typeof value === 'number') return Number.isFinite(value) ? value : null
+      if (typeof value === 'string') {
+        const cleaned = value.trim().replace(/,/g, '.').replace(/[^0-9.-]+/g, '')
+        if (!cleaned || cleaned === '-' || cleaned === '.') return null
+        const parsed = Number(cleaned)
+        return Number.isFinite(parsed) ? parsed : null
+      }
+      return null
+    }
     const displayObj =
       (typeof entry.Display === 'object' && entry.Display !== null && entry.Display) ||
       (typeof entry.display === 'object' && entry.display !== null && entry.display) ||
@@ -458,15 +469,24 @@ export default function HyperVDetailModal({ record, selectorKey = '', onClose })
       entry.percent,
       entry.pct
     )
-    const hasMetric = [alloc, size, pct].some(
+    const allocNumber = toNumber(alloc)
+    const sizeNumber = toNumber(size)
+    let pctNumber = toNumber(pct)
+    if (pctNumber == null && allocNumber != null && sizeNumber != null && sizeNumber > 0) {
+      pctNumber = Math.round((allocNumber / sizeNumber) * 100 * 100) / 100
+    }
+    const hasMetric = [allocNumber, sizeNumber, pctNumber].some(
       (value) => value !== undefined && value !== null && value !== ''
     )
-    if (size && pct !== undefined && pct !== null && pct !== '') {
-      const allocText =
-        alloc !== undefined && alloc !== null && alloc !== ''
-          ? `${alloc}`
-          : '\u2014'
-      return `${allocText} / ${size} (${pct}%)`
+    if (allocNumber != null && sizeNumber != null) {
+      const pctText = pctNumber != null ? ` (${pctNumber}%)` : ''
+      return `${allocNumber} GiB / ${sizeNumber} GiB${pctText}`
+    }
+    if (allocNumber != null) {
+      return `Usado: ${allocNumber} GiB`
+    }
+    if (sizeNumber != null) {
+      return `Tamano: ${sizeNumber} GiB`
     }
     const displayText = resolveValue(
       typeof entry.Display === 'string' ? entry.Display : undefined,
@@ -474,7 +494,7 @@ export default function HyperVDetailModal({ record, selectorKey = '', onClose })
       typeof source.Display === 'string' ? source.Display : undefined,
       typeof source.display === 'string' ? source.display : undefined
     )
-    if (displayText) return displayText
+    if (displayText && !displayText.includes('???')) return displayText
     if (!hasMetric) return ''
     if (source && typeof source.toString === 'function') {
       const strValue = source.toString.call(source)

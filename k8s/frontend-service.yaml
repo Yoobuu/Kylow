@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vmware-inv-frontend
+  labels:
+    app: vmware-inv-frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: vmware-inv-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

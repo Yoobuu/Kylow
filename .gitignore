@@ -61,3 +61,14 @@ desktop.ini
 *.zip
 *.bak
 *.tmp
+
+# === NON-DEPLOYMENT (TOP-LEVEL) ===
+/docs/
+/scripts/
+/tests/
+/reference/
+/out/
+/hyperv_latency_probe/
+/hyperv_rvtools_exporter/
+/vmware_rvtools_exporter/
+/ngrok-v3-stable-linux-amd64.tgz

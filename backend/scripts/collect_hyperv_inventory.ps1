@@ -36,6 +36,44 @@ $DoVhd = -not $SkipVhd
 $DoMeasure = -not $SkipMeasure
 $DoKvp = -not $SkipKvp
 
+# Limite de espera para Get-VHD (segundos). Si se excede o falla, seguimos sin SizeGiB.
+$GetVhdTimeoutSec = 8
+$DebugVhd = $env:HV_DEBUG_VHD -eq '1'
+
+# SizeGiB = capacidad total; AllocatedGiB = tamano actual del archivo VHDX; pct = allocated/size
+function Get-VhdSizeSafe {
+  param(
+    [Parameter(Mandatory=$true)][string]$Path,
+    [int]$TimeoutSec = 8
+  )
+  $cmd = Get-Command Get-VHD -ErrorAction SilentlyContinue
+  if (-not $cmd) {
+    return [pscustomobject]@{ SizeGiB = $null; Status = "command_not_found"; Error = "Get-VHD not found" }
+  }
+  try {
+    $job = Start-Job -ScriptBlock {
+      param($p)
+      Get-VHD -Path $p -ErrorAction Stop | Select-Object -First 1 -ExpandProperty Size
+    } -ArgumentList $Path
+
+    $completed = Wait-Job -Job $job -Timeout $TimeoutSec
+    if (-not $completed) {
+      Stop-Job $job -Force | Out-Null
+      Remove-Job $job -Force | Out-Null
+      return [pscustomobject]@{ SizeGiB = $null; Status = "timeout"; Error = "Get-VHD timeout" }
+    }
+    $result = Receive-Job $job -ErrorAction SilentlyContinue
+    Remove-Job $job -Force | Out-Null
+    if ($result) {
+      $sizeGiB = [math]::Round(($result / 1GB), 2)
+      return [pscustomobject]@{ SizeGiB = $sizeGiB; Status = "ok"; Error = $null }
+    }
+    return [pscustomobject]@{ SizeGiB = $null; Status = "empty"; Error = "Get-VHD empty result" }
+  } catch {
+    return [pscustomobject]@{ SizeGiB = $null; Status = "exception"; Error = $_.Exception.Message }
+  }
+}
+
 # Datos de host/switch para deep
 $globalSwitches = @()
 if ($Level -eq 'deep') {
@@ -132,6 +170,7 @@ function Get-HVGuestOSFromKVP {
 }
 
 function Get-Disks($vm) {
+  if ($DebugVhd) { Write-Host "[HV_DEBUG] DoVhd=$DoVhd Level=$Level SkipVhd=$SkipVhd" }
   if (-not $DoVhd) { return @() }
   $diskObjs=@()
   try {
@@ -140,39 +179,54 @@ function Get-Disks($vm) {
     return @(@{ Display = "Error listing drives: $($_.Exception.Message)"; Error = $_.Exception.Message })
   }
 
+  $debugLogged = $false
   foreach($hdd in $drives){
     $path = $hdd.Path
     $errorMsg = $null
     $size = $null
     $alloc = $null
     $pct = $null
+    $pathExists = $false
+    $vhdInfo = $null
     
     try {
        if ([string]::IsNullOrWhiteSpace($path)) {
           $errorMsg = "Path empty (Passthrough?)"
        } else {
           # Intento rápido de obtener tamaño de archivo (Allocated)
-          if (Test-Path $path) {
+          $pathExists = Test-Path $path
+          if ($pathExists) {
             $file = Get-Item $path -ErrorAction SilentlyContinue
             if ($file) { $alloc = [math]::Round(($file.Length/1GB),2) }
           }
 
-          # [OPTIMIZACION DE EMERGENCIA]
-          # Comentamos Get-VHD porque está causando timeouts de >5min en hosts lentos/saturados.
-          # Solo devolveremos el espacio usado (Allocated).
-          
-          # try {
-          #   $v = Get-VHD -Path $path -ErrorAction Stop
-          #   $size = [math]::Round(($v.Size/1GB),2)
-          #   if ($size -gt 0 -and $alloc -ne $null) {
-          #       $pct = [math]::Round(($alloc / $size)*100,2)
-          #   }
-          # } catch {
-          #   $errorMsg = "VHD Header Unreadable"
-          # }
+          # Obtener capacidad total (SizeGiB) con timeout; si falla, seguimos con alloc
+          try {
+            if ($pathExists) {
+              $vhdInfo = Get-VhdSizeSafe -Path $path -TimeoutSec $GetVhdTimeoutSec
+              if ($vhdInfo.Status -eq "ok" -and $vhdInfo.SizeGiB) {
+                $size = $vhdInfo.SizeGiB
+                if ($size -gt 0 -and $alloc -ne $null) {
+                    $pct = [math]::Round(($alloc / $size)*100,2)
+                }
+              }
+            } else {
+              $vhdInfo = [pscustomobject]@{ SizeGiB = $null; Status = "path_missing"; Error = "Path not found" }
+            }
+          } catch {
+            if (-not $errorMsg) { $errorMsg = "Get-VHD failed: $($_.Exception.Message)" }
+          }
        }
     } catch {
        $errorMsg = "Error: $($_.Exception.Message)"
+    }
+
+    if ($DebugVhd -and -not $debugLogged) {
+      Write-Host "[HV_DEBUG] DiskPath=$path"
+      Write-Host "[HV_DEBUG] Test-Path=$pathExists"
+      Write-Host "[HV_DEBUG] VHD status=$($vhdInfo.Status) sizeGiB=$($vhdInfo.SizeGiB) error=$($vhdInfo.Error)"
+      Write-Host "[HV_DEBUG] Final AllocatedGiB=$alloc SizeGiB=$size AllocatedPct=$pct"
+      $debugLogged = $true
     }
     
     $props = [ordered]@{
@@ -183,15 +237,20 @@ function Get-Disks($vm) {
        Error = $errorMsg
     }
     
-    # Si tenemos al menos el alloc, quitamos el error del display para que se vea el dato
-    if ($alloc -ne $null) {
-       $sizeText = if ($size) { $size } else { "???" }
-       $props['Display'] = "$alloc GB / $sizeText GB"
+    # Si tenemos datos, mostramos un display claro; evitamos "???"
+    if ($alloc -ne $null -and $size -ne $null) {
+       $pctText = if ($pct -ne $null) { " ($pct`%)" } else { "" }
+       $props['Display'] = "$alloc GiB / $size GiB$pctText"
+    } elseif ($alloc -ne $null) {
+       $props['Display'] = "Usado: $alloc GiB"
+    } elseif ($size -ne $null) {
+       $props['Display'] = "Tamano: $size GiB"
     } elseif ($errorMsg) {
-       $props['Display'] = "Error: $errorMsg"
+      $props['Display'] = "Error: $errorMsg"
     }
 
     $diskObjs += [pscustomobject]$props
+    if ($DebugVhd -and $debugLogged) { break }
   }
   return $diskObjs
 }

@@ -68,6 +68,8 @@ class SnapshotHostStatus(BaseModel):
     last_error_at: Optional[datetime] = None
     cooldown_until: Optional[datetime] = None
     last_job_id: Optional[str] = None
+    last_error_type: Optional[str] = None
+    last_error_message: Optional[str] = None
 
     def copy(self) -> "SnapshotHostStatus":
         return copy.deepcopy(self)

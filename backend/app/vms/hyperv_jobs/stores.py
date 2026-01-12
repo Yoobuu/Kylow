@@ -228,6 +228,36 @@ class SnapshotStore:
         self._lock = threading.RLock()
         self._snapshots: Dict[ScopeKey, SnapshotPayload] = {}
 
+    @staticmethod
+    def _normalize_host_key(value: Optional[str]) -> Optional[str]:
+        if value is None:
+            return None
+        normalized = str(value).strip().lower()
+        return normalized or None
+
+    @classmethod
+    def _extract_host_key(cls, item) -> Optional[str]:
+        if item is None:
+            return None
+        if isinstance(item, dict):
+            return item.get("host") or item.get("name")
+        return getattr(item, "host", None) or getattr(item, "name", None)
+
+    @classmethod
+    def _dedupe_hosts_list(cls, items: list) -> list:
+        # Keep the last occurrence for each normalized host key.
+        seen: set[str] = set()
+        deduped: list = []
+        for item in reversed(items):
+            key = cls._normalize_host_key(cls._extract_host_key(item))
+            if key:
+                if key in seen:
+                    continue
+                seen.add(key)
+            deduped.append(item)
+        deduped.reverse()
+        return deduped
+
     def _prune_locked(self) -> None:
         if len(self._snapshots) <= MAX_ITEMS:
             return
@@ -268,8 +298,12 @@ class SnapshotStore:
 
     def _payload_to_snapshot(self, payload: dict) -> SnapshotPayload:
         if hasattr(SnapshotPayload, "model_validate"):
-            return SnapshotPayload.model_validate(payload)
-        return SnapshotPayload.parse_obj(payload)
+            snapshot = SnapshotPayload.model_validate(payload)
+        else:
+            snapshot = SnapshotPayload.parse_obj(payload)
+        if snapshot.scope == ScopeName.HOSTS and isinstance(snapshot.data, list):
+            snapshot.data = self._dedupe_hosts_list(snapshot.data)
+        return snapshot
 
     def _persist_snapshot(self, scope_key: ScopeKey, snapshot: SnapshotPayload) -> None:
         scope_value = self._scope_value(scope_key)
@@ -355,16 +389,22 @@ class SnapshotStore:
             else:
                 # para hosts scope, data es lista; reemplazamos/actualizamos el host en lista
                 existing = snap.data if isinstance(snap.data, list) else []
-                replaced = False
-                for idx, item in enumerate(existing):
-                    name = getattr(item, "host", None) or getattr(item, "name", None) or item.get("host") if isinstance(item, dict) else None
-                    if name and name == host:
-                        existing[idx] = data
-                        replaced = True
-                        break
-                if not replaced:
-                    existing.append(data)
-                snap.data = existing
+                existing = self._dedupe_hosts_list(existing)
+                if data is None:
+                    # Evitar placeholders nulos; solo actualizamos status/metadata.
+                    snap.data = existing
+                else:
+                    host_key = self._normalize_host_key(host)
+                    replaced = False
+                    for idx, item in enumerate(existing):
+                        name_key = self._normalize_host_key(self._extract_host_key(item))
+                        if name_key and host_key and name_key == host_key:
+                            existing[idx] = data
+                            replaced = True
+                            break
+                    if not replaced:
+                        existing.append(data)
+                    snap.data = existing
             snap.hosts_status[host] = status
             snap.total_hosts = len(scope_key.hosts)
             if summary is not None:

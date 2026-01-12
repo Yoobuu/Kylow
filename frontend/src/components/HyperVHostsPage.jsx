@@ -126,6 +126,7 @@ export default function HyperVHostsPage() {
   const pollRef = useRef(null)
   const { hasPermission } = useAuth()
   const isSuperadmin = hasPermission('jobs.trigger')
+  const [refreshRequested, setRefreshRequested] = useState(false)
   const [status, setStatus] = useState(null)
   const initialRefreshRef = useRef(false)
   const useLegacyRef = useRef(false)
@@ -272,7 +273,8 @@ const discoverHosts = useCallback(async () => {
       return
     }
     try {
-      const resp = await postHypervRefresh({ scope: 'hosts', hosts: hs, level: 'summary', force: false })
+      setRefreshRequested(true)
+      const resp = await postHypervRefresh({ scope: 'hosts', hosts: hs, level: 'summary', force: true })
       if (resp?.message === 'cooldown_active') {
         setBanner({
           kind: 'info',
@@ -306,6 +308,8 @@ const discoverHosts = useCallback(async () => {
       })
       setStatus({ kind: 'error', text: 'Error iniciando refresh' })
       fetchVm({ refresh: true, showLoading: false })
+    } finally {
+      setRefreshRequested(false)
     }
   }, [discoverHosts, fetchVm, isSuperadmin])
 
@@ -348,6 +352,8 @@ const discoverHosts = useCallback(async () => {
   useEffect(() => {
     setBanner(bannerRef.current)
   }, [bannerRef.current])
+
+  const refreshBusy = polling || refreshRequested || loading || refreshing
 
   const kpiCards = [
     { label: 'Hosts Hyper-V', value: resumen.total || 0, icon: IoServerSharp },
@@ -476,7 +482,7 @@ const discoverHosts = useCallback(async () => {
             <p className="text-sm text-neutral-300">Inventario de hosts Hyper-V con recursos básicos y switches.</p>
           </div>
           <div className="flex flex-col items-end gap-2 text-xs text-neutral-300">
-            {refreshing && <span className="text-cyan-300">Actualizando…</span>}
+            {refreshBusy && <span className="text-cyan-300 animate-pulse">Actualizando…</span>}
             <InventoryMetaBar
               generatedAt={snapshotGeneratedAt}
               source={snapshotSource}
@@ -489,7 +495,9 @@ const discoverHosts = useCallback(async () => {
             />
             <button
               onClick={handleRefresh}
-              className="rounded-lg border border-blue-400/60 px-3 py-1.5 text-sm font-semibold text-blue-200 hover:bg-blue-400/10"
+              disabled={refreshBusy}
+              aria-busy={refreshBusy}
+              className="rounded-lg border border-blue-400/60 px-3 py-1.5 text-sm font-semibold text-blue-200 hover:bg-blue-400/10 disabled:cursor-not-allowed disabled:opacity-60"
             >
               Refrescar
             </button>

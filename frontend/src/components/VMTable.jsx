@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo, useDeferredValue, useState, useEffect } from 'react'
-import { getVmwareSnapshot } from '../api/vmware'
+import React, { useCallback, useMemo, useDeferredValue, useState, useEffect, useRef } from 'react'
+import { getVmwareSnapshot, getVmwareJob, postVmwareRefresh } from '../api/vmware'
 import { useInventoryState } from './VMTable/useInventoryState'
 import VMSummaryCards from './VMTable/VMSummaryCards'
 import VMFiltersPanel from './VMTable/VMFiltersPanel'
@@ -11,16 +11,24 @@ import { exportInventoryCsv } from '../lib/exportCsv'
 import { normalizeVMware } from '../lib/normalize'
 import InventoryMetaBar from './common/InventoryMetaBar'
 import * as inventoryCache from '../lib/inventoryCache'
+import { useAuth } from '../context/AuthContext'
 
 const AUTO_REFRESH_MS = 5 * 60 * 1000
 const DEBUG_SNAPSHOT = false
 
 export default function VMTable() {
+  const { hasPermission } = useAuth()
+  const isSuperadmin = hasPermission('jobs.trigger')
   const [snapshotGeneratedAt, setSnapshotGeneratedAt] = useState(null)
   const [snapshotSource, setSnapshotSource] = useState(null)
   const [snapshotStale, setSnapshotStale] = useState(false)
   const [snapshotStaleReason, setSnapshotStaleReason] = useState(null)
   const [snapshotLoadedFromSnapshot, setSnapshotLoadedFromSnapshot] = useState(false)
+  const [refreshJobId, setRefreshJobId] = useState(null)
+  const [refreshPolling, setRefreshPolling] = useState(false)
+  const [refreshRequested, setRefreshRequested] = useState(false)
+  const [refreshNotice, setRefreshNotice] = useState(null)
+  const pollRef = useRef(null)
   const snapshotFetcher = useCallback(async () => {
     const snapshot = await getVmwareSnapshot()
     if (DEBUG_SNAPSHOT) {
@@ -96,6 +104,13 @@ export default function VMTable() {
   const deferredEntries = useDeferredValue(entries)
   const hasGroups = entries.length > 0
   const fallbackRows = !hasGroups && vms.length > 0 ? vms : null
+  const refreshBusy = refreshPolling || refreshRequested || refreshing || loading
+  const refreshNoticeTone =
+    refreshNotice?.kind === 'error'
+      ? 'text-red-600'
+      : refreshNotice?.kind === 'warning'
+        ? 'text-amber-600'
+        : 'text-blue-600'
 
   useEffect(() => {
     if (snapshotLoadedFromSnapshot) return
@@ -140,9 +155,70 @@ export default function VMTable() {
     exportInventoryCsv(processed, 'vmware_inventory')
   }, [processed])
 
-  const handleRefresh = useCallback(() => {
-    fetchVm({ refresh: true, showLoading: false })
-  }, [fetchVm])
+  const handleRefresh = useCallback(async () => {
+    if (!isSuperadmin) {
+      setRefreshNotice({ kind: 'error', text: 'Sin permisos para refrescar VMs VMware.' })
+      return
+    }
+    setRefreshNotice(null)
+    setRefreshRequested(true)
+    try {
+      const resp = await postVmwareRefresh({ force: true })
+      if (resp?.message === 'cooldown_active') {
+        const until = resp?.cooldown_until ? `hasta ${resp.cooldown_until}` : 'intervalo minimo'
+        setRefreshNotice({ kind: 'warning', text: `Cooldown activo (${until}).` })
+        return
+      }
+      if (resp?.job_id) {
+        setRefreshJobId(resp.job_id)
+        setRefreshPolling(true)
+      } else {
+        setRefreshNotice({ kind: 'warning', text: 'No se pudo iniciar el refresh.' })
+      }
+    } catch (err) {
+      const status = err?.response?.status
+      if (status === 403) {
+        setRefreshNotice({ kind: 'error', text: 'Sin permisos para refrescar VMs VMware.' })
+        return
+      }
+      setRefreshNotice({ kind: 'error', text: 'Error iniciando refresh de VMs VMware.' })
+    } finally {
+      setRefreshRequested(false)
+    }
+  }, [isSuperadmin])
+
+  useEffect(() => {
+    if (!refreshJobId || !refreshPolling) return undefined
+    const tick = async () => {
+      try {
+        const job = await getVmwareJob(refreshJobId)
+        const terminal = ['succeeded', 'failed', 'expired'].includes(job.status)
+        const isPartial = job.message === 'partial'
+        if (terminal) {
+          setRefreshPolling(false)
+          setRefreshJobId(null)
+          if (job.status === 'succeeded') {
+            setRefreshNotice(
+              isPartial
+                ? { kind: 'warning', text: 'Refresh parcial: algunos datos no se pudieron actualizar.' }
+                : null
+            )
+          } else {
+            setRefreshNotice({ kind: 'error', text: 'No se pudo completar el refresh de VMs VMware.' })
+          }
+          await fetchVm({ refresh: false, showLoading: false })
+        }
+      } catch (err) {
+        setRefreshPolling(false)
+        setRefreshJobId(null)
+        setRefreshNotice({ kind: 'error', text: 'Error durante el refresh de VMs VMware.' })
+      }
+    }
+    tick()
+    const id = setInterval(tick, 2500)
+    pollRef.current = id
+    return () => clearInterval(id)
+  }, [refreshJobId, refreshPolling, fetchVm])
 
   const handleRowClick = useCallback(
     (row) => {
@@ -195,7 +271,8 @@ export default function VMTable() {
           <div className="flex items-center gap-2">
             <button
               onClick={handleRefresh}
-              disabled={loading}
+              disabled={refreshBusy}
+              aria-busy={refreshBusy}
               className="bg-white border border-blue-300 text-blue-700 font-medium py-2 px-4 rounded-lg shadow-sm hover:bg-blue-50 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
               Actualizar inventario
@@ -208,11 +285,16 @@ export default function VMTable() {
               Exportar CSV
             </button>
           </div>
-          {refreshing && (
+          {refreshBusy && (
             <div className="text-xs text-blue-600 animate-pulse text-right">
               Actualizando&hellip;
             </div>
           )}
+          {refreshNotice ? (
+            <div className={`text-xs text-right ${refreshNoticeTone}`}>
+              {refreshNotice.text}
+            </div>
+          ) : null}
           <InventoryMetaBar
             generatedAt={snapshotGeneratedAt}
             source={snapshotSource}

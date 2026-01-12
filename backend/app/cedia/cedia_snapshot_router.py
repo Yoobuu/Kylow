@@ -13,6 +13,7 @@ from pydantic import BaseModel
 
 from app.auth.user_model import User
 from app.cedia import service as cedia_service
+from app.cedia.metrics import normalize_vcloud_metrics
 from app.dependencies import require_permission, get_current_user
 from app.db import get_session
 from app.permissions.models import PermissionCode
@@ -130,6 +131,63 @@ def _extract_vm_id(record: dict) -> Optional[str]:
     if href:
         return str(href).rstrip("/").split("/")[-1]
     return None
+
+
+_METRICS_FIELDS = (
+    "cpu_pct",
+    "mem_pct",
+    "cpu_mhz",
+    "disks",
+    "disk_used_kb_total",
+    "disk_provisioned_kb_total",
+    "metrics_updated_at",
+)
+
+
+def _metrics_from_previous(record: Optional[dict]) -> Optional[dict]:
+    if not record or not isinstance(record, dict):
+        return None
+    payload = {key: record.get(key) for key in _METRICS_FIELDS if key in record}
+    if not payload:
+        return None
+    payload.setdefault("disks", [])
+    return payload
+
+
+def _metrics_empty(metrics: dict) -> bool:
+    if not metrics:
+        return True
+    if metrics.get("disks"):
+        return False
+    for key in ("cpu_pct", "mem_pct", "cpu_mhz", "disk_used_kb_total", "disk_provisioned_kb_total"):
+        if metrics.get(key) not in (None, "", []):
+            return False
+    return True
+
+
+def _index_records_by_id(records) -> Dict[str, dict]:
+    if not isinstance(records, list):
+        return {}
+    indexed: Dict[str, dict] = {}
+    for rec in records:
+        if not isinstance(rec, dict):
+            continue
+        vm_id = _extract_vm_id(rec)
+        if vm_id:
+            indexed[vm_id] = rec
+    return indexed
+
+
+def _empty_metrics() -> dict:
+    return {
+        "cpu_pct": None,
+        "mem_pct": None,
+        "cpu_mhz": None,
+        "disks": [],
+        "disk_used_kb_total": None,
+        "disk_provisioned_kb_total": None,
+        "metrics_updated_at": None,
+    }
 
 
 @router.get("/snapshot")
@@ -282,6 +340,7 @@ def _run_job_scope_vms_inner(job: JobStatus) -> None:
 
         health = _HEALTH_STORE.get(host)
         existing_data = _get_existing_host_data(scope_key, host)
+        prev_by_id = _index_records_by_id(existing_data)
 
         if health.cooldown_until and health.cooldown_until > now:
             state = (
@@ -353,8 +412,17 @@ def _run_job_scope_vms_inner(job: JobStatus) -> None:
                             last_metric_error = str(exc)
                             last_metric_status = getattr(exc, "status_code", None)
                     merged = dict(rec)
+                    prev_metrics = _metrics_from_previous(prev_by_id.get(vm_id)) if vm_id else None
                     if metrics is not None:
                         merged["metrics"] = metrics
+                        normalized = normalize_vcloud_metrics(metrics, now=datetime.utcnow())
+                        if _metrics_empty(normalized):
+                            normalized = prev_metrics or _empty_metrics()
+                    else:
+                        normalized = prev_metrics or _empty_metrics()
+                        if prev_by_id.get(vm_id) and prev_by_id[vm_id].get("metrics") is not None:
+                            merged["metrics"] = prev_by_id[vm_id].get("metrics")
+                    merged.update(normalized)
                     enriched.append(merged)
 
                 if metrics_errors:

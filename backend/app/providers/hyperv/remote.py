@@ -1,6 +1,6 @@
 # filepath: app/providers/hyperv/remote.py
 from __future__ import annotations
-import json, logging, subprocess, tempfile, time
+import json, logging, os, subprocess, tempfile, time
 from typing import List, Optional
 from dataclasses import dataclass
 
@@ -304,6 +304,17 @@ def run_inventory(
     sv = skip_vhd if skip_vhd is not None else level_norm == "summary"
     sm = skip_measure if skip_measure is not None else level_norm == "summary"
     sk = skip_kvp if skip_kvp is not None else level_norm == "summary"
+    if os.getenv("HV_DEBUG_VHD") == "1":
+        logger.info(
+            "HV_DEBUG run_inventory level=%s skip_vhd=%s skip_measure=%s skip_kvp=%s host=%s vm=%s use_winrm=%s",
+            level_norm,
+            sv,
+            sm,
+            sk,
+            creds.host,
+            vm_name,
+            creds.use_winrm,
+        )
 
     for attempt in range(creds.retries + 1):
         try:

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vmware-inv-backend
+  labels:
+    app: vmware-inv-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vmware-inv-backend
+  template:
+    metadata:
+      labels:
+        app: vmware-inv-backend
+    spec:
+      containers:
+        - name: backend
+          image: vmware-inv-backend:${IMAGE_TAG}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          envFrom:
+            # Provide non-secret envs like APP_ENV, PORT, CORS_ALLOW_ORIGINS via ConfigMap.
+            - configMapRef:
+                name: vmware-inv-config
+            # Provide secrets (DATABASE_URL, SECRET_KEY, VCENTER_*, HYPERV_*, CEDIA_*) via Secret.
+            - secretRef:
+                name: vmware-inv-secrets
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+      # NOTE: This is a 1-replica v1 setup.
+      # If you scale >1, move schedulers/warmups to a singleton deployment or external worker.

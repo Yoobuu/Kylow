@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: vmware-inv-db-init
+  labels:
+    app: vmware-inv-backend
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: vmware-inv-backend
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: db-init
+          image: vmware-inv-backend:${IMAGE_TAG}
+          imagePullPolicy: Always
+          command: ["python", "scripts/bootstrap_db.py"]
+          envFrom:
+            # Provide non-secret envs like APP_ENV via ConfigMap.
+            - configMapRef:
+                name: vmware-inv-config
+            # Provide DATABASE_URL via Secret.
+            - secretRef:
+                name: vmware-inv-secrets

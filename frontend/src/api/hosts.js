@@ -13,6 +13,16 @@ export async function getVmwareHostsSnapshot() {
   return response.data;
 }
 
+export async function postVmwareHostsRefresh(body = { force: false }) {
+  const { data } = await api.post("/vmware/hosts/refresh", body);
+  return data;
+}
+
+export async function getVmwareHostsJob(jobId) {
+  const { data } = await api.get(`/vmware/hosts/jobs/${jobId}`);
+  return data;
+}
+
 export async function getHostDetail(id, params = {}) {
   const { data } = await api.get(`/hosts/${id}`, { params });
   return data;
