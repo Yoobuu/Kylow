@@ -1,10 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import ChooseInventory from "./components/ChooseInventory";
 import LoginForm from "./components/LoginForm";
-import HyperVPage from "./components/HyperVPage";
+import HyperVInventoryPage from "./components/HyperVInventoryPage";
 import KVMPage from "./components/KVMPage";
-import VMTable from "./components/VMTable";
-import HostTable from "./components/HostTable";
 import AppLayout from "./components/AppLayout";
 import AccessDenied from "./components/AccessDenied";
 import { AuthProvider, useAuth } from "./context/AuthContext";
@@ -12,9 +10,11 @@ import ChangePasswordPage from "./pages/ChangePasswordPage";
 import UserAdminPage from "./pages/UserAdminPage";
 import AuditPage from "./pages/AuditPage";
 import NotificationsPage from "./pages/NotificationsPage";
-import HyperVHostsPage from "./components/HyperVHostsPage";
+import VMwarePage from "./components/VMwarePage";
 import CediaPage from "./components/CediaPage";
+import AzurePage from "./components/AzurePage";
 import SystemPage from "./pages/SystemPage";
+import ExecutiveMissionControl from "./pages/ExecutiveMissionControl";
 
 export default function App() {
   return (
@@ -33,10 +33,12 @@ function AppRoutes() {
   const canViewVmware = hasPermission("vms.view");
   const canViewHyperv = hasPermission("hyperv.view");
   const canViewCedia = hasPermission("cedia.view");
+  const canViewAzure = hasPermission("azure.view");
   const canViewNotifications = hasPermission("notifications.view");
   const canViewAudit = hasPermission("audit.view");
   const canManageUsers = hasPermission("users.manage");
   const canViewSystemSettings = hasPermission("system.settings.view");
+  const canViewInventory = canViewVmware || canViewHyperv || canViewCedia || canViewAzure;
 
   return (
     <Routes>
@@ -76,13 +78,13 @@ function AppRoutes() {
           isAuthenticated ? (
             enforcePasswordChange ? (
               <Navigate to="/change-password" replace />
-            ) : canViewVmware || canViewHyperv ? (
+            ) : canViewInventory ? (
               <AppLayout mainClassName="p-0">
                 <ChooseInventory />
               </AppLayout>
             ) : (
               <AppLayout>
-                <AccessDenied description="No tienes permisos para ver inventarios (vms.view / hyperv.view)." />
+                <AccessDenied description="No tienes permisos para ver inventarios (vms.view / hyperv.view / cedia.view / azure.view)." />
               </AppLayout>
             )
           ) : (
@@ -99,7 +101,7 @@ function AppRoutes() {
               <Navigate to="/change-password" replace />
             ) : canViewHyperv ? (
               <AppLayout>
-                <HyperVPage />
+                <HyperVInventoryPage />
               </AppLayout>
             ) : (
               <AppLayout>
@@ -119,9 +121,7 @@ function AppRoutes() {
             enforcePasswordChange ? (
               <Navigate to="/change-password" replace />
             ) : canViewHyperv ? (
-              <AppLayout mainClassName="p-0">
-                <HyperVHostsPage />
-              </AppLayout>
+              <Navigate to="/hyperv?view=hosts" replace />
             ) : (
               <AppLayout>
                 <AccessDenied description="Necesitas el permiso hyperv.view para acceder." />
@@ -155,14 +155,54 @@ function AppRoutes() {
       />
 
       <Route
+        path="/azure"
+        element={
+          isAuthenticated ? (
+            enforcePasswordChange ? (
+              <Navigate to="/change-password" replace />
+            ) : canViewAzure ? (
+              <AppLayout>
+                <AzurePage />
+              </AppLayout>
+            ) : (
+              <AppLayout>
+                <AccessDenied description="Necesitas el permiso azure.view para acceder." />
+              </AppLayout>
+            )
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+
+      <Route
         path="/hosts"
         element={
           isAuthenticated ? (
             enforcePasswordChange ? (
               <Navigate to="/change-password" replace />
             ) : canViewVmware ? (
-              <AppLayout mainClassName="p-0">
-                <HostTable />
+              <Navigate to="/vmware?view=hosts" replace />
+            ) : (
+              <AppLayout>
+                <AccessDenied description="Necesitas el permiso vms.view para acceder." />
+              </AppLayout>
+            )
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+
+      <Route
+        path="/vmware"
+        element={
+          isAuthenticated ? (
+            enforcePasswordChange ? (
+              <Navigate to="/change-password" replace />
+            ) : canViewVmware ? (
+              <AppLayout>
+                <VMwarePage />
               </AppLayout>
             ) : (
               <AppLayout>
@@ -220,7 +260,7 @@ function AppRoutes() {
             enforcePasswordChange ? (
               <Navigate to="/change-password" replace />
             ) : canViewAudit ? (
-              <AppLayout>
+              <AppLayout mainClassName="p-0 bg-black">
                 <AuditPage />
               </AppLayout>
             ) : (
@@ -241,7 +281,7 @@ function AppRoutes() {
             enforcePasswordChange ? (
               <Navigate to="/change-password" replace />
             ) : canManageUsers ? (
-              <AppLayout>
+              <AppLayout mainClassName="p-0 bg-black">
                 <UserAdminPage />
               </AppLayout>
             ) : (
@@ -277,18 +317,37 @@ function AppRoutes() {
       />
 
       <Route
-        path="/*"
+        path="/mission-control"
         element={
           isAuthenticated ? (
             enforcePasswordChange ? (
               <Navigate to="/change-password" replace />
             ) : canViewVmware ? (
-              <AppLayout>
-                <VMTable />
+              <AppLayout mainClassName="p-0">
+                <ExecutiveMissionControl />
               </AppLayout>
             ) : (
               <AppLayout>
                 <AccessDenied description="Necesitas el permiso vms.view para acceder." />
+              </AppLayout>
+            )
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+
+      <Route
+        path="/*"
+        element={
+          isAuthenticated ? (
+            enforcePasswordChange ? (
+              <Navigate to="/change-password" replace />
+            ) : canViewInventory ? (
+              <Navigate to="/choose" replace />
+            ) : (
+              <AppLayout>
+                <AccessDenied description="No tienes permisos para ver inventarios." />
               </AppLayout>
             )
           ) : (

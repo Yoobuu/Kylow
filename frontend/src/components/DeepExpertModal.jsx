@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { IoClose, IoChevronDown, IoChevronForward, IoPulseSharp, IoHardwareChipSharp, IoShieldCheckmarkSharp, IoGitNetworkSharp, IoCloudSharp } from 'react-icons/io5'
-import { getHostDeep } from '../api/hosts'
+import { getHostDeep as getVmwareHostDeep } from '../api/hosts'
 import { normalizeHostDeep } from '../lib/normalizeHost'
 
 const Collapse = ({ title, children, defaultOpen = false, icon: Icon = null, accent = 'text-cyan-200' }) => {
@@ -125,7 +125,7 @@ const NumaView = ({ numa }) => {
   )
 }
 
-export default function DeepExpertModal({ hostId, onClose }) {
+export default function DeepExpertModal({ hostId, onClose, getHostDeep = getVmwareHostDeep }) {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -137,7 +137,8 @@ export default function DeepExpertModal({ hostId, onClose }) {
     getHostDeep(hostId)
       .then((res) => {
         if (cancelled) return
-        setData(normalizeHostDeep(res))
+        const payload = res?.data ?? res
+        setData(normalizeHostDeep(payload))
       })
       .catch(() => {
         if (cancelled) return

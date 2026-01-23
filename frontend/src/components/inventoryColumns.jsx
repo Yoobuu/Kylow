@@ -27,6 +27,13 @@ const formatGiB = (value) => {
   return gib.toLocaleString(undefined, { maximumFractionDigits: 2 })
 }
 
+const formatDateTime = (value) => {
+  if (!value) return '\u2014'
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return value
+  return parsed.toLocaleString()
+}
+
 const joinList = (list) =>
   Array.isArray(list) && list.length ? list.join(', ') : '\u2014'
 
@@ -110,6 +117,44 @@ const renderDisksWithBars = (disks) => {
         )
       })}
     </div>
+  )
+}
+
+const shortenAzureId = (value) => {
+  if (!value) return '\u2014'
+  const raw = String(value)
+  const vmMatch = /\/virtualMachines\/([^/]+)$/i.exec(raw)
+  if (vmMatch) return vmMatch[1]
+  const parts = raw.split('/').filter(Boolean)
+  return parts.length ? parts[parts.length - 1] : raw
+}
+
+const renderTruncatedText = (value, maxWidth = 'max-w-[200px]') => {
+  const text = value == null || value === '' ? '\u2014' : String(value)
+  return (
+    <span className={`block ${maxWidth} truncate text-sm text-gray-700`} title={text}>
+      {text}
+    </span>
+  )
+}
+
+const renderCompactList = (list, maxItems = 2, maxWidth = 'max-w-[240px]') => {
+  const items = Array.isArray(list) ? list.filter((v) => v != null && String(v).trim()) : []
+  if (!items.length) return <span className="text-sm text-gray-700">{'\u2014'}</span>
+  const normalized = items.map((v) => {
+    if (typeof v === 'object') {
+      if (typeof v.text === 'string' && v.text.trim()) return v.text
+      if (typeof v.name === 'string' && v.name.trim()) return v.name
+    }
+    return String(v)
+  })
+  const display = normalized.slice(0, maxItems)
+  const rest = normalized.length - display.length
+  const text = rest > 0 ? `${display.join(', ')} (+${rest})` : display.join(', ')
+  return (
+    <span className={`block ${maxWidth} truncate text-sm text-gray-700`} title={normalized.join(', ')}>
+      {text}
+    </span>
   )
 }
 
@@ -328,6 +373,68 @@ export const columnsVMware = BASE_COLUMNS.filter((column) => column.key !== 'vla
 export const columnsHyperV = BASE_COLUMNS.filter(
   (column) => column.key !== 'networks' && column.key !== 'nics' && column.key !== 'compatibility_human'
 )
+
+const _columnsByKey = Object.fromEntries(BASE_COLUMNS.map((column) => [column.key, column]))
+
+export const columnsAzure = [
+  {
+    ..._columnsByKey.id,
+    render: (vm) => renderTruncatedText(shortenAzureId(vm.id), 'max-w-[220px]'),
+  },
+  _columnsByKey.name,
+  _columnsByKey.power_state,
+  _columnsByKey.environment,
+  _columnsByKey.cpu_count,
+  _columnsByKey.memory_size_MiB,
+  {
+    ..._columnsByKey.host,
+    label: 'Resource Group',
+    render: (vm) => renderTruncatedText(vm.resource_group || vm.host || '\u2014', 'max-w-[180px]'),
+  },
+  {
+    ..._columnsByKey.cluster,
+    label: 'Location',
+    render: (vm) => renderTruncatedText(vm.location || vm.cluster || '\u2014', 'max-w-[140px]'),
+  },
+  {
+    key: 'vm_size',
+    label: 'VM Size',
+    render: (vm) => renderTruncatedText(vm.vm_size || vm.vmSize || '\u2014', 'max-w-[160px]'),
+  },
+  {
+    ..._columnsByKey.guest_os,
+    label: 'OS Type',
+    render: (vm) => renderGuestOsBadge(vm.os_type || vm.guest_os),
+  },
+  {
+    key: 'provisioning_state',
+    label: 'Provisioning',
+    render: (vm) => renderTruncatedText(vm.provisioning_state || '\u2014', 'max-w-[160px]'),
+  },
+  {
+    key: 'time_created',
+    label: 'Creada',
+    render: (vm) => (
+      <span className="text-sm text-gray-700">{formatDateTime(vm.time_created || vm.timeCreated)}</span>
+    ),
+  },
+  {
+    ..._columnsByKey.networks,
+    render: (vm) => renderCompactList(vm.networks, 2, 'max-w-[220px]'),
+  },
+  {
+    ..._columnsByKey.ip_addresses,
+    render: (vm) => renderCompactList(vm.ip_addresses, 2, 'max-w-[220px]'),
+  },
+  {
+    ..._columnsByKey.disks,
+    render: (vm) => renderCompactList(vm.disks, 1, 'max-w-[260px]'),
+  },
+  {
+    ..._columnsByKey.nics,
+    render: (vm) => renderCompactList(vm.nics, 2, 'max-w-[200px]'),
+  },
+]
 
 export const INVENTORY_COLUMNS = columnsVMware
 const renderPercentWithBar = (value) => {

@@ -136,6 +136,31 @@ const CEDIA_COLUMNS = [
   { key: 'nics', label: 'NICs', value: (row) => formatList(row.nics) },
 ]
 
+const INVENTORY_COLUMNS = [
+  { key: 'id', label: 'ID', width: 20 },
+  { key: 'name', label: 'Nombre', width: 26 },
+  { key: 'provider', label: 'Proveedor', width: 12 },
+  { key: 'environment', label: 'Ambiente', width: 18 },
+  { key: 'power_state', label: 'Estado', value: (row) => formatPowerState(row.power_state) },
+  { key: 'host', label: 'Host', width: 18 },
+  { key: 'cluster', label: 'Cluster', width: 18 },
+  { key: 'cpu_count', label: 'vCPU', width: 8 },
+  { key: 'cpu_usage_pct', label: 'CPU (%)', value: (row) => formatPercent(row.cpu_usage_pct) },
+  { key: 'memory_size_MiB', label: 'RAM', value: (row) => formatMemoryMiB(row.memory_size_MiB) },
+  { key: 'ram_demand_mib', label: 'RAM Demand', value: (row) => formatMemoryMiB(row.ram_demand_mib) },
+  { key: 'ram_usage_pct', label: 'RAM (%)', value: (row) => formatPercent(row.ram_usage_pct) },
+  { key: 'guest_os', label: 'SO', width: 24 },
+  { key: 'vlans', label: 'VLAN(s)', value: (row) => formatList(row.vlans) },
+  { key: 'networks', label: 'Redes', value: (row) => formatList(row.networks) },
+  { key: 'ip_addresses', label: 'IPs', width: 28, value: (row) => formatList(row.ip_addresses) },
+  { key: 'compatibility_code', label: 'Compat Code', width: 14 },
+  { key: 'compatibility_human', label: 'Compatibilidad', width: 18 },
+  { key: 'compat_generation', label: 'Generacion', width: 12 },
+  { key: 'boot_type', label: 'Boot', width: 10 },
+  { key: 'disks', label: 'Discos', width: 30, value: (row) => formatDisks(row.disks) },
+  { key: 'nics', label: 'NICs', value: (row) => formatList(row.nics) },
+]
+
 const defaultValue = (value) => {
   if (value === null || value === undefined) return ''
   if (Array.isArray(value)) return formatList(value)
@@ -143,8 +168,8 @@ const defaultValue = (value) => {
   return value
 }
 
-const buildRow = (row) =>
-  CEDIA_COLUMNS.map((column) => {
+const buildRow = (row, columns) =>
+  columns.map((column) => {
     if (typeof column.value === 'function') return column.value(row)
     return defaultValue(row[column.key])
   })
@@ -152,9 +177,23 @@ const buildRow = (row) =>
 export function exportCediaInventoryXlsx(rows = [], filenameBase = 'cedia_inventory') {
   const safeRows = Array.isArray(rows) ? rows : []
   const header = CEDIA_COLUMNS.map((column) => column.label)
-  const data = safeRows.map((row) => buildRow(row))
+  const data = safeRows.map((row) => buildRow(row, CEDIA_COLUMNS))
   const worksheet = utils.aoa_to_sheet([header, ...data])
   worksheet['!cols'] = CEDIA_COLUMNS.map((column) => ({
+    wch: column.width || 16,
+  }))
+  const workbook = utils.book_new()
+  utils.book_append_sheet(workbook, worksheet, 'Inventario')
+  const timestamp = toTimestamp()
+  writeFile(workbook, `${filenameBase}_${timestamp}.xlsx`)
+}
+
+export function exportInventoryXlsx(rows = [], filenameBase = 'inventory') {
+  const safeRows = Array.isArray(rows) ? rows : []
+  const header = INVENTORY_COLUMNS.map((column) => column.label)
+  const data = safeRows.map((row) => buildRow(row, INVENTORY_COLUMNS))
+  const worksheet = utils.aoa_to_sheet([header, ...data])
+  worksheet['!cols'] = INVENTORY_COLUMNS.map((column) => ({
     wch: column.width || 16,
   }))
   const workbook = utils.book_new()

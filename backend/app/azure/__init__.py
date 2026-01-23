@@ -1,0 +1,1 @@
+"""Azure ARM inventory module."""

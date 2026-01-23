@@ -1221,7 +1221,7 @@ export default function CediaPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 px-6 py-8">
+    <main className="min-h-screen bg-gray-50 px-6 py-8" data-tutorial-id="cedia-root">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-3xl font-bold text-gray-800">Inventario CEDIA</h2>

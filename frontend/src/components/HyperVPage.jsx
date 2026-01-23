@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import api from '../api/axios'
 import { normalizeHyperV } from '../lib/normalize'
-import { exportInventoryCsv } from '../lib/exportCsv'
+import { exportInventoryXlsx } from '../lib/exportXlsx'
 import HyperVTable from './HyperVTable'
 import { getHypervHosts, getHypervSnapshot, postHypervRefresh, getHypervConfig } from '../api/hypervHosts'
 import { useAuth } from '../context/AuthContext'
@@ -410,7 +410,7 @@ export default function HyperVPage() {
   }, [jobId, polling, fetchSnapshot])
 
   const handleExport = useCallback(
-    (rows) => exportInventoryCsv(rows, 'hyperv_inventory'),
+    (rows) => exportInventoryXlsx(rows, 'hyperv_inventory'),
     []
   )
 
@@ -508,7 +508,7 @@ export default function HyperVPage() {
   }, [banner, status, tableError, snapshotMeta])
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3" data-tutorial-id="hyperv-root">
       {noticeNode}
       <HyperVTable
         title="Inventario Hyper-V"
@@ -519,6 +519,7 @@ export default function HyperVPage() {
         searchInputId="hyperv-global-search"
         onExport={handleExport}
         exportFilenameBase="hyperv_inventory"
+        exportLabel="Exportar XLSX"
         onErrorChange={setTableError}
         refreshBusy={polling || refreshRequested}
         refreshCooldownUntil={cooldownUntil}

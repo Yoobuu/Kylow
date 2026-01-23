@@ -1,28 +1,102 @@
+import { useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
+import VMTable from "./VMTable";
+import HostTable from "./HostTable";
+import {
+  getOvirtSnapshot,
+  getOvirtJob,
+  postOvirtRefresh,
+  getOvirtVmDetail,
+  getOvirtVmPerf,
+} from "../api/ovirt";
+import {
+  getOvirtHostsSnapshot,
+  getOvirtHostsJob,
+  postOvirtHostsRefresh,
+  getOvirtHostDetail,
+  getOvirtHostDeep,
+} from "../api/ovirtHosts";
+import { normalizeVMware } from "../lib/normalize";
+import { exportInventoryXlsx } from "../lib/exportXlsx";
+
+const normalizeOvirt = (vm) => ({ ...normalizeVMware(vm), provider: "ovirt" });
 export default function KVMPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const viewParam = (searchParams.get("view") || "vms").toLowerCase();
+  const view = viewParam === "hosts" ? "hosts" : "vms";
+
+  const handleSwitch = (next) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("view", next);
+    setSearchParams(params, { replace: true });
+  };
+
+  const toggleClass = (active) =>
+    active
+      ? "bg-neutral-900 text-white shadow"
+      : "text-neutral-700 hover:text-neutral-900";
+
+  const vmTableProps = useMemo(
+    () => ({
+      providerKey: "ovirt",
+      cacheKey: "ovirt",
+      providerLabel: "oVirt",
+      pageTitle: "Inventario de VMs oVirt",
+      snapshotFetcher: getOvirtSnapshot,
+      refreshFn: postOvirtRefresh,
+      jobFetcher: getOvirtJob,
+      snapshotDataKey: "ovirt",
+      normalizeRecord: normalizeOvirt,
+      exportFilenameBase: "ovirt_inventory",
+      exportFn: exportInventoryXlsx,
+      exportLabel: "Exportar XLSX",
+      vmDetailFetcher: getOvirtVmDetail,
+      vmPerfFetcher: getOvirtVmPerf,
+      powerActionsEnabled: false,
+    }),
+    []
+  );
+
+  const hostTableProps = useMemo(
+    () => ({
+      providerKey: "ovirt",
+      cacheKey: "ovirt-hosts",
+      providerLabel: "oVirt",
+      pageTitle: "Hosts oVirt",
+      pageSubtitle: "Inventario en vivo por cluster y estado.",
+      snapshotFetcher: getOvirtHostsSnapshot,
+      refreshFn: postOvirtHostsRefresh,
+      jobFetcher: getOvirtHostsJob,
+      snapshotDataKey: "ovirt",
+      getHostDetail: getOvirtHostDetail,
+      getHostDeep: getOvirtHostDeep,
+    }),
+    []
+  );
+
   return (
-    <div className="flex min-h-full items-center justify-center rounded-2xl border border-neutral-200 bg-white p-8 shadow">
-      <div className="max-w-xl space-y-3 text-center">
-        <h1 className="text-2xl font-semibold text-neutral-900">Inventario KVM</h1>
-        <p className="text-neutral-600">
-          Estamos preparando la integración con los nodos KVM y Libvirt. Mientras tanto, puedes descargar el inventario
-          manual o solicitar acceso al equipo de virtualización.
-        </p>
-        <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-center">
-          <a
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-blue-500"
-            href="mailto:ti-inventario@usfq.edu.ec?subject=Inventario%20KVM"
-          >
-            Solicitar actualización
-          </a>
-          <button
-            type="button"
-            className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-semibold text-neutral-700 transition hover:border-neutral-400"
-            onClick={() => window.open("https://intranet.usfq.edu.ec/documentos", "_blank", "noopener")}
-          >
-            Documentación relacionada
-          </button>
-        </div>
+    <div className="relative min-h-screen w-full bg-black m-0 p-0">
+      <div className="fixed right-6 top-20 z-40 rounded-full border border-neutral-200 bg-white/90 p-1 text-xs shadow backdrop-blur">
+        <button
+          type="button"
+          onClick={() => handleSwitch("vms")}
+          className={`rounded-full px-3 py-1 font-semibold ${toggleClass(view === "vms")}`}
+        >
+          VMs
+        </button>
+        <button
+          type="button"
+          onClick={() => handleSwitch("hosts")}
+          className={`rounded-full px-3 py-1 font-semibold ${toggleClass(view === "hosts")}`}
+        >
+          Hosts
+        </button>
       </div>
+      {view === "hosts" ? (
+        <HostTable key="hosts" {...hostTableProps} />
+      ) : (
+        <VMTable key="vms" {...vmTableProps} />
+      )}
     </div>
-  )
+  );
 }

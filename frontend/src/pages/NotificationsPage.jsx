@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import NotificationsTable from "../components/NotificationsTable";
 import DisksModal from "../components/DisksModal";
 
-const PROVIDER_OPTIONS = ["", "HYPERV", "VMWARE"];
+const PROVIDER_OPTIONS = ["", "CEDIA", "HYPERV", "OVIRT", "VMWARE"];
 const METRIC_OPTIONS = ["", "CPU", "RAM", "DISK"];
 const LIMIT_OPTIONS = [10, 25, 50];
 
@@ -386,7 +386,10 @@ export default function NotificationsPage() {
           })}
         </div>
 
-        <section className="rounded-lg border border-gray-200 bg-white p-4 shadow">
+        <section
+          className="rounded-lg border border-gray-200 bg-white p-4 shadow"
+          data-tutorial-id="notifications-filters"
+        >
           <div className="grid gap-4 md:grid-cols-4">
             <div className="md:col-span-2">
               <span className="block text-xs font-semibold uppercase text-gray-600">Estados</span>
@@ -493,7 +496,10 @@ export default function NotificationsPage() {
           </div>
         </section>
 
-        <section className="rounded-lg border border-gray-200 bg-white shadow">
+        <section
+          className="rounded-lg border border-gray-200 bg-white shadow"
+          data-tutorial-id="notifications-table"
+        >
           <NotificationsTable
             items={data.items}
             loading={loading}

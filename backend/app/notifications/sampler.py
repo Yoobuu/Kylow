@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
 from app.notifications.service import VmSample
-from app.providers.hyperv.remote import RemoteCreds
+from app.providers.hyperv.remote import HostUnreachableError, RemoteCreds
 from app.providers.hyperv.schema import DiskInfo, VMRecord
 from app.vms.hyperv_router import _load_ps_content
 from app.vms.hyperv_service import collect_hyperv_inventory_for_host
@@ -66,6 +66,7 @@ def _collect_hyperv_for_host(host: str, refresh: bool, ps_content: str, observed
         password=settings.hyperv_pass,
         transport=settings.hyperv_transport,
         use_winrm=True,
+        connect_timeout=settings.hyperv_connect_timeout,
     )
     try:
         records = collect_hyperv_inventory_for_host(
@@ -73,6 +74,9 @@ def _collect_hyperv_for_host(host: str, refresh: bool, ps_content: str, observed
             ps_content=ps_content,
             use_cache=not refresh,
         )
+    except HostUnreachableError:
+        logger.warning("Hyper-V host unreachable for sampler: %s", host)
+        return []
     except Exception as exc:  # broad to ensure scheduler continues
         logger.warning("Unable to collect Hyper-V inventory for host %s: %s", host, exc)
         return []

@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import sys
+import threading
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -18,17 +19,8 @@ _raw_audit_log_path = os.getenv("AUDIT_LOG_PATH", "").strip()
 AUDIT_LOG_PATH = Path(_raw_audit_log_path).expanduser().resolve() if _raw_audit_log_path else None
 
 _audit_logger = logging.getLogger("app.audit")
-if not _audit_logger.handlers:
-    if AUDIT_LOG_PATH is not None:
-        AUDIT_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
-        handler = logging.FileHandler(AUDIT_LOG_PATH, encoding="utf-8")
-    else:
-        handler = logging.StreamHandler(stream=sys.stdout)
-    handler.setFormatter(logging.Formatter("%(message)s"))
-    handler.setLevel(logging.INFO)
-    _audit_logger.addHandler(handler)
-    _audit_logger.setLevel(logging.INFO)
-    _audit_logger.propagate = False
+_audit_logger_lock = threading.Lock()
+_audit_logger_ready = False
 
 
 @dataclass(slots=True)
@@ -65,6 +57,46 @@ def _normalize_meta(value: Any) -> Optional[MutableMapping[str, Any]]:
     return {"value": value}
 
 
+def _truncate_error(value: Exception | str, max_len: int = 200) -> str:
+    msg = str(value).strip()
+    if not msg:
+        return "unknown error"
+    if len(msg) > max_len:
+        return f"{msg[:max_len]}..."
+    return msg
+
+
+def get_audit_logger() -> logging.Logger:
+    global _audit_logger_ready
+    if _audit_logger_ready and _audit_logger.handlers:
+        return _audit_logger
+    with _audit_logger_lock:
+        if _audit_logger_ready and _audit_logger.handlers:
+            return _audit_logger
+
+        handler: logging.Handler
+        if AUDIT_LOG_PATH is not None:
+            try:
+                AUDIT_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+                handler = logging.FileHandler(AUDIT_LOG_PATH, encoding="utf-8")
+            except Exception as exc:
+                print(
+                    f"Audit log file disabled; falling back to stdout. Reason: {_truncate_error(exc)}",
+                    file=sys.stderr,
+                )
+                handler = logging.StreamHandler(stream=sys.stdout)
+        else:
+            handler = logging.StreamHandler(stream=sys.stdout)
+
+        handler.setFormatter(logging.Formatter("%(message)s"))
+        handler.setLevel(logging.INFO)
+        _audit_logger.addHandler(handler)
+        _audit_logger.setLevel(logging.INFO)
+        _audit_logger.propagate = False
+        _audit_logger_ready = True
+    return _audit_logger
+
+
 def log_audit(
     session: Session,
     *,
@@ -99,8 +131,19 @@ def log_audit(
         correlation_id=corr,
     )
 
-    session.add(entry)
-    session.flush()
+    db_write = "ok"
+    db_error = None
+    try:
+        with session.begin_nested():
+            session.add(entry)
+            session.flush()
+    except Exception as exc:
+        db_write = "failed"
+        db_error = _truncate_error(exc)
+        try:
+            session.expunge(entry)
+        except Exception:
+            pass
 
     payload = {
         "id": entry.id,
@@ -113,7 +156,10 @@ def log_audit(
         "ip": ip,
         "user_agent": ua,
         "correlation_id": corr,
+        "db_write": db_write,
+        "db_error": db_error,
     }
-    _audit_logger.info(json.dumps(payload, ensure_ascii=False, default=str))
+    logger = get_audit_logger()
+    logger.info(json.dumps(payload, ensure_ascii=False, default=str))
 
     return entry

@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 import winrm  # pywinrm en requirements
 from requests.exceptions import RequestException
+from winrm.exceptions import WinRMOperationTimeoutError, WinRMTransportError
 
 try:
     from app.main import TEST_MODE
@@ -36,6 +37,10 @@ class RemoteCreds:
 PS_SCRIPT_BASENAME = "collect_hyperv_inventory.ps1"
 
 
+class HostUnreachableError(RuntimeError):
+    pass
+
+
 def _compute_winrm_timeouts(read_timeout_sec: int, *, cap_operation_timeout_sec: int | None = None) -> tuple[int, int]:
     """
     Compute pywinrm timeouts.
@@ -49,6 +54,59 @@ def _compute_winrm_timeouts(read_timeout_sec: int, *, cap_operation_timeout_sec:
     # Keep a small margin so the HTTP client doesn't cut off exactly at WSMan timeout.
     read_timeout = op_timeout + 30
     return op_timeout, read_timeout
+
+
+def _compute_probe_timeouts(connect_timeout_sec: int) -> tuple[int, int]:
+    read_timeout = max(2, int(connect_timeout_sec))
+    op_timeout = max(1, read_timeout - 1)
+    if read_timeout <= op_timeout:
+        read_timeout = op_timeout + 1
+    return op_timeout, read_timeout
+
+
+def _is_unreachable_exception(exc: Exception) -> bool:
+    if isinstance(exc, HostUnreachableError):
+        return True
+    if isinstance(exc, (RequestException, WinRMTransportError, WinRMOperationTimeoutError, TimeoutError)):
+        msg = str(exc).lower()
+        return any(
+            token in msg
+            for token in (
+                "connect",
+                "connection",
+                "timed out",
+                "timeout",
+                "refused",
+                "unreachable",
+                "no route",
+                "failed to establish",
+                "name or service not known",
+                "temporary failure in name resolution",
+            )
+        )
+    return False
+
+
+def _ensure_winrm_reachable(creds: RemoteCreds) -> None:
+    if creds.connect_timeout <= 0:
+        return
+    endpoint = f"{creds.scheme}://{creds.host}:{creds.port}/wsman"
+    op_timeout, read_timeout = _compute_probe_timeouts(creds.connect_timeout)
+    try:
+        session = winrm.Session(
+            target=endpoint,
+            auth=(creds.username or "", creds.password or ""),
+            transport=creds.transport,
+            read_timeout_sec=read_timeout,
+            operation_timeout_sec=op_timeout,
+        )
+        response = session.run_cmd("echo", ["ok"])
+        if response.status_code != 0:
+            raise RuntimeError(f"WinRM probe failed: {response.status_code}")
+    except Exception as exc:
+        if _is_unreachable_exception(exc):
+            raise HostUnreachableError("unreachable") from exc
+        raise
 
 
 def _run_local_powershell(
@@ -204,6 +262,7 @@ def _run_winrm_inline(
     import base64, uuid
 
     endpoint = f"{creds.scheme}://{creds.host}:{creds.port}/wsman"
+    _ensure_winrm_reachable(creds)
     op_timeout, read_timeout = _compute_winrm_timeouts(creds.read_timeout)
 
     session = winrm.Session(
@@ -395,6 +454,8 @@ if (Test-Path -LiteralPath $p) {{
 
         except (json.JSONDecodeError, RequestException, subprocess.TimeoutExpired,
                 RuntimeError, ValueError) as e:
+            if _is_unreachable_exception(e):
+                raise HostUnreachableError("unreachable") from e
             last_err = e
             logger.warning(
                 "Intento %s/%s fallA3 para %s: %s",
@@ -457,6 +518,7 @@ try {{
 
     try:
         endpoint = f"{creds.scheme}://{creds.host}:{creds.port}/wsman"
+        _ensure_winrm_reachable(creds)
         op_timeout, read_timeout = _compute_winrm_timeouts(
             creds.read_timeout,
             cap_operation_timeout_sec=120,
@@ -469,6 +531,8 @@ try {{
             operation_timeout_sec=op_timeout,
         )
         response = session.run_ps(script)
+    except HostUnreachableError:
+        return (False, "unreachable")
     except Exception as exc:
         logger.error("WinRM power action failure for %s: %s", creds.host, exc)
         return (False, f"WinRM error: {exc}")

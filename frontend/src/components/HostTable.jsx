@@ -56,7 +56,19 @@ const typeBadge = (type) => (
   <Badge tone="border-cyan-400 text-cyan-200 bg-cyan-500/10">{type || 'Servidor'}</Badge>
 )
 
-export default function HostTable() {
+export default function HostTable({
+  providerKey = 'hosts',
+  cacheKey,
+  providerLabel = 'VMware',
+  snapshotFetcher = getVmwareHostsSnapshot,
+  refreshFn = postVmwareHostsRefresh,
+  jobFetcher = getVmwareHostsJob,
+  snapshotDataKey = 'vmware',
+  pageTitle = 'Hosts ESXi',
+  pageSubtitle = 'Inventario en vivo por cluster y estado.',
+  getHostDetail,
+  getHostDeep,
+}) {
   const { hasPermission } = useAuth()
   const isSuperadmin = hasPermission('jobs.trigger')
   const [snapshotGeneratedAt, setSnapshotGeneratedAt] = useState(null)
@@ -70,7 +82,7 @@ export default function HostTable() {
   const [refreshNotice, setRefreshNotice] = useState(null)
   const pollRef = useRef(null)
   const hostFetcher = useCallback(async () => {
-    const snapshot = await getVmwareHostsSnapshot()
+    const snapshot = await snapshotFetcher()
     if (snapshot?.empty) {
       setSnapshotGeneratedAt(null)
       setSnapshotSource(null)
@@ -83,14 +95,18 @@ export default function HostTable() {
     setSnapshotStale(Boolean(snapshot?.stale))
     setSnapshotStaleReason(snapshot?.stale_reason || null)
     const payload = snapshot?.data || {}
-    return Array.isArray(payload?.vmware) ? payload.vmware : []
-  }, [])
+    const dataKey = snapshotDataKey || providerKey
+    return Array.isArray(payload?.[dataKey]) ? payload[dataKey] : []
+  }, [providerKey, snapshotDataKey, snapshotFetcher])
 
+  const resolvedCacheKey = cacheKey ? `${cacheKey}:hosts` : `${providerKey}:hosts`
   const { state, actions } = useInventoryState({
-    provider: 'hosts',
+    provider: providerKey,
+    cacheKey: resolvedCacheKey,
     fetcher: hostFetcher,
     normalizeRecord: normalizeHostSummary,
     summaryBuilder: hostSummaryBuilder,
+    groupersKey: 'hosts',
     initialGroup: 'cluster',
     cacheTtlMs: 5 * 60 * 1000,
     autoRefreshMs: AUTO_REFRESH_MS,
@@ -141,6 +157,10 @@ export default function HostTable() {
     [hosts]
   )
   const refreshBusy = refreshPolling || refreshRequested || refreshing || loading
+  const isOvirt = useMemo(
+    () => providerKey === 'ovirt' || resolvedCacheKey.startsWith('ovirt'),
+    [providerKey, resolvedCacheKey]
+  )
 
   const handleFilterChange = useCallback(
     (field, value) => {
@@ -169,13 +189,14 @@ export default function HostTable() {
 
   const handleRefresh = useCallback(async () => {
     if (!isSuperadmin) {
-      setRefreshNotice({ kind: 'error', text: 'Sin permisos para refrescar hosts VMware.' })
+      const label = providerLabel ? ` ${providerLabel}` : ''
+      setRefreshNotice({ kind: 'error', text: `Sin permisos para refrescar hosts${label}.` })
       return
     }
     setRefreshNotice(null)
     setRefreshRequested(true)
     try {
-      const resp = await postVmwareHostsRefresh({ force: true })
+      const resp = await refreshFn({ force: true })
       if (resp?.message === 'cooldown_active') {
         const until = resp?.cooldown_until ? `hasta ${resp.cooldown_until}` : 'intervalo mínimo'
         setRefreshNotice({ kind: 'warning', text: `Cooldown activo (${until}).` })
@@ -190,20 +211,22 @@ export default function HostTable() {
     } catch (err) {
       const status = err?.response?.status
       if (status === 403) {
-        setRefreshNotice({ kind: 'error', text: 'Sin permisos para refrescar hosts VMware.' })
+        const label = providerLabel ? ` ${providerLabel}` : ''
+        setRefreshNotice({ kind: 'error', text: `Sin permisos para refrescar hosts${label}.` })
         return
       }
-      setRefreshNotice({ kind: 'error', text: 'Error iniciando refresh de hosts VMware.' })
+      const label = providerLabel ? ` ${providerLabel}` : ''
+      setRefreshNotice({ kind: 'error', text: `Error iniciando refresh de hosts${label}.` })
     } finally {
       setRefreshRequested(false)
     }
-  }, [isSuperadmin])
+  }, [isSuperadmin, providerLabel, refreshFn])
 
   useEffect(() => {
     if (!refreshJobId || !refreshPolling) return undefined
     const tick = async () => {
       try {
-        const job = await getVmwareHostsJob(refreshJobId)
+        const job = await jobFetcher(refreshJobId)
         const terminal = ['succeeded', 'failed', 'expired'].includes(job.status)
         const isPartial = job.message === 'partial'
         if (terminal) {
@@ -216,21 +239,23 @@ export default function HostTable() {
                 : null
             )
           } else {
-            setRefreshNotice({ kind: 'error', text: 'No se pudo completar el refresh de hosts VMware.' })
+            const label = providerLabel ? ` ${providerLabel}` : ''
+            setRefreshNotice({ kind: 'error', text: `No se pudo completar el refresh de hosts${label}.` })
           }
           await fetchVm({ refresh: false, showLoading: false })
         }
       } catch (err) {
         setRefreshPolling(false)
         setRefreshJobId(null)
-        setRefreshNotice({ kind: 'error', text: 'Error durante el refresh de hosts VMware.' })
+        const label = providerLabel ? ` ${providerLabel}` : ''
+        setRefreshNotice({ kind: 'error', text: `Error durante el refresh de hosts${label}.` })
       }
     }
     tick()
     const id = setInterval(tick, 2500)
     pollRef.current = id
     return () => clearInterval(id)
-  }, [refreshJobId, refreshPolling, fetchVm])
+  }, [refreshJobId, refreshPolling, fetchVm, jobFetcher, providerLabel])
 
   const kpiCards = [
     { label: 'Hosts totales', value: resumen.total || 0, icon: IoServerSharp },
@@ -252,18 +277,21 @@ export default function HostTable() {
     },
   ]
 
-  const tableHeader = [
-    { key: 'name', label: 'Nombre' },
-    { key: 'cluster', label: 'Cluster' },
-    { key: 'connection_state', label: 'Conexión' },
-    { key: 'health', label: 'Health' },
-    { key: 'server_type', label: 'Tipo' },
-    { key: 'cpu_usage_pct', label: 'CPU %' },
-    { key: 'memory_usage_pct', label: 'RAM %' },
-    { key: 'version', label: 'ESXi' },
-    { key: 'vendor', label: 'Vendor/Modelo' },
-    { key: 'total_vms', label: 'VMs' },
-  ]
+  const tableHeader = useMemo(
+    () => [
+      { key: 'name', label: 'Nombre' },
+      { key: 'cluster', label: 'Cluster' },
+      { key: 'connection_state', label: 'Conexión' },
+      { key: 'health', label: 'Health' },
+      { key: 'server_type', label: 'Tipo' },
+      { key: 'cpu_usage_pct', label: 'CPU %' },
+      { key: 'memory_usage_pct', label: 'RAM %' },
+      { key: 'version', label: 'ESXi' },
+      { key: 'vendor', label: 'Vendor/Modelo' },
+      { key: 'total_vms', label: isOvirt ? 'VMs encendidas' : 'VMs' },
+    ],
+    [isOvirt]
+  )
 
   const renderBar = (value, tone = 'from-yellow-400 to-amber-500') => {
     if (value == null || Number.isNaN(value)) return <span className="text-neutral-400">—</span>
@@ -279,13 +307,17 @@ export default function HostTable() {
     )
   }
 
+  const containerClass = isOvirt
+    ? `${gradientBg} min-h-screen text-white -mx-4 -my-6 sm:-mx-6`
+    : `${gradientBg} min-h-screen text-white`
+
   return (
-    <div className={`${gradientBg} min-h-screen text-white`}>
+    <div className={containerClass} data-tutorial-id="host-table-root">
       <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-yellow-300 drop-shadow">Hosts ESXi</h2>
-            <p className="text-sm text-neutral-300">Inventario en vivo por cluster y estado.</p>
+            <h2 className="text-3xl font-bold text-yellow-300 drop-shadow">{pageTitle}</h2>
+            <p className="text-sm text-neutral-300">{pageSubtitle}</p>
           </div>
           <div className="flex flex-col items-end gap-2 text-xs text-neutral-300">
             {refreshBusy && <span className="text-cyan-300 animate-pulse">Actualizando…</span>}
@@ -323,7 +355,10 @@ export default function HostTable() {
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+        <div
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5"
+          data-tutorial-id="host-kpis"
+        >
           {kpiCards.map((card, idx) => {
             const Icon = card.icon
             return (
@@ -341,7 +376,10 @@ export default function HostTable() {
           })}
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        <div
+          className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
+          data-tutorial-id="host-filters"
+        >
           <input
             type="text"
             placeholder="Buscar por nombre o cluster..."
@@ -451,7 +489,19 @@ export default function HostTable() {
           </div>
         )}
 
-        <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-950/80 shadow-2xl">
+        {isOvirt && (
+          <div
+            className="text-xs text-neutral-400"
+            title="Las VMs apagadas no tienen host.id, por eso no se incluyen aquí."
+          >
+            En oVirt, este conteo muestra solo VMs en ejecución (las apagadas no se asignan a un host).
+          </div>
+        )}
+
+        <div
+          className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-950/80 shadow-2xl"
+          data-tutorial-id="host-table-list"
+        >
           <table className="min-w-full divide-y divide-white/10">
             <thead className="bg-neutral-900/60 text-xs uppercase text-neutral-300">
               <tr>
@@ -563,10 +613,18 @@ export default function HostTable() {
           record={selectedRecord}
           onClose={handleCloseModal}
           onOpenDeep={() => setShowDeep(true)}
+          getHostDetail={getHostDetail}
+          getHostDeep={getHostDeep}
         />
       )}
 
-      {showDeep && selectedVm && <DeepExpertModal hostId={selectedVm} onClose={() => setShowDeep(false)} />}
+      {showDeep && selectedVm && (
+        <DeepExpertModal
+          hostId={selectedVm}
+          onClose={() => setShowDeep(false)}
+          getHostDeep={getHostDeep}
+        />
+      )}
     </div>
   )
 }

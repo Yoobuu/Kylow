@@ -16,7 +16,25 @@ import { useAuth } from '../context/AuthContext'
 const AUTO_REFRESH_MS = 5 * 60 * 1000
 const DEBUG_SNAPSHOT = false
 
-export default function VMTable() {
+export default function VMTable({
+  providerKey = 'vmware',
+  cacheKey,
+  providerLabel = 'VMware',
+  snapshotFetcher: fetchSnapshot = getVmwareSnapshot,
+  refreshFn = postVmwareRefresh,
+  jobFetcher = getVmwareJob,
+  snapshotDataKey = 'vmware',
+  columns = columnsVMware,
+  normalizeRecord = normalizeVMware,
+  exportFilenameBase = 'vmware_inventory',
+  exportFn = exportInventoryCsv,
+  exportLabel = 'Exportar CSV',
+  pageTitle = 'Inventario de VMs',
+  vmDetailFetcher,
+  vmPerfFetcher,
+  powerActionsEnabled = true,
+  powerUnavailableMessage,
+}) {
   const { hasPermission } = useAuth()
   const isSuperadmin = hasPermission('jobs.trigger')
   const [snapshotGeneratedAt, setSnapshotGeneratedAt] = useState(null)
@@ -29,8 +47,9 @@ export default function VMTable() {
   const [refreshRequested, setRefreshRequested] = useState(false)
   const [refreshNotice, setRefreshNotice] = useState(null)
   const pollRef = useRef(null)
+  const resolvedCacheKey = cacheKey ? `${cacheKey}:vms` : `${providerKey}:vms`
   const snapshotFetcher = useCallback(async () => {
-    const snapshot = await getVmwareSnapshot()
+    const snapshot = await fetchSnapshot()
     if (DEBUG_SNAPSHOT) {
       const payloadKeys =
         snapshot && snapshot.data && typeof snapshot.data === 'object'
@@ -54,13 +73,30 @@ export default function VMTable() {
     setSnapshotStale(Boolean(snapshot?.stale))
     setSnapshotStaleReason(snapshot?.stale_reason || null)
     setSnapshotLoadedFromSnapshot(true)
-    const payload = snapshot?.data || {}
-    return Array.isArray(payload?.vmware) ? payload.vmware : []
-  }, [])
+    const payload = snapshot?.data
+    if (Array.isArray(payload)) {
+      return payload
+    }
+    const dataKey = snapshotDataKey || providerKey
+    if (payload && typeof payload === 'object') {
+      if (Array.isArray(payload?.[dataKey])) return payload[dataKey]
+      const values = Object.values(payload)
+      if (values.length === 1 && Array.isArray(values[0])) return values[0]
+    }
+    if (Array.isArray(snapshot?.[dataKey])) {
+      return snapshot[dataKey]
+    }
+    if (Array.isArray(snapshot?.records)) {
+      return snapshot.records
+    }
+    return []
+  }, [providerKey, snapshotDataKey, fetchSnapshot])
   const { state, actions } = useInventoryState({
-    provider: 'vmware',
+    provider: providerKey,
+    cacheKey: resolvedCacheKey,
     autoRefreshMs: AUTO_REFRESH_MS,
     fetcher: snapshotFetcher,
+    normalizeRecord,
   })
   const {
     vms,
@@ -116,7 +152,7 @@ export default function VMTable() {
     if (snapshotLoadedFromSnapshot) return
     if (snapshotGeneratedAt || snapshotSource) return
     if (!vms.length) return
-    const cachedEntry = inventoryCache.get('vmware')
+    const cachedEntry = inventoryCache.get(resolvedCacheKey)
     const cachedList = Array.isArray(cachedEntry?.data) ? cachedEntry.data : null
     if (!cachedList || !cachedList.length) return
     setSnapshotSource('cache')
@@ -128,6 +164,7 @@ export default function VMTable() {
     snapshotGeneratedAt,
     snapshotSource,
     vms.length,
+    resolvedCacheKey,
   ])
 
   const handleFilterChange = useCallback(
@@ -152,18 +189,19 @@ export default function VMTable() {
 
   const handleExport = useCallback(() => {
     if (!processed.length) return
-    exportInventoryCsv(processed, 'vmware_inventory')
-  }, [processed])
+    exportFn(processed, exportFilenameBase)
+  }, [processed, exportFilenameBase, exportFn])
 
   const handleRefresh = useCallback(async () => {
     if (!isSuperadmin) {
-      setRefreshNotice({ kind: 'error', text: 'Sin permisos para refrescar VMs VMware.' })
+      const label = providerLabel ? ` ${providerLabel}` : ''
+      setRefreshNotice({ kind: 'error', text: `Sin permisos para refrescar VMs${label}.` })
       return
     }
     setRefreshNotice(null)
     setRefreshRequested(true)
     try {
-      const resp = await postVmwareRefresh({ force: true })
+      const resp = await refreshFn({ force: true })
       if (resp?.message === 'cooldown_active') {
         const until = resp?.cooldown_until ? `hasta ${resp.cooldown_until}` : 'intervalo minimo'
         setRefreshNotice({ kind: 'warning', text: `Cooldown activo (${until}).` })
@@ -178,20 +216,22 @@ export default function VMTable() {
     } catch (err) {
       const status = err?.response?.status
       if (status === 403) {
-        setRefreshNotice({ kind: 'error', text: 'Sin permisos para refrescar VMs VMware.' })
+        const label = providerLabel ? ` ${providerLabel}` : ''
+        setRefreshNotice({ kind: 'error', text: `Sin permisos para refrescar VMs${label}.` })
         return
       }
-      setRefreshNotice({ kind: 'error', text: 'Error iniciando refresh de VMs VMware.' })
+      const label = providerLabel ? ` ${providerLabel}` : ''
+      setRefreshNotice({ kind: 'error', text: `Error iniciando refresh de VMs${label}.` })
     } finally {
       setRefreshRequested(false)
     }
-  }, [isSuperadmin])
+  }, [isSuperadmin, providerLabel, refreshFn])
 
   useEffect(() => {
     if (!refreshJobId || !refreshPolling) return undefined
     const tick = async () => {
       try {
-        const job = await getVmwareJob(refreshJobId)
+        const job = await jobFetcher(refreshJobId)
         const terminal = ['succeeded', 'failed', 'expired'].includes(job.status)
         const isPartial = job.message === 'partial'
         if (terminal) {
@@ -204,31 +244,33 @@ export default function VMTable() {
                 : null
             )
           } else {
-            setRefreshNotice({ kind: 'error', text: 'No se pudo completar el refresh de VMs VMware.' })
+            const label = providerLabel ? ` ${providerLabel}` : ''
+            setRefreshNotice({ kind: 'error', text: `No se pudo completar el refresh de VMs${label}.` })
           }
           await fetchVm({ refresh: false, showLoading: false })
         }
       } catch (err) {
         setRefreshPolling(false)
         setRefreshJobId(null)
-        setRefreshNotice({ kind: 'error', text: 'Error durante el refresh de VMs VMware.' })
+        const label = providerLabel ? ` ${providerLabel}` : ''
+        setRefreshNotice({ kind: 'error', text: `Error durante el refresh de VMs${label}.` })
       }
     }
     tick()
     const id = setInterval(tick, 2500)
     pollRef.current = id
     return () => clearInterval(id)
-  }, [refreshJobId, refreshPolling, fetchVm])
+  }, [refreshJobId, refreshPolling, fetchVm, jobFetcher, providerLabel])
 
   const handleRowClick = useCallback(
     (row) => {
       if (!row) return
-      const normalized = row.provider ? row : { ...normalizeVMware(row), __raw: row }
+      const normalized = row.provider ? row : { ...normalizeRecord(row), __raw: row }
       if (!normalized.id) return
       setSelectedVm(normalized.id)
       setSelectedRecord(normalized)
     },
-    [setSelectedRecord, setSelectedVm]
+    [normalizeRecord, setSelectedRecord, setSelectedVm]
   )
 
   const handleCloseModal = useCallback(
@@ -261,13 +303,13 @@ export default function VMTable() {
   }
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-gray-50 min-h-screen" data-tutorial-id="vm-table-root">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">Inventario de VMs</h2>
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">{pageTitle}</h2>
           <div className="h-1 w-32 bg-[#5da345] rounded-full"></div>
         </div>
-        <div className="flex flex-col items-end gap-2">
+        <div className="flex flex-col items-end gap-2" data-tutorial-id="vm-table-actions">
           <div className="flex items-center gap-2">
             <button
               onClick={handleRefresh}
@@ -282,7 +324,7 @@ export default function VMTable() {
               disabled={!processed.length}
               className="bg-[#5da345] text-white font-medium py-2 px-4 rounded-lg shadow hover:bg-[#4c8c38] transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Exportar CSV
+              {exportLabel}
             </button>
           </div>
           {refreshBusy && (
@@ -306,7 +348,9 @@ export default function VMTable() {
         </div>
       </div>
 
-      <VMSummaryCards summary={resumen} />
+      <div data-tutorial-id="vm-summary">
+        <VMSummaryCards summary={resumen} />
+      </div>
 
       <div className="mb-6">
         <label htmlFor="global-search" className="block text-sm font-medium text-gray-700 mb-1">
@@ -322,20 +366,22 @@ export default function VMTable() {
         />
       </div>
 
-      <VMFiltersPanel
-        filter={filter}
-        groupByOption={groupByOption}
-        uniqueEnvironments={uniqueEnvironments}
-        uniquePowerStates={uniquePowerStates}
-        uniqueGuestOS={uniqueGuestOS}
-        uniqueHosts={uniqueHosts}
-        uniqueClusters={uniqueClusters}
-        uniqueVlans={uniqueVlans}
-        onFilterChange={handleFilterChange}
-        onClearFilters={clearFilters}
-        onGroupChange={handleGroupChange}
-        hasFilters={hasFilters}
-      />
+      <div data-tutorial-id="vm-filters">
+        <VMFiltersPanel
+          filter={filter}
+          groupByOption={groupByOption}
+          uniqueEnvironments={uniqueEnvironments}
+          uniquePowerStates={uniquePowerStates}
+          uniqueGuestOS={uniqueGuestOS}
+          uniqueHosts={uniqueHosts}
+          uniqueClusters={uniqueClusters}
+          uniqueVlans={uniqueVlans}
+          onFilterChange={handleFilterChange}
+          onClearFilters={clearFilters}
+          onGroupChange={handleGroupChange}
+          hasFilters={hasFilters}
+        />
+      </div>
 
       <div className="text-sm text-gray-600 mb-4">
         Mostrando {processed.length} de {vms.length} VMs
@@ -344,63 +390,69 @@ export default function VMTable() {
         )}
       </div>
 
-      {emptyMessage && !loading && !error ? (
-        <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-600 shadow">
-          {emptyMessage}
-        </div>
-      ) : emptyStateType ? (
-        <VMEmptyState type={emptyStateType} onResetFilters={clearFilters} />
-      ) : hasGroups ? (
-        <VMGroupsTable
-          columns={columnsVMware}
-          entries={deferredEntries}
-          groupByOption={groupByOption}
-          collapsedGroups={collapsedGroups}
-          toggleGroup={toggleGroup}
-          sortBy={sortBy}
-          onHeaderClick={onHeaderClick}
-          onRowClick={handleRowClick}
-          loading={loading}
-        />
-      ) : (
-        <table className="min-w-full bg-white rounded-lg shadow overflow-hidden">
-          <thead className="bg-gray-100 text-left text-sm text-gray-600">
-            <tr>
-              <th className="px-4 py-2">Nombre</th>
-              <th className="px-4 py-2">Estado</th>
-              <th className="px-4 py-2">Host</th>
-              <th className="px-4 py-2">Cluster</th>
-              <th className="px-4 py-2">SO</th>
-              <th className="px-4 py-2">vCPU</th>
-              <th className="px-4 py-2">RAM (MiB)</th>
-            </tr>
-          </thead>
-          <tbody className="text-sm text-gray-800">
-            {fallbackRows && fallbackRows.map((vm) => (
-              <tr
-                key={vm.id || vm.name}
-                className="border-b hover:bg-gray-50 cursor-pointer"
-                onClick={() => handleRowClick(vm)}
-              >
-                <td className="px-4 py-2 font-medium text-gray-900">{vm.name || '—'}</td>
-                <td className="px-4 py-2">{vm.power_state || vm.State || '—'}</td>
-                <td className="px-4 py-2">{vm.host || vm.HVHost || '—'}</td>
-                <td className="px-4 py-2">{vm.cluster || vm.Cluster || '—'}</td>
-                <td className="px-4 py-2">{vm.guest_os || vm.OS || '—'}</td>
-                <td className="px-4 py-2">{vm.cpu_count ?? vm.vCPU ?? '—'}</td>
-                <td className="px-4 py-2">{vm.memory_size_MiB ?? vm.RAM_MiB ?? '—'}</td>
+      <div data-tutorial-id="vm-table-list">
+        {emptyMessage && !loading && !error ? (
+          <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-600 shadow">
+            {emptyMessage}
+          </div>
+        ) : emptyStateType ? (
+          <VMEmptyState type={emptyStateType} onResetFilters={clearFilters} />
+        ) : hasGroups ? (
+          <VMGroupsTable
+            columns={columns}
+            entries={deferredEntries}
+            groupByOption={groupByOption}
+            collapsedGroups={collapsedGroups}
+            toggleGroup={toggleGroup}
+            sortBy={sortBy}
+            onHeaderClick={onHeaderClick}
+            onRowClick={handleRowClick}
+            loading={loading}
+          />
+        ) : (
+          <table className="min-w-full bg-white rounded-lg shadow overflow-hidden">
+            <thead className="bg-gray-100 text-left text-sm text-gray-600">
+              <tr>
+                <th className="px-4 py-2">Nombre</th>
+                <th className="px-4 py-2">Estado</th>
+                <th className="px-4 py-2">Host</th>
+                <th className="px-4 py-2">Cluster</th>
+                <th className="px-4 py-2">SO</th>
+                <th className="px-4 py-2">vCPU</th>
+                <th className="px-4 py-2">RAM (MiB)</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody className="text-sm text-gray-800">
+              {fallbackRows && fallbackRows.map((vm) => (
+                <tr
+                  key={vm.id || vm.name}
+                  className="border-b hover:bg-gray-50 cursor-pointer"
+                  onClick={() => handleRowClick(vm)}
+                >
+                  <td className="px-4 py-2 font-medium text-gray-900">{vm.name || '—'}</td>
+                  <td className="px-4 py-2">{vm.power_state || vm.State || '—'}</td>
+                  <td className="px-4 py-2">{vm.host || vm.HVHost || '—'}</td>
+                  <td className="px-4 py-2">{vm.cluster || vm.Cluster || '—'}</td>
+                  <td className="px-4 py-2">{vm.guest_os || vm.OS || '—'}</td>
+                  <td className="px-4 py-2">{vm.cpu_count ?? vm.vCPU ?? '—'}</td>
+                  <td className="px-4 py-2">{vm.memory_size_MiB ?? vm.RAM_MiB ?? '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
 
       {selectedVm && (
         <VMDetailModal
           vmId={selectedVm}
           record={selectedRecord}
           onClose={handleCloseModal}
-          onAction={handleDetailAction}
+          onAction={powerActionsEnabled ? handleDetailAction : undefined}
+          getVmDetail={vmDetailFetcher}
+          getVmPerf={vmPerfFetcher}
+          powerActionsEnabled={powerActionsEnabled}
+          powerUnavailableMessage={powerUnavailableMessage}
         />
       )}
     </div>

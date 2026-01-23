@@ -206,6 +206,22 @@ def register_startup_events(app: FastAPI) -> None:
                     logger.info("VMware warmup scheduled on startup")
         except Exception as exc:  # pragma: no cover - defensive
             logger.exception("Failed to start VMware warmup: %s", exc)
+        # ── oVirt warmup ──
+        try:
+            from app.vms.ovirt_router import _kick_scheduler as _kick_ovirt_scheduler, _kick_warmup as _kick_ovirt_warmup
+
+            _kick_ovirt_scheduler()
+            if settings.warmup_enabled:
+                if not settings.ovirt_configured:
+                    logger.info(
+                        "Warmup skipped for ovirt: not configured missing=%s",
+                        settings.ovirt_missing_envs or [],
+                    )
+                elif settings.ovirt_enabled:
+                    _kick_ovirt_warmup()
+                    logger.info("oVirt warmup scheduled on startup")
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.exception("Failed to start oVirt warmup: %s", exc)
         # ── VMware hosts warmup ──
         try:
             from app.hosts.vmware_host_snapshot_router import (
@@ -225,6 +241,25 @@ def register_startup_events(app: FastAPI) -> None:
                     logger.info("VMware hosts warmup scheduled on startup")
         except Exception as exc:  # pragma: no cover - defensive
             logger.exception("Failed to start VMware hosts warmup: %s", exc)
+        # ── oVirt hosts warmup ──
+        try:
+            from app.hosts.ovirt_host_snapshot_router import (
+                _kick_scheduler as _kick_ovirt_hosts_scheduler,
+                _kick_warmup as _kick_ovirt_hosts_warmup,
+            )
+
+            _kick_ovirt_hosts_scheduler()
+            if settings.warmup_enabled:
+                if not settings.ovirt_configured:
+                    logger.info(
+                        "Warmup skipped for ovirt-hosts: not configured missing=%s",
+                        settings.ovirt_missing_envs or [],
+                    )
+                elif settings.ovirt_enabled:
+                    _kick_ovirt_hosts_warmup()
+                    logger.info("oVirt hosts warmup scheduled on startup")
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.exception("Failed to start oVirt hosts warmup: %s", exc)
         # ── Cedia warmup ──
         try:
             from app.cedia.cedia_snapshot_router import _kick_scheduler as _kick_cedia_scheduler, _kick_warmup as _kick_cedia_warmup
@@ -241,6 +276,22 @@ def register_startup_events(app: FastAPI) -> None:
                     logger.info("Cedia warmup scheduled on startup")
         except Exception as exc:  # pragma: no cover - defensive
             logger.exception("Failed to start Cedia warmup: %s", exc)
+        # ── Azure warmup ──
+        try:
+            from app.azure.azure_snapshot_router import _kick_scheduler as _kick_azure_scheduler, _kick_warmup as _kick_azure_warmup
+
+            _kick_azure_scheduler()
+            if settings.warmup_enabled:
+                if not settings.azure_configured:
+                    logger.info(
+                        "Warmup skipped for azure: not configured missing=%s",
+                        settings.azure_missing_envs or [],
+                    )
+                elif settings.azure_enabled:
+                    _kick_azure_warmup()
+                    logger.info("Azure warmup scheduled on startup")
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.exception("Failed to start Azure warmup: %s", exc)
 
         # ── Startup config logging (no secrets) ──
         logger.info(
@@ -256,21 +307,36 @@ def register_startup_events(app: FastAPI) -> None:
             settings.vmware_missing_envs or [],
         )
         logger.info(
+            "ovirt enabled=%s configured=%s missing=%s",
+            settings.ovirt_enabled,
+            settings.ovirt_configured,
+            settings.ovirt_missing_envs or [],
+        )
+        logger.info(
             "cedia enabled=%s configured=%s missing=%s",
             settings.cedia_enabled,
             settings.cedia_configured,
             settings.cedia_missing_envs or [],
         )
         logger.info(
+            "azure enabled=%s configured=%s missing=%s",
+            settings.azure_enabled,
+            settings.azure_configured,
+            settings.azure_missing_envs or [],
+        )
+        logger.info(
             "Hyper-V hosts configured: %s",
             len(settings.hyperv_hosts_configured),
         )
         logger.info(
-            "Refresh intervals (minutes): hyperv=%s vmware=%s vmware_hosts=%s cedia=%s",
+            "Refresh intervals (minutes): hyperv=%s vmware=%s ovirt=%s vmware_hosts=%s ovirt_hosts=%s cedia=%s azure=%s",
             settings.hyperv_refresh_interval_minutes,
             settings.vmware_refresh_interval_minutes,
+            settings.ovirt_refresh_interval_minutes,
             settings.vmware_hosts_refresh_interval_minutes,
+            settings.ovirt_hosts_refresh_interval_minutes,
             settings.cedia_refresh_interval_minutes,
+            settings.azure_refresh_interval_minutes,
         )
         logger.info(
             "CORS allow origins configured: %s",
@@ -304,6 +370,14 @@ def register_startup_events(app: FastAPI) -> None:
             logger.info("VMware warmup stopped")
         except Exception as exc:  # pragma: no cover - defensive
             logger.exception("Failed to stop VMware warmup: %s", exc)
+        # ── oVirt warmup stop ──
+        try:
+            from app.vms.ovirt_router import _stop_warmup as _stop_ovirt_warmup
+
+            _stop_ovirt_warmup()
+            logger.info("oVirt warmup stopped")
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.exception("Failed to stop oVirt warmup: %s", exc)
         # ── VMware hosts warmup stop ──
         try:
             from app.hosts.vmware_host_snapshot_router import _stop_warmup as _stop_vmware_hosts_warmup
@@ -312,6 +386,14 @@ def register_startup_events(app: FastAPI) -> None:
             logger.info("VMware hosts warmup stopped")
         except Exception as exc:  # pragma: no cover - defensive
             logger.exception("Failed to stop VMware hosts warmup: %s", exc)
+        # ── oVirt hosts warmup stop ──
+        try:
+            from app.hosts.ovirt_host_snapshot_router import _stop_warmup as _stop_ovirt_hosts_warmup
+
+            _stop_ovirt_hosts_warmup()
+            logger.info("oVirt hosts warmup stopped")
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.exception("Failed to stop oVirt hosts warmup: %s", exc)
         # ── Cedia warmup stop ──
         try:
             from app.cedia.cedia_snapshot_router import _stop_warmup as _stop_cedia_warmup
@@ -320,3 +402,11 @@ def register_startup_events(app: FastAPI) -> None:
             logger.info("Cedia warmup stopped")
         except Exception as exc:  # pragma: no cover - defensive
             logger.exception("Failed to stop Cedia warmup: %s", exc)
+        # ── Azure warmup stop ──
+        try:
+            from app.azure.azure_snapshot_router import _stop_warmup as _stop_azure_warmup
+
+            _stop_azure_warmup()
+            logger.info("Azure warmup stopped")
+        except Exception as exc:  # pragma: no cover - defensive
+            logger.exception("Failed to stop Azure warmup: %s", exc)

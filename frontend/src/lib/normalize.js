@@ -280,6 +280,9 @@ function normalizeVMware(vm) {
   const vlans = dedupeSortStrings(vm.vlans ?? [])
   const networks = Array.isArray(vm.networks) ? vm.networks : []
   const ipAddresses = dedupeSortStrings(vm.ip_addresses ?? [])
+  const publicIps = dedupeSortStrings(vm.public_ips ?? [])
+  const publicDns = dedupeSortStrings(vm.public_dns ?? [])
+  const zones = Array.isArray(vm.zones) ? vm.zones.map((z) => String(z)) : []
 
   const formatDiskEntry = (entry) => {
     if (!entry) return null
@@ -402,4 +405,75 @@ function normalizeVMware(vm) {
   }
 }
 
-export { normalizeHyperV, normalizeVMware }
+const _normalizeAzureTags = (tags) => {
+  if (!tags || typeof tags !== 'object') return {}
+  const out = {}
+  Object.entries(tags).forEach(([key, value]) => {
+    if (typeof key === 'string') {
+      out[key.trim().toLowerCase()] = value
+    }
+  })
+  return out
+}
+
+function normalizeAzure(vm) {
+  const tags = _normalizeAzureTags(vm.tags)
+  const envRaw =
+    tags.environment ??
+    tags.env ??
+    tags.ambiente ??
+    tags.stage ??
+    tags.tier ??
+    vm.environment
+  const environment = mapEnvironment(envRaw)
+  const powerState = vm.power_state ?? vm.powerState ?? null
+
+  const nicIds = Array.isArray(vm.nic_ids)
+    ? vm.nic_ids.map((nic) => (nic == null ? '' : String(nic))).filter(Boolean)
+    : []
+  const ipAddresses = dedupeSortStrings(vm.ip_addresses ?? [])
+  const publicIps = dedupeSortStrings(vm.public_ips ?? [])
+  const publicDns = dedupeSortStrings(vm.public_dns ?? [])
+  const zones = Array.isArray(vm.zones)
+    ? vm.zones.map((zone) => (zone == null ? '' : String(zone))).filter(Boolean)
+    : []
+
+  return {
+    id: vm.id,
+    name: vm.name,
+    power_state: powerState,
+    cpu_count: vm.cpu_count ?? vm.cpuCount ?? null,
+    cpu_usage_pct: vm.cpu_usage_pct ?? vm.cpuUsagePct ?? null,
+    memory_size_MiB: vm.memory_size_MiB ?? vm.memory_size_mib ?? vm.memorySizeMiB ?? null,
+    ram_demand_mib: vm.ram_demand_mib ?? vm.ramDemandMiB ?? null,
+    ram_usage_pct: vm.ram_usage_pct ?? vm.ramUsagePct ?? null,
+    environment,
+    guest_os: vm.os_type ?? vm.guest_os ?? null,
+    host: vm.resource_group ?? vm.host ?? null,
+    cluster: vm.location ?? vm.cluster ?? null,
+    vlans: [],
+    networks: Array.isArray(vm.networks) ? vm.networks : [],
+    compatibility_code: null,
+    compatibility_human: null,
+    compat_generation: null,
+    boot_type: null,
+    ip_addresses: ipAddresses,
+    disks: Array.isArray(vm.disks) ? vm.disks : [],
+    nics: Array.isArray(vm.nics) && vm.nics.length ? vm.nics : nicIds,
+    public_ips: publicIps,
+    public_dns: publicDns,
+    zones,
+    vm_size: vm.vm_size ?? vm.vmSize ?? null,
+    os_type: vm.os_type ?? null,
+    provisioning_state: vm.provisioning_state ?? vm.provisioningState ?? null,
+    time_created: vm.time_created ?? vm.timeCreated ?? null,
+    resource_group: vm.resource_group ?? null,
+    location: vm.location ?? null,
+    tags: vm.tags ?? null,
+    vm_agent_status: vm.vm_agent_status ?? vm.vmAgentStatus ?? null,
+    vm_agent_version: vm.vm_agent_version ?? vm.vmAgentVersion ?? null,
+    provider: 'azure',
+  }
+}
+
+export { normalizeHyperV, normalizeVMware, normalizeAzure }

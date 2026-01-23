@@ -37,6 +37,19 @@ Legend:
 | CEDIA_JOB_HOST_TIMEOUT | Timeout por host Cedia (seg). | `150` | Opcional | no | `300` |
 | CEDIA_JOB_MAX_DURATION | Timeout job Cedia (seg). | `900` | Opcional | no | `1200` |
 | CEDIA_REFRESH_INTERVAL_MINUTES | Intervalo Cedia (min). | `REFRESH_INTERVAL_MINUTES` | Opcional | no | `60` |
+| AZURE_TENANT_ID | Tenant ID (AAD) para Azure ARM. | none | **If enabled** (Azure) | no | `00000000-0000-0000-0000-000000000000` |
+| AZURE_CLIENT_ID | Client ID (App Registration) para Azure ARM. | none | **If enabled** (Azure) | no | `00000000-0000-0000-0000-000000000000` |
+| AZURE_CLIENT_SECRET | Client Secret (App Registration). | none | **If enabled** (Azure) | **sí** | `********` |
+| AZURE_SUBSCRIPTION_ID | Subscription ID (GUID). | none | **If enabled** (Azure) | no | `00000000-0000-0000-0000-000000000000` |
+| AZURE_RESOURCE_GROUPS | CSV de Resource Groups (opcional). | vacío | Opcional | no | `rg-a,rg-b` |
+| AZURE_API_BASE | Base URL ARM. | `https://management.azure.com` | Opcional | no | `https://management.azure.com` |
+| AZURE_API_VERSION_COMPUTE | API version Compute. | `2025-04-01` | Opcional | no | `2025-04-01` |
+| AZURE_API_VERSION_NETWORK | API version Network. | `2024-05-01` | Opcional | no | `2024-05-01` |
+| AZURE_JOB_MAX_GLOBAL | Concurrencia global jobs Azure. | `4` | Opcional | no | `6` |
+| AZURE_JOB_MAX_PER_SCOPE | Concurrencia por scope Azure. | `2` | Opcional | no | `2` |
+| AZURE_JOB_HOST_TIMEOUT | Timeout por host Azure (seg). | `150` | Opcional | no | `300` |
+| AZURE_JOB_MAX_DURATION | Timeout job Azure (seg). | `900` | Opcional | no | `1200` |
+| AZURE_REFRESH_INTERVAL_MINUTES | Intervalo Azure (min). | `REFRESH_INTERVAL_MINUTES` | Opcional | no | `60` |
 | HYPERV_HOSTS | Lista de hosts Hyper-V (coma/`;`). | vacío | **If enabled** (Hyper-V) | no | `hv1,hv2;hv3` |
 | HYPERV_HOST | Host Hyper-V único (fallback). | vacío | **If enabled** (Hyper-V) | no | `hv1` |
 | HYPERV_USER | Usuario Hyper-V. | none | **If enabled** (Hyper-V) | no | `svc_hyperv` |
@@ -71,5 +84,5 @@ Legend:
 | DB_PASSWORD | Password DB (futuro, no usado). | none | Futuro | **sí** | `********` |
 
 Notes:
-- `VMWARE_ENABLED`, `CEDIA_ENABLED`, `HYPERV_ENABLED` are derived flags (computed from env presence) and are not env vars themselves.
+- `VMWARE_ENABLED`, `CEDIA_ENABLED`, `HYPERV_ENABLED`, `AZURE_ENABLED` are derived flags (computed from env presence) and are not env vars themselves.
 - In production, do not rely on `.env`; supply env vars via K8S/Secrets/ConfigMaps.

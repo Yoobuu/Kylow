@@ -472,7 +472,7 @@ const discoverHosts = useCallback(async () => {
   }
 
   return (
-    <div className={`${gradientBg} min-h-screen text-white`}>
+    <div className={`${gradientBg} min-h-screen text-white`} data-tutorial-id="hyperv-hosts-root">
       <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-8">
         {statusNode}
         {bannerNode}

@@ -20,15 +20,19 @@ from app.auth import auth_router, user_admin_router  # /api/auth/...
 from app.middleware import install_audit_middleware
 from app.hosts import router as host_router  # /api/hosts
 from app.hosts.vmware_host_snapshot_router import router as vmware_hosts_router  # /api/vmware/hosts
+from app.hosts.ovirt_host_snapshot_router import router as ovirt_hosts_router  # /api/ovirt/hosts
 from app.notifications import router as notifications_router  # /api/notifications
 from app.permissions.router import router as permissions_router  # /api/permissions
 from app.cedia.router import router as cedia_router  # /api/cedia
 from app.cedia.cedia_snapshot_router import router as cedia_snapshot_router  # /api/cedia snapshot/jobs
+from app.azure.router import router as azure_router  # /api/azure
+from app.azure.azure_snapshot_router import router as azure_snapshot_router  # /api/azure snapshot/jobs
 from app.admin.system_router import router as system_router  # /api/admin/system
 from app.admin.system_settings_router import router as system_settings_router  # /api/admin/system/settings
 from app.vms import vm_router  # /api/vms (VMware)
 from app.vms.hyperv_router import router as hyperv_router  # /api/hyperv (Hyper-V)
 from app.vms.vmware_router import router as vmware_router  # /api/vmware (VMware snapshot/jobs)
+from app.vms.ovirt_router import router as ovirt_router  # /api/ovirt (oVirt snapshot/jobs)
 # Import register_startup_events after TEST_MODE definition to avoid circular issues
 from app.startup import register_startup_events
 from app.settings import settings
@@ -95,12 +99,16 @@ app.include_router(user_admin_router.router)  # /api/users (Admin)
 app.include_router(vm_router.router, prefix="/api")  # /api/vms (VMware)
 app.include_router(host_router, prefix="/api")  # /api/hosts (ESXi)
 app.include_router(vmware_hosts_router)  # /api/vmware/hosts (snapshot/jobs)
+app.include_router(ovirt_hosts_router)  # /api/ovirt/hosts (snapshot/jobs)
 app.include_router(hyperv_router)  # /api/hyperv (Hyper-V)
 app.include_router(vmware_router)  # /api/vmware (VMware snapshot/jobs)
+app.include_router(ovirt_router)  # /api/ovirt (oVirt snapshot/jobs)
 app.include_router(permissions_router)  # /api/permissions (management)
 app.include_router(notifications_router, prefix="/api/notifications", tags=["notifications"])
 app.include_router(audit_router)  # /api/audit (Audit trail)
 app.include_router(cedia_router)  # /api/cedia (CEDIA VMs)
 app.include_router(cedia_snapshot_router)  # /api/cedia (snapshot/jobs)
+app.include_router(azure_router)  # /api/azure (Azure VMs)
+app.include_router(azure_snapshot_router)  # /api/azure (snapshot/jobs)
 app.include_router(system_router)  # /api/admin/system
 app.include_router(system_settings_router)  # /api/admin/system/settings

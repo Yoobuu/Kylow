@@ -4,6 +4,7 @@ import logging
 import os
 from dataclasses import dataclass
 from typing import List, Optional
+from sqlalchemy.exc import ProgrammingError
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +46,29 @@ def _as_float(value: Optional[str], default: float) -> float:
         return default
 
 
+def _ensure_min(name: str, value: int, minimum: int) -> int:
+    if value < minimum:
+        logger.warning(
+            "%s (%s) is lower than minimum %s; using %s",
+            name,
+            value,
+            minimum,
+            minimum,
+        )
+        return minimum
+    return value
+
+
+def _normalize_ovirt_host_vm_count_mode(value: Optional[str]) -> str:
+    if value is None:
+        return "runtime"
+    normalized = value.strip().lower()
+    if normalized in {"runtime", "cluster"}:
+        return normalized
+    logger.warning("Invalid OVIRT_HOST_VM_COUNT_MODE=%r, defaulting to runtime", value)
+    return "runtime"
+
+
 def _split_list(value: Optional[str]) -> List[str]:
     if not value:
         return []
@@ -83,12 +107,18 @@ class Settings:
     vmware_enabled: bool
     vmware_configured: bool
     vmware_missing_envs: List[str]
+    ovirt_enabled: bool
+    ovirt_configured: bool
+    ovirt_missing_envs: List[str]
     cedia_enabled: bool
     cedia_configured: bool
     cedia_missing_envs: List[str]
     hyperv_enabled: bool
     hyperv_configured: bool
     hyperv_missing_envs: List[str]
+    azure_enabled: bool
+    azure_configured: bool
+    azure_missing_envs: List[str]
 
     # vCenter (VMware)
     vcenter_host: Optional[str]
@@ -102,6 +132,20 @@ class Settings:
     vmware_hosts_job_host_timeout: int
     vmware_hosts_job_max_duration: int
     vmware_hosts_refresh_interval_minutes: int
+
+    # oVirt / KVM
+    ovirt_base_url: Optional[str]
+    ovirt_user: Optional[str]
+    ovirt_pass: Optional[str]
+    ovirt_job_max_global: int
+    ovirt_job_max_per_scope: int
+    ovirt_job_host_timeout: int
+    ovirt_job_max_duration: int
+    ovirt_refresh_interval_minutes: int
+    ovirt_hosts_job_host_timeout: int
+    ovirt_hosts_job_max_duration: int
+    ovirt_hosts_refresh_interval_minutes: int
+    ovirt_host_vm_count_mode: str
 
     # Cedia
     cedia_base: Optional[str]
@@ -128,13 +172,30 @@ class Settings:
     hyperv_job_max_global: int
     hyperv_job_max_per_scope: int
     hyperv_job_host_timeout: int
+    hyperv_hosts_job_host_timeout: int
     hyperv_job_max_duration: int
+    hyperv_connect_timeout: int
     hyperv_inventory_read_timeout: int
     hyperv_inventory_retries: int
     hyperv_inventory_backoff_sec: float
     hyperv_power_read_timeout: int
     hyperv_detail_timeout: int
     hyperv_refresh_interval_minutes: int
+
+    # Azure
+    azure_tenant_id: Optional[str]
+    azure_client_id: Optional[str]
+    azure_client_secret: Optional[str]
+    azure_subscription_id: Optional[str]
+    azure_resource_groups: List[str]
+    azure_api_base: str
+    azure_api_version_compute: str
+    azure_api_version_network: str
+    azure_job_max_global: int
+    azure_job_max_per_scope: int
+    azure_job_host_timeout: int
+    azure_job_max_duration: int
+    azure_refresh_interval_minutes: int
 
     # Notifications
     notif_sched_enabled: bool
@@ -156,12 +217,20 @@ class Settings:
         return list(self.vmware_missing_envs)
 
     @property
+    def ovirt_missing_vars(self) -> List[str]:
+        return list(self.ovirt_missing_envs)
+
+    @property
     def cedia_missing_vars(self) -> List[str]:
         return list(self.cedia_missing_envs)
 
     @property
     def hyperv_missing_vars(self) -> List[str]:
         return list(self.hyperv_missing_envs)
+
+    @property
+    def azure_missing_vars(self) -> List[str]:
+        return list(self.azure_missing_envs)
 
 
 def _build_settings() -> Settings:
@@ -185,14 +254,29 @@ def _build_settings() -> Settings:
     cedia_user = os.getenv("CEDIA_USER")
     cedia_pass = os.getenv("CEDIA_PASS")
 
+    ovirt_base_url = os.getenv("OVIRT_BASE_URL")
+    ovirt_user = os.getenv("OVIRT_USER")
+    ovirt_pass = os.getenv("OVIRT_PASS")
+
     hyperv_hosts = _split_hosts(os.getenv("HYPERV_HOSTS"))
     hyperv_host = os.getenv("HYPERV_HOST")
     hyperv_user = os.getenv("HYPERV_USER")
     hyperv_pass = os.getenv("HYPERV_PASS")
 
+    azure_tenant_id = os.getenv("AZURE_TENANT_ID")
+    azure_client_id = os.getenv("AZURE_CLIENT_ID")
+    azure_client_secret = os.getenv("AZURE_CLIENT_SECRET")
+    azure_subscription_id = os.getenv("AZURE_SUBSCRIPTION_ID")
+    azure_resource_groups = _split_list(os.getenv("AZURE_RESOURCE_GROUPS"))
+    azure_api_base = (os.getenv("AZURE_API_BASE") or "https://management.azure.com").strip() or "https://management.azure.com"
+    azure_api_version_compute = (os.getenv("AZURE_API_VERSION_COMPUTE") or "2025-04-01").strip() or "2025-04-01"
+    azure_api_version_network = (os.getenv("AZURE_API_VERSION_NETWORK") or "2024-05-01").strip() or "2024-05-01"
+
     vmware_enabled = _as_bool_default_true(os.getenv("VMWARE_ENABLED"), name="VMWARE_ENABLED")
+    ovirt_enabled = _as_bool_default_true(os.getenv("OVIRT_ENABLED"), name="OVIRT_ENABLED")
     cedia_enabled = _as_bool_default_true(os.getenv("CEDIA_ENABLED"), name="CEDIA_ENABLED")
     hyperv_enabled = _as_bool_default_true(os.getenv("HYPERV_ENABLED"), name="HYPERV_ENABLED")
+    azure_enabled = _as_bool_default_true(os.getenv("AZURE_ENABLED"), name="AZURE_ENABLED")
 
     vmware_missing_envs = []
     if not vcenter_host:
@@ -202,6 +286,15 @@ def _build_settings() -> Settings:
     if not vcenter_pass:
         vmware_missing_envs.append("VCENTER_PASS")
     vmware_configured = not vmware_missing_envs
+
+    ovirt_missing_envs = []
+    if not ovirt_base_url:
+        ovirt_missing_envs.append("OVIRT_BASE_URL")
+    if not ovirt_user:
+        ovirt_missing_envs.append("OVIRT_USER")
+    if not ovirt_pass:
+        ovirt_missing_envs.append("OVIRT_PASS")
+    ovirt_configured = not ovirt_missing_envs
 
     cedia_missing_envs = []
     if not cedia_base:
@@ -221,10 +314,24 @@ def _build_settings() -> Settings:
         hyperv_missing_envs.append("HYPERV_PASS")
     hyperv_configured = not hyperv_missing_envs
 
+    azure_missing_envs = []
+    if not azure_tenant_id:
+        azure_missing_envs.append("AZURE_TENANT_ID")
+    if not azure_client_id:
+        azure_missing_envs.append("AZURE_CLIENT_ID")
+    if not azure_client_secret:
+        azure_missing_envs.append("AZURE_CLIENT_SECRET")
+    if not azure_subscription_id:
+        azure_missing_envs.append("AZURE_SUBSCRIPTION_ID")
+    azure_configured = not azure_missing_envs
+
     raw_autoclear = os.getenv("NOTIFS_AUTOCLEAR_ENABLED")
     notifs_autoclear_enabled = _as_bool(raw_autoclear) if raw_autoclear is not None else not testing
 
     warmup_enabled = _as_bool_default_true(os.getenv("WARMUP_ENABLED"), name="WARMUP_ENABLED")
+    ovirt_host_vm_count_mode = _normalize_ovirt_host_vm_count_mode(
+        os.getenv("OVIRT_HOST_VM_COUNT_MODE")
+    )
 
     overrides = None
     if not testing and not test_mode:
@@ -237,7 +344,57 @@ def _build_settings() -> Settings:
                 row = load_system_settings(session)
             overrides = extract_overrides(row) if row else None
         except Exception as exc:
-            logger.warning("System settings override unavailable: %s", exc)
+            is_missing_column = False
+            msg = str(exc)
+            if isinstance(exc, ProgrammingError):
+                orig = getattr(exc, "orig", None)
+                if orig and orig.__class__.__name__ == "UndefinedColumn":
+                    is_missing_column = True
+            if "UndefinedColumn" in msg or "system_settings" in msg and "column" in msg:
+                is_missing_column = True
+            if is_missing_column:
+                hint = "Run `python -m app.scripts.migrate` to apply DB migrations."
+                if app_env in {"prod", "production"}:
+                    raise RuntimeError(
+                        "system_settings schema is out of date. " + hint
+                    ) from exc
+                logger.warning(
+                    "System settings override unavailable (schema mismatch). %s",
+                    hint,
+                )
+            else:
+                logger.warning("System settings override unavailable: %s", exc)
+
+    hyperv_connect_timeout_raw = _as_int(os.getenv("HYPERV_CONNECT_TIMEOUT"), 10)
+    hyperv_connect_timeout = _ensure_min(
+        "hyperv_connect_timeout",
+        hyperv_connect_timeout_raw,
+        2,
+    )
+    hyperv_inventory_read_timeout = _as_int(os.getenv("HYPERV_INVENTORY_READ_TIMEOUT"), 1800)
+    # Margin to avoid host jobs timing out before WinRM inventory reads complete.
+    hyperv_timeout_margin = 60
+    hyperv_job_host_timeout_raw = _as_int(os.getenv("HYPERV_JOB_HOST_TIMEOUT"), 300)
+    hyperv_job_host_timeout = _ensure_min(
+        "hyperv_job_host_timeout",
+        hyperv_job_host_timeout_raw,
+        hyperv_inventory_read_timeout + hyperv_timeout_margin,
+    )
+    hyperv_hosts_job_host_timeout_raw = _as_int(
+        os.getenv("HYPERV_HOSTS_JOB_HOST_TIMEOUT"),
+        hyperv_job_host_timeout,
+    )
+    hyperv_hosts_job_host_timeout = _ensure_min(
+        "hyperv_hosts_job_host_timeout",
+        hyperv_hosts_job_host_timeout_raw,
+        hyperv_inventory_read_timeout + hyperv_timeout_margin,
+    )
+    hyperv_job_max_duration_raw = _as_int(os.getenv("HYPERV_JOB_MAX_DURATION"), 15 * 60)
+    hyperv_job_max_duration = _ensure_min(
+        "hyperv_job_max_duration",
+        hyperv_job_max_duration_raw,
+        hyperv_job_host_timeout + hyperv_timeout_margin,
+    )
 
     return Settings(
         app_env=app_env,
@@ -252,12 +409,18 @@ def _build_settings() -> Settings:
         vmware_enabled=overrides.get("vmware_enabled", vmware_enabled) if overrides else vmware_enabled,
         vmware_configured=vmware_configured,
         vmware_missing_envs=vmware_missing_envs,
+        ovirt_enabled=overrides.get("ovirt_enabled", ovirt_enabled) if overrides else ovirt_enabled,
+        ovirt_configured=ovirt_configured,
+        ovirt_missing_envs=ovirt_missing_envs,
         cedia_enabled=overrides.get("cedia_enabled", cedia_enabled) if overrides else cedia_enabled,
         cedia_configured=cedia_configured,
         cedia_missing_envs=cedia_missing_envs,
         hyperv_enabled=overrides.get("hyperv_enabled", hyperv_enabled) if overrides else hyperv_enabled,
         hyperv_configured=hyperv_configured,
         hyperv_missing_envs=hyperv_missing_envs,
+        azure_enabled=overrides.get("azure_enabled", azure_enabled) if overrides else azure_enabled,
+        azure_configured=azure_configured,
+        azure_missing_envs=azure_missing_envs,
         vcenter_host=vcenter_host,
         vcenter_user=vcenter_user,
         vcenter_pass=vcenter_pass,
@@ -296,6 +459,49 @@ def _build_settings() -> Settings:
                 10,
             )
         ),
+        ovirt_base_url=ovirt_base_url,
+        ovirt_user=ovirt_user,
+        ovirt_pass=ovirt_pass,
+        ovirt_job_max_global=_as_int(os.getenv("OVIRT_JOB_MAX_GLOBAL"), 4),
+        ovirt_job_max_per_scope=_as_int(os.getenv("OVIRT_JOB_MAX_PER_SCOPE"), 2),
+        ovirt_job_host_timeout=_as_int(os.getenv("OVIRT_JOB_HOST_TIMEOUT"), 150),
+        ovirt_job_max_duration=_as_int(os.getenv("OVIRT_JOB_MAX_DURATION"), 15 * 60),
+        ovirt_refresh_interval_minutes=(
+            max(
+                int(overrides.get("ovirt_refresh_interval_minutes")), 10
+            )
+            if overrides and overrides.get("ovirt_refresh_interval_minutes") is not None
+            else max(
+                _as_int(os.getenv("OVIRT_REFRESH_INTERVAL_MINUTES"), refresh_interval_minutes),
+                10,
+            )
+        ),
+        ovirt_hosts_job_host_timeout=_as_int(
+            os.getenv("OVIRT_HOSTS_JOB_HOST_TIMEOUT"),
+            _as_int(os.getenv("OVIRT_JOB_HOST_TIMEOUT"), 150),
+        ),
+        ovirt_hosts_job_max_duration=_as_int(
+            os.getenv("OVIRT_HOSTS_JOB_MAX_DURATION"),
+            _as_int(os.getenv("OVIRT_JOB_MAX_DURATION"), 15 * 60),
+        ),
+        ovirt_hosts_refresh_interval_minutes=(
+            max(
+                int(overrides.get("ovirt_hosts_refresh_interval_minutes")), 10
+            )
+            if overrides and overrides.get("ovirt_hosts_refresh_interval_minutes") is not None
+            else max(
+                _as_int(
+                    os.getenv("OVIRT_HOSTS_REFRESH_INTERVAL_MINUTES"),
+                    _as_int(os.getenv("OVIRT_REFRESH_INTERVAL_MINUTES"), refresh_interval_minutes),
+                ),
+                10,
+            )
+        ),
+        ovirt_host_vm_count_mode=_normalize_ovirt_host_vm_count_mode(
+            overrides.get("ovirt_host_vm_count_mode")
+            if overrides and overrides.get("ovirt_host_vm_count_mode") is not None
+            else ovirt_host_vm_count_mode
+        ),
         cedia_base=cedia_base,
         cedia_user=cedia_user,
         cedia_pass=cedia_pass,
@@ -313,6 +519,28 @@ def _build_settings() -> Settings:
                 10,
             )
         ),
+        azure_tenant_id=azure_tenant_id,
+        azure_client_id=azure_client_id,
+        azure_client_secret=azure_client_secret,
+        azure_subscription_id=azure_subscription_id,
+        azure_resource_groups=azure_resource_groups,
+        azure_api_base=azure_api_base,
+        azure_api_version_compute=azure_api_version_compute,
+        azure_api_version_network=azure_api_version_network,
+        azure_job_max_global=_as_int(os.getenv("AZURE_JOB_MAX_GLOBAL"), 4),
+        azure_job_max_per_scope=_as_int(os.getenv("AZURE_JOB_MAX_PER_SCOPE"), 2),
+        azure_job_host_timeout=_as_int(os.getenv("AZURE_JOB_HOST_TIMEOUT"), 150),
+        azure_job_max_duration=_as_int(os.getenv("AZURE_JOB_MAX_DURATION"), 15 * 60),
+        azure_refresh_interval_minutes=(
+            max(
+                int(overrides.get("azure_refresh_interval_minutes")), 10
+            )
+            if overrides and overrides.get("azure_refresh_interval_minutes") is not None
+            else max(
+                _as_int(os.getenv("AZURE_REFRESH_INTERVAL_MINUTES"), refresh_interval_minutes),
+                10,
+            )
+        ),
         hyperv_hosts=hyperv_hosts,
         hyperv_host=hyperv_host,
         hyperv_user=hyperv_user,
@@ -326,9 +554,11 @@ def _build_settings() -> Settings:
         hyperv_cache_ttl_hosts=_as_int(os.getenv("HYPERV_CACHE_TTL_HOSTS"), 300),
         hyperv_job_max_global=_as_int(os.getenv("HYPERV_JOB_MAX_GLOBAL"), 4),
         hyperv_job_max_per_scope=_as_int(os.getenv("HYPERV_JOB_MAX_PER_SCOPE"), 2),
-        hyperv_job_host_timeout=_as_int(os.getenv("HYPERV_JOB_HOST_TIMEOUT"), 300),
-        hyperv_job_max_duration=_as_int(os.getenv("HYPERV_JOB_MAX_DURATION"), 15 * 60),
-        hyperv_inventory_read_timeout=_as_int(os.getenv("HYPERV_INVENTORY_READ_TIMEOUT"), 1800),
+        hyperv_job_host_timeout=hyperv_job_host_timeout,
+        hyperv_hosts_job_host_timeout=hyperv_hosts_job_host_timeout,
+        hyperv_job_max_duration=hyperv_job_max_duration,
+        hyperv_connect_timeout=hyperv_connect_timeout,
+        hyperv_inventory_read_timeout=hyperv_inventory_read_timeout,
         hyperv_inventory_retries=_as_int(os.getenv("HYPERV_INVENTORY_RETRIES"), 2),
         hyperv_inventory_backoff_sec=_as_float(os.getenv("HYPERV_INVENTORY_BACKOFF_SEC"), 1.5),
         hyperv_power_read_timeout=_as_int(os.getenv("HYPERV_POWER_READ_TIMEOUT"), 60),

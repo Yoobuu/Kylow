@@ -19,6 +19,7 @@ PERMISSION_DEFINITIONS: Dict[PermissionCode, Dict[str, str]] = {
     PermissionCode.HYPERV_POWER: {"name": "Operar energía Hyper-V", "category": "hyperv"},
     PermissionCode.JOBS_TRIGGER: {"name": "Ejecutar jobs", "category": "jobs"},
     PermissionCode.CEDIA_VIEW: {"name": "Ver inventario CEDIA", "category": "cedia"},
+    PermissionCode.AZURE_VIEW: {"name": "Ver inventario Azure", "category": "azure"},
     PermissionCode.SYSTEM_RESTART: {"name": "Reiniciar backend", "category": "system"},
     PermissionCode.SYSTEM_SETTINGS_VIEW: {"name": "Ver configuración del sistema", "category": "system"},
     PermissionCode.SYSTEM_SETTINGS_EDIT: {"name": "Editar configuración del sistema", "category": "system"},

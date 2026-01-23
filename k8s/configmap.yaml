@@ -9,6 +9,13 @@ data:
   PORT: "8000"
   LOG_LEVEL: "INFO"
   INIT_DB_ON_STARTUP: "false"
+  VMWARE_ENABLED: "true"
+  HYPERV_ENABLED: "true"
+  CEDIA_ENABLED: "true"
+  WARMUP_ENABLED: "true"
+  NOTIF_SCHED_ENABLED: "false"
+  CORS_ALLOW_ORIGINS: ""
+  FRONTEND_ORIGIN: ""
   # Optional: configure CORS for cross-origin deployments.
   # CORS_ALLOW_ORIGINS: "https://inventario-ti-test.usfq.edu.ec"
   # FRONTEND_ORIGIN: "https://inventario-ti-test.usfq.edu.ec"

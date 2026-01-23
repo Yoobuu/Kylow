@@ -14,7 +14,9 @@ def utcnow() -> datetime:
 
 
 class NotificationProvider(str, Enum):
+    CEDIA = "cedia"
     HYPERV = "hyperv"
+    OVIRT = "ovirt"
     VMWARE = "vmware"
 
 

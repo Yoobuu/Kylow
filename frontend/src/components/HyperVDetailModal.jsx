@@ -55,6 +55,20 @@ function inferEnvironment({ vm, selectorKey }) {
   if (fromSelector) return fromSelector
   return 'desconocido'
 }
+
+function isHostStatusPayload(payload) {
+  return payload && typeof payload === 'object' && payload.provider === 'hyperv' && Array.isArray(payload.hosts)
+}
+
+function extractHostStatusMessage(payload, host) {
+  if (!isHostStatusPayload(payload)) return null
+  const hostKey = String(host || '').toLowerCase()
+  const entry = payload.hosts.find((item) => String(item?.host || '').toLowerCase() === hostKey) || payload.hosts[0]
+  if (!entry || entry.status === 'ok') return null
+  const status = String(entry.status || 'error')
+  const error = entry.error ? String(entry.error) : ''
+  return error ? `${status}: ${error}` : status
+}
 // Nota: ya no bloqueamos por sandbox. Los botones siempre salen.
 export default function HyperVDetailModal({ record, selectorKey = '', onClose }) {
   const modalRef = useRef(null)
@@ -209,7 +223,14 @@ export default function HyperVDetailModal({ record, selectorKey = '', onClose })
     )
       .then((resp) => {
         if (cancelled) return
-        setDetail(resp?.data || null)
+        const payload = resp?.data || null
+        const statusMsg = extractHostStatusMessage(payload, hvhost)
+        if (statusMsg) {
+          setDetail(null)
+          setDetailError(`Host ${hvhost}: ${statusMsg}`)
+          return
+        }
+        setDetail(payload)
       })
       .catch((err) => {
         if (cancelled) return
@@ -737,6 +758,11 @@ export default function HyperVDetailModal({ record, selectorKey = '', onClose })
                       setError("");
                       try {
                         const resp = await api.post(`/hyperv/vms/${hvhost}/${vmname}/power/${action}`);
+                        const statusMsg = extractHostStatusMessage(resp?.data, hvhost)
+                        if (statusMsg) {
+                          setError(`Host ${hvhost}: ${statusMsg}`)
+                          return
+                        }
                         setSuccessMsg(
                           resp?.data?.message ||
                             `Acción ${pending.text.toLowerCase()} aceptada para ${vmname} en ${hvhost}.`

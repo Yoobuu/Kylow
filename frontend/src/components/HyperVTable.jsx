@@ -64,7 +64,9 @@ export default function HyperVTable({
   searchInputId = 'hyperv-global-search',
   searchPlaceholder = 'Buscar por Nombre, SO, Host, Cluster...',
   onExport,
+  exportFn = exportInventoryCsv,
   exportFilenameBase = 'inventory',
+  exportLabel = 'Exportar CSV',
   onErrorChange,
   refreshBusy = false,
   refreshCooldownUntil = null,
@@ -211,8 +213,8 @@ export default function HyperVTable({
       onExport(processed)
       return
     }
-    exportInventoryCsv(processed, exportFilenameBase)
-  }, [exportFilenameBase, onExport, processed])
+    exportFn(processed, exportFilenameBase)
+  }, [exportFilenameBase, exportFn, onExport, processed])
 
   const handleRefresh = useCallback(() => {
     const refresh = () => fetchVm()
@@ -285,7 +287,7 @@ export default function HyperVTable({
               disabled={!processed.length}
               className="bg-[#5da345] text-white font-medium py-2 px-4 rounded-lg shadow hover:bg-[#4c8c38] transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Exportar CSV
+              {exportLabel}
             </button>
           </div>
           {refreshing && (

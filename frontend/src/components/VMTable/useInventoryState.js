@@ -179,13 +179,17 @@ export function useInventoryState(options = {}) {
     summaryBuilder = defaultSummary,
     initialGroup = 'none',
     provider = 'vmware',
+    cacheKey,
     cacheTtlMs,
     autoRefreshMs,
     keepPreviousOnEmpty = false,
+    groupersKey,
   } = options
 
   const providerKey = provider || 'vmware'
-  const filtersKey = `inv-filters:${providerKey}`
+  const resolvedCacheKey = cacheKey || providerKey
+  const resolvedGroupersKey = groupersKey || (providerKey === 'hosts' ? 'hosts' : 'default')
+  const filtersKey = `inv-filters:${resolvedCacheKey}`
   const resolvedCacheTtl = cacheTtlMs ?? inventoryCache.DEFAULT_TTL_MS
 
   const persistedFilters = readPersistedFilters(filtersKey)
@@ -228,7 +232,7 @@ export function useInventoryState(options = {}) {
         // 1. pedir datos al backend usando el fetcher actual
         const rawItems = await fetcher(fetchOptions)
         if (rawItems?.empty) {
-          const cachedEntry = keepPreviousOnEmpty ? inventoryCache.get(providerKey) : null
+          const cachedEntry = keepPreviousOnEmpty ? inventoryCache.get(resolvedCacheKey) : null
           const cachedList = Array.isArray(cachedEntry?.data) ? cachedEntry.data : null
           if (!(keepPreviousOnEmpty && cachedList && cachedList.length)) {
             setVms([])
@@ -242,7 +246,7 @@ export function useInventoryState(options = {}) {
         console.log('RAW ITEMS', rawItems)
         const safeItems = Array.isArray(rawItems) ? rawItems : []
         if (safeItems.length === 0 && keepPreviousOnEmpty) {
-          const cachedEntry = inventoryCache.get(providerKey)
+          const cachedEntry = inventoryCache.get(resolvedCacheKey)
           const cachedList = Array.isArray(cachedEntry?.data) ? cachedEntry.data : null
           if (cachedList && cachedList.length) {
             setLastFetchTs(Date.now())
@@ -296,7 +300,7 @@ export function useInventoryState(options = {}) {
 
         // 3. actualizar estado con las VMs recibidas
         setVms(normalized)
-        inventoryCache.set(providerKey, normalized)
+        inventoryCache.set(resolvedCacheKey, normalized)
         console.log('STATE SET', normalized.length)
         setLastFetchTs(Date.now())
 
@@ -318,7 +322,7 @@ export function useInventoryState(options = {}) {
         }
       }
     },
-    [fetcher, normalizeRecord, providerKey, keepPreviousOnEmpty]
+    [fetcher, normalizeRecord, providerKey, keepPreviousOnEmpty, resolvedCacheKey]
   )
 
   const fetchVm = useCallback(
@@ -357,9 +361,9 @@ export function useInventoryState(options = {}) {
 
   useEffect(() => {
     console.log('[useEffect mount] providerKey =', providerKey)
-    const cachedEntry = inventoryCache.get(providerKey)
+    const cachedEntry = inventoryCache.get(resolvedCacheKey)
     const cachedList = Array.isArray(cachedEntry?.data) ? cachedEntry.data : null
-    const cacheIsFresh = cachedEntry ? inventoryCache.isFresh(providerKey, resolvedCacheTtl) : false
+    const cacheIsFresh = cachedEntry ? inventoryCache.isFresh(resolvedCacheKey, resolvedCacheTtl) : false
 
     if (cachedList && cachedList.length) {
       console.log('[useEffect mount] using cached inventory len =', cachedList.length)
@@ -374,7 +378,7 @@ export function useInventoryState(options = {}) {
 
     const shouldShowLoading = !(cachedList && cachedList.length)
     fetchData({ showLoading: shouldShowLoading })
-  }, [providerKey, fetchData, resolvedCacheTtl])
+  }, [providerKey, resolvedCacheKey, fetchData, resolvedCacheTtl])
 
   useEffect(() => {
     writePersistedFilters(filtersKey, {
@@ -564,7 +568,7 @@ export function useInventoryState(options = {}) {
   }, [vms, debouncedSearch, filter, sortBy])
 
   const groups = useMemo(() => {
-    const groupersMap = providerKey === 'hosts' ? GROUPERS.hosts : GROUPERS.default
+    const groupersMap = resolvedGroupersKey === 'hosts' ? GROUPERS.hosts : GROUPERS.default
     const grouper = groupersMap[groupByOption] ?? (() => '')
 
     return processed.reduce((acc, vm) => {
@@ -577,7 +581,7 @@ export function useInventoryState(options = {}) {
       acc[key].push(row)
       return acc
     }, {})
-  }, [processed, groupByOption, providerKey])
+  }, [processed, groupByOption, resolvedGroupersKey])
 
   console.log('[render state] vms.length =', vms.length, 'processed.length =', processed.length, 'group keys =', Object.keys(groups))
 

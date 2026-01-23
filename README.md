@@ -66,6 +66,15 @@ INITIAL_ADMIN_PASS=admin123      # Contraseña inicial del script init_user
 FRONTEND_ORIGIN=http://localhost:5173  # Origen permitido para CORS
 ```
 
+Notas:
+- `DATABASE_URL` va en `backend/.env` (el backend carga ese archivo automáticamente).
+- Verifica el esquema detectado:
+  ```bash
+  cd backend
+  python -c "from app.db import SQLALCHEMY_DATABASE_URL; print(SQLALCHEMY_DATABASE_URL.split(':',1)[0])"
+  ```
+- Si no quieres tocar `.env`, puedes usar `export DATABASE_URL=...` antes de arrancar.
+
 #### Inicializar base de datos y usuario admin
 
 ```bash

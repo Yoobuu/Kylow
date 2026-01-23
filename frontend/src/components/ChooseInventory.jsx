@@ -8,8 +8,8 @@ const ENVIRONMENTS = [
     desc: "Inventario VMware clásico.",
     tone: "from-emerald-500 via-emerald-600 to-emerald-700",
     actions: [
-      { label: "Ver VMs", to: "/", permission: "vms.view" },
-      { label: "Ver Hosts", to: "/hosts", permission: "vms.view" },
+      { label: "Ver VMs", to: "/vmware?view=vms", permission: "vms.view" },
+      { label: "Ver Hosts", to: "/vmware?view=hosts", permission: "vms.view" },
     ],
   },
   {
@@ -18,8 +18,8 @@ const ENVIRONMENTS = [
     desc: "Inventario y estado de Hyper-V.",
     tone: "from-blue-500 via-blue-600 to-indigo-600",
     actions: [
-      { label: "Ver VMs", to: "/hyperv", permission: "hyperv.view" },
-      { label: "Ver Hosts", to: "/hyperv-hosts", permission: "hyperv.view" },
+      { label: "Ver VMs", to: "/hyperv?view=vms", permission: "hyperv.view" },
+      { label: "Ver Hosts", to: "/hyperv?view=hosts", permission: "hyperv.view" },
     ],
   },
   {
@@ -27,7 +27,10 @@ const ENVIRONMENTS = [
     title: "KVM / Libvirt",
     desc: "Inventario KVM (piloto).",
     tone: "from-neutral-700 via-neutral-800 to-black",
-    actions: [{ label: "Ver VMs", to: "/kvm", permission: "vms.view" }],
+    actions: [
+      { label: "Ver VMs", to: "/kvm?view=vms", permission: "vms.view" },
+      { label: "Ver Hosts", to: "/kvm?view=hosts", permission: "vms.view" },
+    ],
   },
   {
     key: "cedia",
@@ -35,6 +38,13 @@ const ENVIRONMENTS = [
     desc: "Inventario de VMs en CEDIA (vCloud).",
     tone: "from-teal-500 via-teal-600 to-cyan-600",
     actions: [{ label: "Ver VMs", to: "/cedia", permission: "cedia.view" }],
+  },
+  {
+    key: "azure",
+    title: "Microsoft Azure",
+    desc: "Inventario de VMs en Azure (ARM).",
+    tone: "from-sky-500 via-blue-600 to-indigo-700",
+    actions: [{ label: "Ver VMs", to: "/azure", permission: "azure.view" }],
   },
 ];
 
@@ -63,17 +73,23 @@ export default function ChooseInventory() {
 
       <div className="relative flex min-h-screen items-center justify-center p-6">
         <div className="w-full max-w-6xl">
-          <h1 className="mb-10 text-center text-3xl font-semibold">Selecciona el inventario</h1>
+          <h1
+            className="mb-10 text-center text-3xl font-semibold"
+            data-tutorial-id="choose-title"
+          >
+            Selecciona el inventario
+          </h1>
 
           {visibleEnvs.length === 0 ? (
             <div className="rounded-3xl border border-white/10 bg-neutral-900/60 p-6 text-center text-sm text-neutral-200 shadow-xl">
               No tienes permisos para ver inventarios. Solicita acceso a un administrador.
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2" data-tutorial-id="choose-grid">
               {visibleEnvs.map((env) => (
                 <div
                   key={env.key}
+                  data-tutorial-id={`choose-card-${env.key}`}
                   className="group relative overflow-hidden rounded-3xl border border-white/10 bg-neutral-900/60 p-6 text-left shadow-xl backdrop-blur transition hover:scale-[1.01] hover:border-white/20 hover:shadow-2xl"
                 >
                   <div className={`absolute inset-0 opacity-60 blur-2xl bg-gradient-to-r ${env.tone}`} aria-hidden />
@@ -85,7 +101,7 @@ export default function ChooseInventory() {
                         <p className="text-sm text-neutral-300">{env.desc}</p>
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2" data-tutorial-id={`choose-actions-${env.key}`}>
                       {env.actions.map((action) => (
                         <button
                           key={action.to}

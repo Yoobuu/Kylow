@@ -5,11 +5,24 @@ import { useAuth } from "../context/AuthContext";
 
 const PAGE_SIZE = 10;
 
+const getInitials = (value) => {
+  if (!value) return "U";
+  const parts = value
+    .split(/[\s._-]+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  if (!parts.length) return value.slice(0, 2).toUpperCase();
+  const first = parts[0][0] || "";
+  const second = parts[1]?.[0] || "";
+  return `${first}${second}`.toUpperCase();
+};
+
 function Toast({ toast, onClose }) {
   if (!toast) return null;
-  const tone = toast.type === "error"
-    ? "bg-red-100 text-red-700 border-red-200"
-    : "bg-emerald-100 text-emerald-700 border-emerald-200";
+  const tone =
+    toast.type === "error"
+      ? "border-red-500/40 bg-red-950/70 text-red-200"
+      : "border-emerald-500/40 bg-emerald-950/70 text-emerald-200";
   return (
     <div className={`fixed right-4 top-4 z-50 max-w-sm rounded-lg border px-4 py-3 shadow ${tone}`}>
       <div className="flex items-start justify-between gap-4">
@@ -31,14 +44,16 @@ function Modal({ title, children, onClose, size = "md" }) {
   const widthClass =
     size === "xl" ? "max-w-5xl" : size === "lg" ? "max-w-3xl" : "max-w-md";
   return (
-    <div className="fixed inset-0 z-40 flex items-start justify-center bg-black/50 px-4 py-10">
-      <div className={`w-full ${widthClass} rounded-lg bg-white p-6 shadow-xl`}>
+    <div className="fixed inset-0 z-40 flex items-start justify-center bg-black/70 px-4 py-10">
+      <div
+        className={`w-full ${widthClass} rounded-2xl border border-zinc-800 bg-zinc-950 p-6 text-zinc-100 shadow-2xl`}
+      >
         <div className="flex items-start justify-between gap-4">
-          <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+          <h2 className="text-lg font-semibold text-zinc-100">{title}</h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-gray-500 transition hover:text-gray-800"
+            className="text-zinc-400 transition hover:text-zinc-100"
             aria-label="Cerrar"
           >
             x
@@ -58,6 +73,7 @@ export default function UserAdminPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [searchDraft, setSearchDraft] = useState("");
   const [page, setPage] = useState(1);
   const [modal, setModal] = useState({ type: null, user: null });
   const [createForm, setCreateForm] = useState({ username: "", password: "" });
@@ -70,6 +86,7 @@ export default function UserAdminPage() {
   const [permissionsError, setPermissionsError] = useState("");
   const [permissionsSaving, setPermissionsSaving] = useState(false);
   const [fullAccessUsers, setFullAccessUsers] = useState(0);
+  const [fullAccessMap, setFullAccessMap] = useState({});
   const toastTimerRef = useRef();
 
   const showToast = useCallback((message, type = "success") => {
@@ -151,18 +168,30 @@ export default function UserAdminPage() {
   );
 
   const computeFullAccessUsers = useCallback(async () => {
-    if (!permissionCatalog.length || !users.length) return 0;
+    if (!permissionCatalog.length || !users.length) {
+      setFullAccessMap({});
+      return 0;
+    }
     const allCodes = allPermissionCodes;
     const tasks = users.map((u) =>
       getUserPermissions(u.id)
         .then(({ data }) => {
           const effective = new Set(data?.effective || []);
-          return [...allCodes].every((code) => effective.has(code));
+          const hasAll = [...allCodes].every((code) => effective.has(code));
+          return { id: u.id, hasAll };
         })
-        .catch(() => false)
+        .catch(() => ({ id: u.id, hasAll: false }))
     );
     const results = await Promise.all(tasks);
-    return results.filter(Boolean).length;
+    const nextMap = {};
+    let count = 0;
+    results.forEach((entry) => {
+      if (!entry) return;
+      nextMap[entry.id] = entry.hasAll;
+      if (entry.hasAll) count += 1;
+    });
+    setFullAccessMap(nextMap);
+    return count;
   }, [allPermissionCodes, permissionCatalog.length, users]);
 
   const ensurePermissionData = useCallback(async () => {
@@ -198,6 +227,14 @@ export default function UserAdminPage() {
       .then((count) => setFullAccessUsers(count))
       .catch(() => null);
   }, [users, permissionCatalog.length, computeFullAccessUsers]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchDraft);
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchDraft]);
 
   const handleCreateSubmit = async (event) => {
     event.preventDefault();
@@ -370,10 +407,10 @@ export default function UserAdminPage() {
 
   if (!canManageUsers) {
     return (
-      <main className="flex-1 px-6 py-10">
+      <main className="min-h-screen w-full bg-black px-6 py-10 text-zinc-100">
         <Toast toast={toast} onClose={() => setToast(null)} />
-        <h1 className="text-2xl font-semibold text-gray-800">Administración de usuarios</h1>
-        <p className="mt-4 text-sm text-gray-600">
+        <h1 className="text-2xl font-semibold text-zinc-100">Administración de usuarios</h1>
+        <p className="mt-4 text-sm text-zinc-400">
           Acceso denegado. Necesitas el permiso <strong>users.manage</strong> para ver esta sección.
         </p>
       </main>
@@ -381,13 +418,13 @@ export default function UserAdminPage() {
   }
 
   return (
-    <main className="flex-1 px-6 py-10">
+    <main className="min-h-screen w-full bg-black px-4 py-8 text-zinc-100 md:px-8">
       <Toast toast={toast} onClose={() => setToast(null)} />
 
-      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between" data-tutorial-id="users-header">
         <div>
-          <h1 className="text-3xl font-semibold text-gray-800">Administración de usuarios</h1>
-          <p className="text-sm text-gray-600">Gestiona cuentas, contraseñas y permisos atómicos.</p>
+          <h1 className="text-3xl font-semibold text-zinc-100">Administración de usuarios</h1>
+          <p className="text-sm text-zinc-400">Gestiona cuentas, contraseñas y permisos atómicos.</p>
         </div>
         <button
           type="button"
@@ -396,77 +433,122 @@ export default function UserAdminPage() {
             setModal({ type: "create", user: null });
             setFormError("");
           }}
-          className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-emerald-500"
+          className="inline-flex items-center justify-center rounded-full bg-[#FFA300] px-4 py-2 text-sm font-semibold text-black shadow-sm transition hover:bg-[#ffb133]"
+          data-tutorial-id="users-create"
         >
           Crear usuario
         </button>
       </div>
 
-      <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <input
-          type="search"
-          value={search}
-          onChange={(event) => {
-            setSearch(event.target.value);
-            setPage(1);
-          }}
-          placeholder="Buscar por usuario"
-          className="w-full max-w-sm rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-        />
-        <div className="text-sm text-gray-500">
-          Total usuarios: <span className="font-semibold text-gray-700">{users.length}</span>
-          {permissionCatalog.length > 0 && (
-            <span className="ml-3 text-xs text-gray-500">
-              Con acceso total: {fullAccessUsers}
-            </span>
-          )}
+      <div className="mb-6 grid gap-4 md:grid-cols-3" data-tutorial-id="users-kpis">
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4">
+          <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Total usuarios</p>
+          <p className="mt-2 text-2xl font-semibold text-zinc-100">{users.length}</p>
+        </div>
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4">
+          <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Con acceso total</p>
+          <p className="mt-2 text-2xl font-semibold text-zinc-100">
+            {permissionCatalog.length ? fullAccessUsers : "—"}
+          </p>
+        </div>
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4">
+          <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Usuarios filtrados</p>
+          <p className="mt-2 text-2xl font-semibold text-zinc-100">{filteredUsers.length}</p>
+        </div>
+      </div>
+
+      <div className="mb-5 rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4" data-tutorial-id="users-search">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="relative w-full md:max-w-md">
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600">🔍</span>
+            <input
+              type="search"
+              value={searchDraft}
+              onChange={(event) => setSearchDraft(event.target.value)}
+              placeholder="Buscar por usuario"
+              className="w-full rounded-lg border border-zinc-800 bg-black py-2 pl-9 pr-3 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-[#FFA300] focus:outline-none"
+            />
+          </div>
+          <div className="text-sm text-zinc-400">
+            Mostrando <span className="font-semibold text-zinc-100">{paginatedUsers.length}</span> de{" "}
+            <span className="font-semibold text-zinc-100">{filteredUsers.length}</span>
+          </div>
         </div>
       </div>
 
       {loading && (
-        <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-600 shadow">
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4 text-sm text-zinc-400 shadow">
           Cargando usuarios...
         </div>
       )}
 
       {error && !loading && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600 shadow">
+        <div className="rounded-2xl border border-red-500/40 bg-red-950/50 p-4 text-sm text-red-200 shadow">
           {error}
         </div>
       )}
 
       {!loading && !error && (
         <>
-          <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow">
-            <table className="min-w-full divide-y divide-gray-200 text-sm">
-              <thead className="bg-gray-50">
+          <div
+            className="overflow-x-auto rounded-2xl border border-zinc-800 bg-zinc-950/40 shadow"
+            data-tutorial-id="users-table"
+          >
+            <table className="min-w-full text-sm">
+              <thead className="sticky top-0 bg-zinc-950">
                 <tr>
-                  <th className="px-4 py-2 text-left font-medium text-gray-600">ID</th>
-                  <th className="px-4 py-2 text-left font-medium text-gray-600">Usuario</th>
-                  <th className="px-4 py-2 text-right font-medium text-gray-600">Acciones</th>
+                  <th className="px-4 py-3 text-left text-xs uppercase tracking-[0.2em] text-zinc-500">ID</th>
+                  <th className="px-4 py-3 text-left text-xs uppercase tracking-[0.2em] text-zinc-500">Usuario</th>
+                  <th className="px-4 py-3 text-left text-xs uppercase tracking-[0.2em] text-zinc-500">Acceso</th>
+                  <th className="px-4 py-3 text-right text-xs uppercase tracking-[0.2em] text-zinc-500">Acciones</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-zinc-900">
                 {paginatedUsers.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-4 py-4 text-center text-gray-500">
-                      Sin resultados.
+                    <td colSpan={4} className="px-4 py-10 text-center text-zinc-500">
+                      No hay usuarios para mostrar.
                     </td>
                   </tr>
                 ) : (
                   paginatedUsers.map((user) => (
-                    <tr key={user.id ?? user.username}>
-                      <td className="px-4 py-2 text-gray-800">{user.id}</td>
-                      <td className="px-4 py-2 text-gray-800">{user.username}</td>
-                      <td className="px-4 py-2">
-                        <div className="flex items-center justify-end gap-2 text-xs">
+                    <tr key={user.id ?? user.username} className="transition hover:bg-zinc-900/60">
+                      <td className="px-4 py-3 text-zinc-300">{user.id}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-700 bg-zinc-900 text-sm font-semibold text-zinc-200">
+                            {getInitials(user.username)}
+                          </div>
+                          <div>
+                            <div className="text-sm font-semibold text-zinc-100">{user.username}</div>
+                            <div className="text-xs text-zinc-500">ID {user.id}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        {permissionCatalog.length ? (
+                          fullAccessMap[user.id] ? (
+                            <span className="inline-flex items-center rounded-full border border-[#FFA300]/40 bg-[#FFA300]/10 px-3 py-1 text-xs font-semibold text-[#FFA300]">
+                              Acceso total
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center rounded-full border border-zinc-700 bg-zinc-900 px-3 py-1 text-xs text-zinc-300">
+                              Estándar
+                            </span>
+                          )
+                        ) : (
+                          <span className="text-xs text-zinc-500">—</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-wrap items-center justify-end gap-2 text-xs">
                           <button
                             type="button"
                             onClick={() => {
                               openPermissionsModal(user);
                               setFormError("");
                             }}
-                            className="rounded border border-gray-300 px-3 py-1 text-gray-700 transition hover:border-blue-500 hover:text-blue-600"
+                            className="rounded-full border border-zinc-700 px-3 py-1 text-zinc-200 transition hover:border-[#FFA300] hover:text-[#FFA300]"
                           >
                             Permisos
                           </button>
@@ -477,9 +559,9 @@ export default function UserAdminPage() {
                             setModal({ type: "password", user });
                             setFormError("");
                           }}
-                            className="rounded border border-gray-300 px-3 py-1 text-gray-700 transition hover:border-blue-500 hover:text-blue-600"
+                            className="rounded-full border border-zinc-700 px-3 py-1 text-zinc-200 transition hover:border-zinc-500 hover:text-zinc-100"
                           >
-                            Restablecer contraseña
+                            Reset pass
                           </button>
                           <button
                             type="button"
@@ -487,7 +569,7 @@ export default function UserAdminPage() {
                               setFormError("");
                               setModal({ type: "delete", user });
                             }}
-                            className="rounded border border-gray-300 px-3 py-1 text-red-600 transition hover:border-red-500 hover:bg-red-50"
+                            className="rounded-full border border-red-500/40 px-3 py-1 text-red-300 transition hover:border-red-400 hover:text-red-200"
                           >
                             Eliminar
                           </button>
@@ -500,7 +582,7 @@ export default function UserAdminPage() {
             </table>
           </div>
 
-          <div className="mt-4 flex flex-col items-center justify-between gap-3 text-sm text-gray-600 md:flex-row">
+          <div className="mt-4 flex flex-col items-center justify-between gap-3 text-sm text-zinc-400 md:flex-row">
             <span>
               Mostrando {paginatedUsers.length} de {filteredUsers.length} usuarios
             </span>
@@ -509,7 +591,7 @@ export default function UserAdminPage() {
                 type="button"
                 onClick={() => setPage((prev) => Math.max(1, prev - 1))}
                 disabled={page === 1}
-                className="rounded border border-gray-300 px-3 py-1 transition hover:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-full border border-zinc-700 px-3 py-1 transition hover:border-zinc-500 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Anterior
               </button>
@@ -520,7 +602,7 @@ export default function UserAdminPage() {
                 type="button"
                 onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
                 disabled={page >= totalPages}
-                className="rounded border border-gray-300 px-3 py-1 transition hover:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-full border border-zinc-700 px-3 py-1 transition hover:border-zinc-500 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Siguiente
               </button>
@@ -533,27 +615,27 @@ export default function UserAdminPage() {
         <Modal title="Crear usuario" onClose={closeModal}>
           <form className="space-y-4" onSubmit={handleCreateSubmit}>
             {formError && (
-              <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700">
+              <div className="rounded-lg border border-amber-500/40 bg-amber-950/50 px-3 py-2 text-sm text-amber-200">
                 {formError}
               </div>
             )}
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Usuario</label>
+              <label className="mb-1 block text-sm font-medium text-zinc-200">Usuario</label>
               <input
                 type="text"
                 value={createForm.username}
                 onChange={(event) => setCreateForm((prev) => ({ ...prev, username: event.target.value }))}
-                className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-zinc-800 bg-black px-3 py-2 text-sm text-zinc-100 focus:border-[#FFA300] focus:outline-none"
                 required
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Contraseña</label>
+              <label className="mb-1 block text-sm font-medium text-zinc-200">Contraseña</label>
               <input
                 type="password"
                 value={createForm.password}
                 onChange={(event) => setCreateForm((prev) => ({ ...prev, password: event.target.value }))}
-                className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-zinc-800 bg-black px-3 py-2 text-sm text-zinc-100 focus:border-[#FFA300] focus:outline-none"
                 required
               />
             </div>
@@ -561,14 +643,14 @@ export default function UserAdminPage() {
               <button
                 type="button"
                 onClick={closeModal}
-                className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 transition hover:border-gray-400"
+                className="rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-200 transition hover:border-zinc-500"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="rounded bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-full bg-[#FFA300] px-4 py-2 text-sm font-semibold text-black shadow transition hover:bg-[#ffb133] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {submitting ? "Guardando..." : "Guardar"}
               </button>
@@ -581,17 +663,17 @@ export default function UserAdminPage() {
         <Modal title={`Restablecer contraseña de ${modal.user.username}`} onClose={closeModal}>
           <form className="space-y-4" onSubmit={handlePasswordSubmit}>
             {formError && (
-              <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700">
+              <div className="rounded-lg border border-amber-500/40 bg-amber-950/50 px-3 py-2 text-sm text-amber-200">
                 {formError}
               </div>
             )}
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Nueva contraseña</label>
+              <label className="mb-1 block text-sm font-medium text-zinc-200">Nueva contraseña</label>
               <input
                 type="password"
                 value={passwordForm.password}
                 onChange={(event) => setPasswordForm({ password: event.target.value })}
-                className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-zinc-800 bg-black px-3 py-2 text-sm text-zinc-100 focus:border-[#FFA300] focus:outline-none"
                 required
               />
             </div>
@@ -599,14 +681,14 @@ export default function UserAdminPage() {
               <button
                 type="button"
                 onClick={closeModal}
-                className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 transition hover:border-gray-400"
+                className="rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-200 transition hover:border-zinc-500"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-full bg-[#FFA300] px-4 py-2 text-sm font-semibold text-black shadow transition hover:bg-[#ffb133] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {submitting ? "Guardando..." : "Actualizar"}
               </button>
@@ -618,35 +700,35 @@ export default function UserAdminPage() {
       {modal.type === "permissions" && modal.user && (
         <Modal title={`Permisos de ${modal.user.username}`} onClose={closeModal} size="xl">
           {permissionsError && (
-            <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700">
+            <div className="mb-3 rounded-lg border border-amber-500/40 bg-amber-950/50 px-3 py-2 text-sm text-amber-200">
               {permissionsError}
             </div>
           )}
           {permissionsState.loading ? (
-            <div className="rounded border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">Cargando permisos...</div>
+            <div className="rounded border border-zinc-800 bg-zinc-900/40 p-4 text-sm text-zinc-300">Cargando permisos...</div>
           ) : !permissionCatalog.length ? (
-            <div className="rounded border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
+            <div className="rounded border border-zinc-800 bg-zinc-900/40 p-4 text-sm text-zinc-300">
               No hay catálogo de permisos disponible.
             </div>
           ) : (
             <form className="space-y-4" onSubmit={handlePermissionsSubmit}>
-              <div className="rounded-md border border-gray-100 bg-gray-50 px-3 py-2 text-sm text-gray-700">
-                <p className="text-xs text-gray-600">
+              <div className="rounded-md border border-zinc-800 bg-zinc-900/40 px-3 py-2 text-sm text-zinc-300">
+                <p className="text-xs text-zinc-500">
                   Selecciona <em>Permitir</em> o <em>Denegar</em>. <em>Sin override</em> elimina la entrada y el permiso queda denegado.
                 </p>
               </div>
 
-              <div className="space-y-4 rounded border border-gray-200 bg-white p-3">
+              <div className="space-y-4 rounded border border-zinc-800 bg-zinc-950/40 p-3">
                 {Object.keys(permissionsByCategory).sort().map((category) => {
                   const items = permissionsByCategory[category] || [];
                   const effectiveSet = new Set(permissionsState.summary?.effective || []);
                   return (
                     <div key={category} className="space-y-2">
-                      <div className="flex items-center justify-between border-b border-gray-100 pb-1">
-                        <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-600">{category}</h3>
-                        <span className="text-[11px] text-gray-400">{items.length} permisos</span>
+                      <div className="flex items-center justify-between border-b border-zinc-800 pb-1">
+                        <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-400">{category}</h3>
+                        <span className="text-[11px] text-zinc-500">{items.length} permisos</span>
                       </div>
-                      <div className="space-y-3 rounded border border-gray-100 bg-gray-50 p-2">
+                      <div className="space-y-3 rounded border border-zinc-800 bg-zinc-950/60 p-2">
                         {items.map((perm) => {
                           const override = permissionsState.overridesDraft?.[perm.code] ?? "inherit";
                           const effective = effectiveSet.has(perm.code);
@@ -661,26 +743,26 @@ export default function UserAdminPage() {
                           return (
                             <div
                               key={perm.code}
-                              className="grid grid-cols-1 gap-3 rounded-md bg-white p-3 shadow-sm ring-1 ring-gray-100 md:grid-cols-12 md:items-center"
+                              className="grid grid-cols-1 gap-3 rounded-md bg-black/60 p-3 shadow-sm ring-1 ring-zinc-800 md:grid-cols-12 md:items-center"
                             >
                               <div className="md:col-span-3">
-                                <div className="break-words text-sm font-semibold text-gray-900">{perm.name}</div>
-                                <div className="break-all text-xs text-gray-500">{perm.code}</div>
+                                <div className="break-words text-sm font-semibold text-zinc-100">{perm.name}</div>
+                                <div className="break-all text-xs text-zinc-500">{perm.code}</div>
                               </div>
-                              <div className="md:col-span-5 break-words text-sm text-gray-700">{perm.description || "—"}</div>
-                              <div className="md:col-span-2 text-xs font-medium text-gray-600">{statusLabel}</div>
+                              <div className="md:col-span-5 break-words text-sm text-zinc-300">{perm.description || "—"}</div>
+                              <div className="md:col-span-2 text-xs font-medium text-zinc-400">{statusLabel}</div>
                               <div className="md:col-span-2">
                                 <select
                                   value={override}
                                   onChange={(event) => updateOverrideChoice(perm.code, event.target.value)}
-                                  className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                  className="w-full rounded border border-zinc-700 bg-black px-2 py-1 text-sm text-zinc-100 focus:border-[#FFA300] focus:outline-none"
                                 >
                                   <option value="inherit">Sin override (queda denegado)</option>
                                   <option value="grant">Permitir</option>
                                   <option value="deny">Denegar</option>
                                 </select>
                               </div>
-                              <div className="md:col-span-6 text-xs font-semibold text-gray-600">
+                              <div className="md:col-span-6 text-xs font-semibold text-zinc-400">
                                 Acceso actual: {effective ? "Permitido" : "Denegado"}
                               </div>
                             </div>
@@ -696,14 +778,14 @@ export default function UserAdminPage() {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 transition hover:border-gray-400"
+                  className="rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-200 transition hover:border-zinc-500"
                 >
                   Cerrar
                 </button>
                 <button
                   type="submit"
                   disabled={permissionsSaving}
-                  className="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-full bg-[#FFA300] px-4 py-2 text-sm font-semibold text-black shadow transition hover:bg-[#ffb133] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {permissionsSaving ? "Guardando..." : "Guardar cambios"}
                 </button>
@@ -715,15 +797,15 @@ export default function UserAdminPage() {
 
       {modal.type === "delete" && modal.user && (
         <Modal title="Eliminar usuario" onClose={closeModal}>
-          <div className="space-y-4 text-sm text-gray-700">
+          <div className="space-y-4 text-sm text-zinc-300">
             <p>
-              Estas seguro de eliminar la cuenta <strong>{modal.user.username}</strong>? Esta accion no se puede deshacer.
+              Estas seguro de eliminar la cuenta <strong className="text-zinc-100">{modal.user.username}</strong>? Esta accion no se puede deshacer.
             </p>
             <div className="flex justify-end gap-2">
               <button
                 type="button"
                 onClick={closeModal}
-                className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 transition hover:border-gray-400"
+                className="rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-200 transition hover:border-zinc-500"
               >
                 Cancelar
               </button>
@@ -731,7 +813,7 @@ export default function UserAdminPage() {
                 type="button"
                 onClick={handleDelete}
                 disabled={submitting}
-                className="rounded bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {submitting ? "Eliminando..." : "Eliminar"}
               </button>

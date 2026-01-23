@@ -12,9 +12,15 @@ export default function Navbar() {
   };
 
   const links = [];
-  if (hasPermission("vms.view") || hasPermission("hyperv.view") || hasPermission("cedia.view")) {
+  if (
+    hasPermission("vms.view") ||
+    hasPermission("hyperv.view") ||
+    hasPermission("cedia.view") ||
+    hasPermission("azure.view")
+  ) {
     links.push({ to: "/choose", label: "Inventarios" });
   }
+  if (hasPermission("vms.view")) links.push({ to: "/mission-control", label: "Mission Control" });
   if (hasPermission("notifications.view")) links.push({ to: "/notifications", label: "Notificaciones" });
   if (hasPermission("audit.view")) links.push({ to: "/audit", label: "Auditoría" });
   if (hasPermission("users.manage")) links.push({ to: "/users", label: "Usuarios" });

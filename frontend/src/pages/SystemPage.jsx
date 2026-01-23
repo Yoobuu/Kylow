@@ -169,14 +169,17 @@ export default function SystemPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-10">
-      <header>
+      <header data-tutorial-id="system-header">
         <h1 className="text-3xl font-semibold text-neutral-900">Sistema</h1>
         <p className="mt-2 text-sm text-neutral-600">
           Cambios de configuración requieren reiniciar el backend para aplicar nuevos valores.
         </p>
       </header>
 
-      <section className="rounded-xl border border-neutral-200 bg-white p-6 shadow">
+      <section
+        className="rounded-xl border border-neutral-200 bg-white p-6 shadow"
+        data-tutorial-id="system-settings"
+      >
         <div className="flex flex-col gap-3">
           <h2 className="text-lg font-semibold text-neutral-900">Configuración</h2>
           <p className="text-sm text-neutral-600">
@@ -257,6 +260,22 @@ export default function SystemPage() {
                 </label>
                 <label className="flex items-start justify-between gap-4 text-sm">
                   <div className="max-w-md">
+                    <span className="font-medium text-neutral-800">oVirt / KVM habilitado</span>
+                    <p className="mt-1 text-xs text-neutral-500">
+                      Permite jobs y refresh de oVirt (requiere credenciales configuradas).
+                    </p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={Boolean(settings.ovirt_enabled)}
+                    onChange={(event) =>
+                      setSettings((prev) => ({ ...prev, ovirt_enabled: event.target.checked }))
+                    }
+                    disabled={!canEdit}
+                  />
+                </label>
+                <label className="flex items-start justify-between gap-4 text-sm">
+                  <div className="max-w-md">
                     <span className="font-medium text-neutral-800">Cedia habilitado</span>
                     <p className="mt-1 text-xs text-neutral-500">
                       Permite jobs y refresh de Cedia (requiere credenciales configuradas).
@@ -267,6 +286,22 @@ export default function SystemPage() {
                     checked={Boolean(settings.cedia_enabled)}
                     onChange={(event) =>
                       setSettings((prev) => ({ ...prev, cedia_enabled: event.target.checked }))
+                    }
+                    disabled={!canEdit}
+                  />
+                </label>
+                <label className="flex items-start justify-between gap-4 text-sm">
+                  <div className="max-w-md">
+                    <span className="font-medium text-neutral-800">Azure habilitado</span>
+                    <p className="mt-1 text-xs text-neutral-500">
+                      Permite jobs y refresh de Azure (requiere credenciales configuradas).
+                    </p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={Boolean(settings.azure_enabled)}
+                    onChange={(event) =>
+                      setSettings((prev) => ({ ...prev, azure_enabled: event.target.checked }))
                     }
                     disabled={!canEdit}
                   />
@@ -292,9 +327,24 @@ export default function SystemPage() {
                     "Intervalo entre refresh automaticos de VMware Hosts (min 10).",
                   ],
                   [
+                    "ovirt_refresh_interval_minutes",
+                    "oVirt VMs refresh",
+                    "Intervalo entre refresh automaticos de oVirt VMs (min 10).",
+                  ],
+                  [
+                    "ovirt_hosts_refresh_interval_minutes",
+                    "oVirt Hosts refresh",
+                    "Intervalo entre refresh automaticos de oVirt Hosts (min 10).",
+                  ],
+                  [
                     "cedia_refresh_interval_minutes",
                     "Cedia refresh",
                     "Intervalo entre refresh automaticos de Cedia (min 10).",
+                  ],
+                  [
+                    "azure_refresh_interval_minutes",
+                    "Azure refresh",
+                    "Intervalo entre refresh automaticos de Azure (min 10).",
                   ],
                 ].map(([key, label, helpText]) => (
                   <label key={key} className="flex items-start justify-between gap-4 text-sm">
@@ -318,6 +368,31 @@ export default function SystemPage() {
                     />
                   </label>
                 ))}
+                {"ovirt_host_vm_count_mode" in settings && (
+                  <label className="flex items-start justify-between gap-4 text-sm">
+                    <div className="max-w-md">
+                      <span className="font-medium text-neutral-800">oVirt conteo de VMs por host</span>
+                      <p className="mt-1 text-xs text-neutral-500">
+                        runtime = solo VMs con host asignado; cluster = contar por cluster.
+                      </p>
+                    </div>
+                    <select
+                      value={settings.ovirt_host_vm_count_mode ?? ""}
+                      onChange={(event) =>
+                        setSettings((prev) => ({
+                          ...prev,
+                          ovirt_host_vm_count_mode: event.target.value || null,
+                        }))
+                      }
+                      className="w-48 rounded border border-neutral-300 px-2 py-1 text-sm"
+                      disabled={!canEdit}
+                    >
+                      <option value="">—</option>
+                      <option value="runtime">runtime</option>
+                      <option value="cluster">cluster</option>
+                    </select>
+                  </label>
+                )}
               </div>
 
               <div className="flex flex-wrap items-center gap-3">

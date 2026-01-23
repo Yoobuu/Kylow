@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import os
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed, Future, TimeoutError as FuturesTimeout
 from datetime import datetime, timedelta
@@ -12,6 +11,7 @@ from typing import List, Optional, Dict
 
 from cachetools import TTLCache
 from fastapi import APIRouter, Depends, HTTPException, Query, Path as PathParam, Response, Request
+from fastapi.responses import JSONResponse
 from sqlmodel import Session
 from pydantic import BaseModel, Field
 
@@ -20,7 +20,7 @@ from app.auth.user_model import User
 from app.db import get_session
 from app.dependencies import require_permission, get_current_user
 from app.permissions.models import PermissionCode
-from app.providers.hyperv.remote import RemoteCreds, run_power_action
+from app.providers.hyperv.remote import HostUnreachableError, RemoteCreds, run_power_action
 from app.providers.hyperv.schema import VMRecord, VMRecordDetail, VMRecordSummary, VMRecordDeep
 from app.vms.hyperv_service import collect_hyperv_inventory_for_host, collect_hyperv_host_info
 from app.vms.hyperv_host_models import HyperVHostSummary
@@ -68,17 +68,10 @@ _REQUIRE_SUPERADMIN = require_permission(PermissionCode.JOBS_TRIGGER)
 HYPERV_INVENTORY_READ_TIMEOUT = settings.hyperv_inventory_read_timeout
 HYPERV_INVENTORY_RETRIES = settings.hyperv_inventory_retries
 HYPERV_INVENTORY_BACKOFF_SEC = settings.hyperv_inventory_backoff_sec
+HYPERV_CONNECT_TIMEOUT = settings.hyperv_connect_timeout
 HYPERV_POWER_READ_TIMEOUT = settings.hyperv_power_read_timeout
 REFRESH_INTERVAL_MINUTES = settings.hyperv_refresh_interval_minutes
-HOSTS_JOB_TIMEOUT_SECONDS = int(os.getenv("HYPERV_HOSTS_JOB_HOST_TIMEOUT", HOST_TIMEOUT_SECONDS))
-
-if HOSTS_JOB_TIMEOUT_SECONDS < HYPERV_INVENTORY_READ_TIMEOUT:
-    logger.warning(
-        "Hyper-V hosts job timeout (%s) is lower than inventory read timeout (%s); "
-        "hosts may be marked timeout before WinRM completes.",
-        HOSTS_JOB_TIMEOUT_SECONDS,
-        HYPERV_INVENTORY_READ_TIMEOUT,
-    )
+HOSTS_JOB_TIMEOUT_SECONDS = settings.hyperv_hosts_job_host_timeout
 
 # Ruta al script PowerShell (puedes overridear con HYPERV_PS_PATH)
 # Usamos Path(__file__) para anclar la ruta al propio módulo sin depender del cwd.
@@ -127,6 +120,7 @@ def _build_inventory_creds(host: str) -> RemoteCreds:
         password=settings.hyperv_pass,
         transport=settings.hyperv_transport,
         use_winrm=True,
+        connect_timeout=HYPERV_CONNECT_TIMEOUT,
         read_timeout=HYPERV_INVENTORY_READ_TIMEOUT,
         retries=HYPERV_INVENTORY_RETRIES,
         backoff_sec=HYPERV_INVENTORY_BACKOFF_SEC,
@@ -140,6 +134,7 @@ def _build_power_creds(host: str) -> RemoteCreds:
         password=settings.hyperv_pass,
         transport=settings.hyperv_transport,
         use_winrm=True,
+        connect_timeout=HYPERV_CONNECT_TIMEOUT,
         read_timeout=HYPERV_POWER_READ_TIMEOUT,
         retries=0,
     )
@@ -179,6 +174,54 @@ def _raise_hyperv_operational_error(exc: Exception, *, host: str) -> None:
     raise HTTPException(status_code=status_code, detail=msg)
 
 
+def _build_host_status_payload(
+    *,
+    provider: str,
+    host_list: list[str],
+    results: dict[str, object],
+    errors: dict[str, dict],
+) -> dict:
+    summary = {"ok": 0, "unreachable": 0, "failed": 0}
+    hosts_payload = []
+    for host in host_list:
+        if host in results:
+            hosts_payload.append({"host": host, "status": "ok", "data": results[host]})
+            summary["ok"] += 1
+            continue
+        err = errors.get(host)
+        if err:
+            status = err.get("status") or "failed"
+            entry = {"host": host, "status": status}
+            if err.get("error"):
+                entry["error"] = err["error"]
+            hosts_payload.append(entry)
+            if status == "unreachable":
+                summary["unreachable"] += 1
+            else:
+                summary["failed"] += 1
+            continue
+        hosts_payload.append({"host": host, "status": "failed"})
+        summary["failed"] += 1
+    ok = summary["ok"] > 0
+    return {
+        "ok": ok,
+        "provider": provider,
+        "hosts": hosts_payload,
+        "summary": summary,
+    }
+
+
+def _unreachable_response(host: str, *, error: str | None = None) -> JSONResponse:
+    msg = _sanitize_error_message(error) or "unreachable"
+    payload = _build_host_status_payload(
+        provider="hyperv",
+        host_list=[host],
+        results={},
+        errors={host: {"status": "unreachable", "error": msg}},
+    )
+    return JSONResponse(status_code=200, content=payload)
+
+
 @router.get("/vms", response_model=List[VMRecordDetail])
 def list_hyperv_vms(
     refresh: bool = Query(False, description="Forzar refresco desde los hosts, ignorando cache"),
@@ -196,6 +239,8 @@ def list_hyperv_vms(
             use_cache=not refresh,
         )
         return items
+    except HostUnreachableError as exc:
+        return _unreachable_response(creds.host, error=str(exc))
     except Exception as exc:
         _raise_hyperv_operational_error(exc, host=creds.host)
 
@@ -303,6 +348,7 @@ def list_hyperv_vms_batch(
 
     results: dict[str, list[dict]] = {}
     errors: dict[str, str] = {}
+    errors_detail: dict[str, dict] = {}
 
     # 4) ejecución paralela (controlada)
     with ThreadPoolExecutor(max_workers=max_workers) as ex:
@@ -314,10 +360,21 @@ def list_hyperv_vms_batch(
                 results[host] = data
             except Exception as e:
                 logger.warning("Error collecting Hyper-V inventory for host '%s': %s", h, e)
-                errors[h] = str(e)
+                err_msg = _sanitize_error_message(str(e)) or "error"
+                status = "unreachable" if isinstance(e, HostUnreachableError) else "failed"
+                errors[h] = err_msg
+                errors_detail[h] = {"status": status, "error": err_msg}
+
+    status_payload = _build_host_status_payload(
+        provider="hyperv",
+        host_list=host_list,
+        results=results,
+        errors=errors_detail,
+    )
 
     payload = {
-        "ok": len(errors) == 0,
+        **status_payload,
+        "all_ok": len(errors) == 0,
         "total_hosts": len(host_list),
         "hosts_ok": list(results.keys()),
         "hosts_error": errors,
@@ -346,6 +403,8 @@ def list_hyperv_vms_by_host(
             use_cache=not refresh,
         )
         return items
+    except HostUnreachableError as exc:
+        return _unreachable_response(hvhost, error=str(exc))
     except Exception as exc:
         _raise_hyperv_operational_error(exc, host=hvhost)
 
@@ -373,13 +432,22 @@ def hyperv_vm_power_action(
     # porque hyperv_power_action necesita inventario fresco para validar sandbox.
     ps_content = _load_ps_content()
 
-    return hyperv_power_action(
-        creds=creds,
-        vm_name=vm_name,
-        action=action,
-        ps_content_inventory=ps_content,
-        use_cache=not refresh,
-    )
+    try:
+        return hyperv_power_action(
+            creds=creds,
+            vm_name=vm_name,
+            action=action,
+            ps_content_inventory=ps_content,
+            use_cache=not refresh,
+        )
+    except HTTPException as exc:
+        if str(exc.detail).strip().lower() == "unreachable":
+            return _unreachable_response(hvhost, error=str(exc.detail))
+        _raise_hyperv_operational_error(exc, host=hvhost)
+    except HostUnreachableError as exc:
+        return _unreachable_response(hvhost, error=str(exc))
+    except Exception as exc:
+        _raise_hyperv_operational_error(exc, host=hvhost)
 
 
 def _build_detail_creds(host: str) -> RemoteCreds:
@@ -390,6 +458,7 @@ def _build_detail_creds(host: str) -> RemoteCreds:
         password=settings.hyperv_pass,
         transport=settings.hyperv_transport,
         use_winrm=True,
+        connect_timeout=HYPERV_CONNECT_TIMEOUT,
         read_timeout=settings.hyperv_detail_timeout,
         retries=0, # Sin reintentos para feedback rápido
         backoff_sec=0,
@@ -413,6 +482,8 @@ def hyperv_vm_detail(
             vm_name=vm_name,
             use_cache=not refresh,
         )
+    except HostUnreachableError as exc:
+        return _unreachable_response(hvhost, error=str(exc))
     except Exception as exc:
         _raise_hyperv_operational_error(exc, host=hvhost)
     for rec in records:
@@ -438,6 +509,8 @@ def hyperv_vm_deep(
             vm_name=vm_name,
             use_cache=not refresh,
         )
+    except HostUnreachableError as exc:
+        return _unreachable_response(hvhost, error=str(exc))
     except Exception as exc:
         _raise_hyperv_operational_error(exc, host=hvhost)
     for rec in records:
@@ -728,9 +801,15 @@ def _run_job_scope_vms_inner(job: JobStatus) -> None:
                     hosts_ok_this_job += 1
                     _HEALTH_STORE.record_success(host)
             except Exception as exc:
-                error_msg = str(exc)
+                if isinstance(exc, HostUnreachableError):
+                    logger.warning("Hyper-V host unreachable during job: %s", host)
+                    error_msg = "unreachable"
+                    error_type = "unreachable"
+                else:
+                    error_msg = str(exc)
+                    error_type = exc.__class__.__name__
                 hosts_error_this_job += 1
-                _HEALTH_STORE.record_failure(host, error_type=exc.__class__.__name__, error_message=error_msg)
+                _HEALTH_STORE.record_failure(host, error_type=error_type, error_message=error_msg)
                 state = SnapshotHostState.ERROR
             finally:
                 finished = datetime.utcnow()
@@ -910,9 +989,15 @@ def _run_job_scope_hosts_inner(job: JobStatus) -> None:
                     hosts_ok_this_job += 1
                     _HEALTH_STORE.record_success(host)
             except Exception as exc:
-                error_msg = str(exc)
+                if isinstance(exc, HostUnreachableError):
+                    logger.warning("Hyper-V host unreachable during job: %s", host)
+                    error_msg = "unreachable"
+                    error_type = "unreachable"
+                else:
+                    error_msg = str(exc)
+                    error_type = exc.__class__.__name__
                 hosts_error_this_job += 1
-                _HEALTH_STORE.record_failure(host, error_type=exc.__class__.__name__, error_message=error_msg)
+                _HEALTH_STORE.record_failure(host, error_type=error_type, error_message=error_msg)
                 state = SnapshotHostState.ERROR
             finally:
                 finished = datetime.utcnow()
@@ -1079,6 +1164,7 @@ def list_hyperv_hosts(
 
     results: List[HyperVHostSummary] = []
     errors: dict[str, str] = {}
+    errors_detail: dict[str, dict] = {}
 
     def _work(h: str) -> HyperVHostSummary:
         creds = _build_inventory_creds(h)
@@ -1092,11 +1178,23 @@ def list_hyperv_hosts(
                 results.append(fut.result())
             except Exception as e:
                 logger.warning("Error collecting Hyper-V host info for '%s': %s", h, e)
-                errors[h] = str(e)
+                err_msg = _sanitize_error_message(str(e)) or "error"
+                status = "unreachable" if isinstance(e, HostUnreachableError) else "failed"
+                errors[h] = err_msg
+                errors_detail[h] = {"status": status, "error": err_msg}
+
+    results_map = {r.host: r.model_dump() for r in results}
+    status_payload = _build_host_status_payload(
+        provider="hyperv",
+        host_list=host_list,
+        results=results_map,
+        errors=errors_detail,
+    )
 
     # Devolvemos parciales si hay errores, para no bloquear UI
     payload = {
-        "ok": len(errors) == 0,
+        **status_payload,
+        "all_ok": len(errors) == 0,
         "hosts_ok": [r.host for r in results],
         "hosts_error": errors,
         "results": [r.model_dump() for r in results],
@@ -1118,6 +1216,8 @@ def hyperv_host_detail(
             ps_content=ps_content,
             use_cache=not refresh,
         )
+    except HostUnreachableError as exc:
+        return _unreachable_response(hvhost, error=str(exc))
     except Exception as exc:
         logger.warning("Error collecting Hyper-V host info for '%s': %s", hvhost, exc)
         raise HTTPException(status_code=502, detail=str(exc))

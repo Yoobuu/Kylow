@@ -93,10 +93,42 @@ const normalizeDiskEntries = (disks) => {
   });
 };
 
-export default function VMDetailModal({ vmId, record = null, onClose, onAction }) {
+const shortenAzureVmId = (value) => {
+  if (!value) return null;
+  const raw = String(value);
+  const match = /\/virtualMachines\/([^/]+)$/i.exec(raw);
+  if (match) return match[1];
+  const parts = raw.split("/").filter(Boolean);
+  return parts.length ? parts[parts.length - 1] : raw;
+};
+
+export default function VMDetailModal({
+  vmId,
+  record = null,
+  onClose,
+  onAction,
+  getVmDetail,
+  getVmPerf,
+  powerActionsEnabled = true,
+}) {
   const modalRef = useRef(null);
   const perfAbortRef = useRef(null);
   const { hasPermission } = useAuth();
+
+  const detailFetcher = useMemo(() => {
+    if (typeof getVmDetail === "function") {
+      return getVmDetail;
+    }
+    return (id) => api.get(`/vms/${id}`).then((res) => res.data);
+  }, [getVmDetail]);
+
+  const perfFetcher = useMemo(() => {
+    if (typeof getVmPerf === "function") {
+      return getVmPerf;
+    }
+    return (id, params, signal) =>
+      api.get(`/vms/${id}/perf`, { params, signal }).then((res) => res.data);
+  }, [getVmPerf]);
 
   const [loading, setLoading] = useState(!record);
   const [detail, setDetail] = useState(record);
@@ -107,8 +139,16 @@ export default function VMDetailModal({ vmId, record = null, onClose, onAction }
   const [perfLoading, setPerfLoading] = useState(false);
   const [perfError, setPerfError] = useState("");
   const [perf, setPerf] = useState(null);
+  const rawName = detail?.name || detail?.Name || record?.name || record?.Name;
+  const idFallback = shortenAzureVmId(detail?.id || record?.id || vmId);
+  const displayName = rawName || idFallback || vmId || "";
+  const displayNameTitle = displayName || "\u2014";
+  const memoryLabel =
+    detail?.memory_size_MiB != null ? `${detail.memory_size_MiB} MiB` : "\u2014";
 
-  const powerDisabled = !hasPermission("vms.power");
+  const hasPowerPermission = hasPermission("vms.power");
+  const showPowerActions = powerActionsEnabled;
+  const powerDisabled = showPowerActions && !hasPowerPermission;
   const powerDisabledMessage = "No tienes permisos para controlar energia. Pide acceso a un admin.";
 
   const fetchPerf = useCallback(() => {
@@ -130,16 +170,12 @@ export default function VMDetailModal({ vmId, record = null, onClose, onAction }
     setPerfLoading(true);
     setPerfError("");
 
-    api
-      .get(`/vms/${vmId}/perf`, {
-        params: { window: PERF_WINDOW_SECONDS },
-        signal: controller.signal,
-      })
+    perfFetcher(vmId, { window: PERF_WINDOW_SECONDS }, controller.signal)
       .then((res) => {
         if (controller.signal.aborted) {
           return;
         }
-        setPerf(res.data);
+        setPerf(res?.data ?? res);
       })
       .catch((err) => {
         if (controller.signal.aborted || err?.code === "ERR_CANCELED") {
@@ -158,7 +194,7 @@ export default function VMDetailModal({ vmId, record = null, onClose, onAction }
       });
 
     return controller;
-  }, [vmId]);
+  }, [vmId, perfFetcher]);
 
   useEffect(() => {
     if (!vmId) {
@@ -179,11 +215,10 @@ export default function VMDetailModal({ vmId, record = null, onClose, onAction }
     setPending(null);
 
     let cancelled = false;
-    api
-      .get(`/vms/${vmId}`)
+    Promise.resolve(detailFetcher(vmId))
       .then((res) => {
         if (cancelled) return;
-        setDetail(res.data);
+        setDetail(res?.data ?? res);
       })
       .catch(() => {
         if (cancelled) return;
@@ -202,7 +237,7 @@ export default function VMDetailModal({ vmId, record = null, onClose, onAction }
     return () => {
       cancelled = true;
     };
-  }, [record, vmId]);
+  }, [record, vmId, detailFetcher]);
 
   useEffect(() => {
     const controller = fetchPerf();
@@ -295,7 +330,7 @@ export default function VMDetailModal({ vmId, record = null, onClose, onAction }
 
   const handlePowerExecution = async (apiPath) => {
     const actionLabel = apiPath === "start" ? "encender" : apiPath === "stop" ? "apagar" : "resetear";
-    if (powerDisabled) {
+    if (!showPowerActions || powerDisabled) {
       alert("Acceso denegado (403).");
       setPending(null);
       return;
@@ -389,13 +424,17 @@ export default function VMDetailModal({ vmId, record = null, onClose, onAction }
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-4 border-b border-gray-200 p-6">
-              <h3 id="vm-detail-title" className="text-2xl font-semibold">
-                Detalle VM {vmId}
+              <h3
+                id="vm-detail-title"
+                className="min-w-0 flex-1 truncate text-2xl font-semibold"
+                title={displayNameTitle}
+              >
+                Detalle VM {displayNameTitle}
               </h3>
               <button
                 onClick={onClose}
                 aria-label="Cerrar detalle de VM"
-                className="text-xl text-gray-500 transition hover:text-gray-900"
+                className="shrink-0 text-xl text-gray-500 transition hover:text-gray-900"
               >
                 &times;
               </button>
@@ -457,7 +496,7 @@ export default function VMDetailModal({ vmId, record = null, onClose, onAction }
                             : detail.power_state,
                         ],
                         ["CPU", detail.cpu_count],
-                        ["RAM", `${detail.memory_size_MiB} MiB`],
+                        ["RAM", memoryLabel],
                         ["OS", detail.guest_os],
                         ["IPs", detail.ip_addresses?.length ? detail.ip_addresses.join(", ") : "-"],
                         [
@@ -501,13 +540,16 @@ export default function VMDetailModal({ vmId, record = null, onClose, onAction }
                     </dl>
                   )}
 
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    {actionButton("Encender", "start", "start", IoPowerSharp)}
-                    {actionButton("Apagar", "stop", "stop", IoPowerOutline)}
-                    {actionButton("Reset", "reset", "reset", IoRefreshSharp)}
-                  </div>
-
-                  {powerDisabled && <p className="text-xs text-red-500">{powerDisabledMessage}</p>}
+                  {showPowerActions && (
+                    <>
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                        {actionButton("Encender", "start", "start", IoPowerSharp)}
+                        {actionButton("Apagar", "stop", "stop", IoPowerOutline)}
+                        {actionButton("Reset", "reset", "reset", IoRefreshSharp)}
+                      </div>
+                      {powerDisabled && <p className="text-xs text-red-500">{powerDisabledMessage}</p>}
+                    </>
+                  )}
                 </div>
 
                 <aside className="w-full shrink-0 space-y-4 border-t border-gray-200 pt-4 lg:w-72 lg:border-l lg:border-t-0 lg:pl-4 lg:pt-0 xl:w-80">

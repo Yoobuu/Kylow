@@ -18,6 +18,7 @@ class PermissionCode(str, Enum):
     HYPERV_POWER = "hyperv.power"
     JOBS_TRIGGER = "jobs.trigger"
     CEDIA_VIEW = "cedia.view"
+    AZURE_VIEW = "azure.view"
     SYSTEM_RESTART = "system.restart"
     SYSTEM_SETTINGS_VIEW = "system.settings.view"
     SYSTEM_SETTINGS_EDIT = "system.settings.edit"

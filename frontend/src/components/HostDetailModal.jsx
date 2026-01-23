@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { IoClose, IoPulse } from 'react-icons/io5'
 import { FaMemory, FaDatabase } from 'react-icons/fa'
-import { getHostDetail, getHostDeep } from '../api/hosts'
+import { getHostDetail as getVmwareHostDetail, getHostDeep as getVmwareHostDeep } from '../api/hosts'
 import { normalizeHostDetail, normalizeHostDeep } from '../lib/normalizeHost'
 
 const Backdrop = ({ children, onClose }) => (
@@ -36,7 +36,14 @@ const healthBadge = (health) => {
   return <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${cfg.tone}`}>{cfg.text}</span>
 }
 
-export default function HostDetailModal({ hostId, record, onClose, onOpenDeep }) {
+export default function HostDetailModal({
+  hostId,
+  record,
+  onClose,
+  onOpenDeep,
+  getHostDetail = getVmwareHostDetail,
+  getHostDeep = getVmwareHostDeep,
+}) {
   const [detail, setDetail] = useState(record ? normalizeHostDetail(record) : null)
   const [loading, setLoading] = useState(!record)
   const [error, setError] = useState('')
@@ -50,7 +57,8 @@ export default function HostDetailModal({ hostId, record, onClose, onOpenDeep })
     getHostDetail(hostId)
       .then((data) => {
         if (cancelled) return
-        setDetail(normalizeHostDetail(data))
+        const payload = data?.data ?? data
+        setDetail(normalizeHostDetail(payload))
       })
       .catch(() => {
         if (cancelled) return
@@ -62,7 +70,8 @@ export default function HostDetailModal({ hostId, record, onClose, onOpenDeep })
     getHostDeep(hostId)
       .then((res) => {
         if (cancelled) return
-        const deep = normalizeHostDeep(res)
+        const payload = res?.data ?? res
+        const deep = normalizeHostDeep(payload)
         setDeepSensors(deep?.sensors || null)
       })
       .catch(() => {})
