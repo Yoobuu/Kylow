@@ -29,12 +29,27 @@ def list_vms(
     environment: Optional[str] = Query(None, description="Filtrar por ambiente"),
     refresh: bool = Query(False, description="Forzar refresco del inventario de VMware"),
     current_user: User = Depends(require_permission(PermissionCode.VMS_VIEW)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     logger.info(
         "GET /api/vms requested by '%s' (refresh=%s)",
         current_user.username,
         refresh,
     )
+
+    log_audit(
+        session,
+        actor=current_user,
+        action="vms.view",
+        target_type="vms",
+        target_id="list",
+        meta={"name": name, "environment": environment, "refresh": refresh},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
 
     try:
         vms = get_vms(refresh=refresh)
@@ -100,6 +115,8 @@ def vm_perf_summary(
         description="Incluye metricas por disco (instancias individuales)."
     ),
     current_user: User = Depends(require_permission(PermissionCode.VMS_VIEW)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     logger.debug(
         "Fetching perf metrics for VM '%s' requested by '%s' (window=%s, idle_to_zero=%s, by_disk=%s)",
@@ -109,6 +126,18 @@ def vm_perf_summary(
         idle_to_zero,
         by_disk,
     )
+    log_audit(
+        session,
+        actor=current_user,
+        action="vms.perf.view",
+        target_type="vm",
+        target_id=vm_id,
+        meta={"window": window, "idle_to_zero": idle_to_zero, "by_disk": by_disk},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
     return get_vm_perf_summary(
         vm_id,
         window_seconds=window,
@@ -120,6 +149,8 @@ def vm_perf_summary(
 def vm_detail(
     vm_id: str = Path(..., description="ID de la VM"),
     current_user: User = Depends(require_permission(PermissionCode.VMS_VIEW)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     safe_id = vm_id.replace("_", "-")
     logger.debug(
@@ -128,4 +159,16 @@ def vm_detail(
         safe_id,
         current_user.username,
     )
+    log_audit(
+        session,
+        actor=current_user,
+        action="vms.detail.view",
+        target_type="vm",
+        target_id=vm_id,
+        meta={"normalized_id": safe_id},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
     return get_vm_detail(safe_id)

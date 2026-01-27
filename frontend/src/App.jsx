@@ -7,9 +7,11 @@ import AppLayout from "./components/AppLayout";
 import AccessDenied from "./components/AccessDenied";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
+import AccessPending from "./pages/AccessPending";
+import AccessDeniedTenant from "./pages/AccessDeniedTenant";
 import UserAdminPage from "./pages/UserAdminPage";
 import AuditPage from "./pages/AuditPage";
-import NotificationsPage from "./pages/NotificationsPage";
+import NotificationsComingSoon from "./pages/NotificationsComingSoon";
 import VMwarePage from "./components/VMwarePage";
 import CediaPage from "./components/CediaPage";
 import AzurePage from "./components/AzurePage";
@@ -70,6 +72,16 @@ function AppRoutes() {
             <Navigate to="/login" replace />
           )
         }
+      />
+
+      <Route
+        path="/access-pending"
+        element={isAuthenticated ? <Navigate to="/choose" replace /> : <AccessPending />}
+      />
+
+      <Route
+        path="/access-denied-tenant"
+        element={isAuthenticated ? <Navigate to="/choose" replace /> : <AccessDeniedTenant />}
       />
 
       <Route
@@ -240,7 +252,7 @@ function AppRoutes() {
               <Navigate to="/change-password" replace />
             ) : canViewNotifications ? (
               <AppLayout>
-                <NotificationsPage />
+                <NotificationsComingSoon />
               </AppLayout>
             ) : (
               <AppLayout>

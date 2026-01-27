@@ -302,12 +302,17 @@ export default function VMTable({
     emptyStateType = 'error'
   }
 
+  const resolvedTitle =
+    pageTitle === 'Inventario de VMs' && providerLabel
+      ? `Inventario de VMs ${providerLabel}`
+      : pageTitle
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen" data-tutorial-id="vm-table-root">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">{pageTitle}</h2>
-          <div className="h-1 w-32 bg-[#5da345] rounded-full"></div>
+          <h2 className="text-[2.6rem] font-bold text-[#231F20] mb-2">{resolvedTitle}</h2>
+          <div className="h-1 w-32 bg-[#E11B22] rounded-full"></div>
         </div>
         <div className="flex flex-col items-end gap-2" data-tutorial-id="vm-table-actions">
           <div className="flex items-center gap-2">
@@ -315,20 +320,20 @@ export default function VMTable({
               onClick={handleRefresh}
               disabled={refreshBusy}
               aria-busy={refreshBusy}
-              className="bg-white border border-blue-300 text-blue-700 font-medium py-2 px-4 rounded-lg shadow-sm hover:bg-blue-50 transition disabled:opacity-60 disabled:cursor-not-allowed"
+              className="bg-[#E11B22] border border-[#E11B22] text-white font-medium py-2 px-4 rounded-lg shadow-sm hover:bg-[#c9161c] transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
               Actualizar inventario
             </button>
             <button
               onClick={handleExport}
               disabled={!processed.length}
-              className="bg-[#5da345] text-white font-medium py-2 px-4 rounded-lg shadow hover:bg-[#4c8c38] transition disabled:opacity-60 disabled:cursor-not-allowed"
+              className="bg-[#E11B22] text-white font-medium py-2 px-4 rounded-lg shadow hover:bg-[#c9161c] transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {exportLabel}
             </button>
           </div>
           {refreshBusy && (
-            <div className="text-xs text-blue-600 animate-pulse text-right">
+            <div className="text-xs text-[#E11B22] animate-pulse text-right">
               Actualizando&hellip;
             </div>
           )}
@@ -383,10 +388,10 @@ export default function VMTable({
         />
       </div>
 
-      <div className="text-sm text-gray-600 mb-4">
+      <div className="text-sm text-[#E11B22] mb-4">
         Mostrando {processed.length} de {vms.length} VMs
         {globalSearch.trim() !== '' && (
-          <span className="ml-2 text-gray-500">(filtradas por "{globalSearch}")</span>
+          <span className="ml-2 text-[#E11B22]/70">(filtradas por "{globalSearch}")</span>
         )}
       </div>
 
@@ -411,7 +416,7 @@ export default function VMTable({
           />
         ) : (
           <table className="min-w-full bg-white rounded-lg shadow overflow-hidden">
-            <thead className="bg-gray-100 text-left text-sm text-gray-600">
+            <thead className="bg-[#FAF3E9] text-left text-sm text-[#E11B22]">
               <tr>
                 <th className="px-4 py-2">Nombre</th>
                 <th className="px-4 py-2">Estado</th>
@@ -422,7 +427,7 @@ export default function VMTable({
                 <th className="px-4 py-2">RAM (MiB)</th>
               </tr>
             </thead>
-            <tbody className="text-sm text-gray-800">
+            <tbody className="text-sm text-[#231F20]">
               {fallbackRows && fallbackRows.map((vm) => (
                 <tr
                   key={vm.id || vm.name}

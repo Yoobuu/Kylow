@@ -1,0 +1,31 @@
+@font-face {
+  font-family: "USFQ Title";
+  src: url("../assets/fonts/Title/UniversityRomanStdBold.OTF") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "USFQ Title";
+  src: url("../assets/fonts/Title/UniversityRomanStdItalic.OTF") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "USFQ Title";
+  src: url("../assets/fonts/Title/UniversityRomanStdRegular.OTF") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "USFQ Body";
+  src: url("../assets/fonts/Body/Helvetica Neue LT Std 47 Light Condensed.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}

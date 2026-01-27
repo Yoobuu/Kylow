@@ -8,8 +8,13 @@ import { useAuth } from '../context/AuthContext'
 import InventoryMetaBar from './common/InventoryMetaBar'
 
 const AUTO_REFRESH_MS = 5 * 60 * 1000
-const gradientBg = 'bg-gradient-to-br from-slate-900 via-black to-slate-950'
-const cardColors = ['from-blue-500/30', 'from-cyan-500/30', 'from-indigo-500/30', 'from-emerald-500/30']
+const gradientBg = 'bg-white'
+const cardColors = [
+  'from-[#FAF3E9] to-[#FAF3E9]',
+  'from-[#FAF3E9] to-[#FAF3E9]',
+  'from-[#FAF3E9] to-[#FAF3E9]',
+  'from-[#FAF3E9] to-[#FAF3E9]',
+]
 
 const hostFetcherFactory = ({ hostsState, snapshotState, bannerState, discoverHosts, setStatus, setSnapshotGeneratedAt, setSnapshotSource, setSnapshotStale, setSnapshotStaleReason, isSuperadmin, useLegacyRef, initialRefreshRef, setJobId, setPolling }) => {
   return async ({ refresh } = {}) => {
@@ -109,6 +114,75 @@ const hostSummaryBuilder = (items) => {
   const avgCpu = items.length ? Math.round((items.reduce((a, h) => a + (h.logical_processors || 0), 0) / items.length) * 100) / 100 : null
   const avgRam = items.length ? Math.round((items.reduce((a, h) => a + (h.memory_capacity_gb || 0), 0) / items.length) * 100) / 100 : null
   return { total, clusters, totalVms, avgCpu, avgRam }
+}
+
+const BeigeSelect = ({ id, value, options, onChange }) => {
+  const [open, setOpen] = useState(false)
+  const containerRef = useRef(null)
+
+  const selectedLabel = useMemo(() => {
+    const match = options.find((opt) => opt.value === value)
+    return match ? match.label : options[0]?.label || 'Seleccionar'
+  }, [options, value])
+
+  useEffect(() => {
+    const handleClick = (event) => {
+      if (!containerRef.current?.contains(event.target)) {
+        setOpen(false)
+      }
+    }
+    const handleKey = (event) => {
+      if (event.key === 'Escape') {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    document.addEventListener('keydown', handleKey)
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+      document.removeEventListener('keydown', handleKey)
+    }
+  }, [])
+
+  return (
+    <div ref={containerRef} className="relative">
+      <button
+        id={id}
+        type="button"
+        className="w-full rounded-lg border border-[#D6C7B8] bg-white px-3 py-2 text-left text-sm text-[#231F20] shadow-sm focus:outline-none focus:ring-2 focus:ring-usfq-red/40"
+        onClick={() => setOpen((prev) => !prev)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        <span>{selectedLabel}</span>
+        <span className="float-right text-[#939598]">▾</span>
+      </button>
+      {open && (
+        <ul
+          className="absolute z-20 mt-2 max-h-60 w-full overflow-auto rounded-lg border border-[#E1D6C8] bg-white shadow-lg"
+          role="listbox"
+          aria-labelledby={id}
+        >
+          {options.map((opt) => (
+            <li key={opt.value ?? opt.label}>
+              <button
+                type="button"
+                className={`w-full px-3 py-2 text-left text-sm transition ${
+                  value === opt.value ? 'bg-[#FAF3E9] text-[#231F20]' : 'hover:bg-[#FAF3E9]'
+                }`}
+                onClick={() => {
+                  onChange(opt.value)
+                  setOpen(false)
+                }}
+              >
+                {opt.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
 }
 
 export default function HyperVHostsPage() {
@@ -237,7 +311,15 @@ const discoverHosts = useCallback(async () => {
   const hasGroups = entries.length > 0
   const fallbackRows = !hasGroups && hosts.length > 0 ? hosts : null
   const statusNode = status ? (
-    <div className={`mb-2 rounded-lg border px-3 py-1 text-xs ${status.kind === 'warning' ? 'border-amber-400/60 bg-amber-500/10 text-amber-200' : status.kind === 'error' ? 'border-red-400/60 bg-red-500/10 text-red-200' : status.kind === 'success' ? 'border-emerald-400/60 bg-emerald-500/10 text-emerald-200' : 'border-cyan-400/60 bg-cyan-500/10 text-cyan-200'}`}>
+    <div className={`mb-2 rounded-lg border px-3 py-1 text-xs ${
+      status.kind === 'warning'
+        ? 'border-[#FFE3A3] bg-[#FFF3CD] text-[#7A5E00]'
+        : status.kind === 'error'
+          ? 'border-[#F5B5B5] bg-[#FDE2E2] text-[#8B0000]'
+          : status.kind === 'success'
+            ? 'border-[#B7E0C1] bg-[#E6F4EA] text-[#1B5E20]'
+            : 'border-[#D6C7B8] bg-[#FAF3E9] text-[#231F20]'
+    }`}>
       {status.text}
     </div>
   ) : null
@@ -245,7 +327,13 @@ const discoverHosts = useCallback(async () => {
     const bannerToUse = banner || bannerRef.current
     if (!bannerToUse) return null
     return (
-      <div className={`mb-4 rounded-lg border px-3 py-2 text-sm ${bannerToUse.kind === 'warning' ? 'border-amber-400/60 bg-amber-500/10 text-amber-200' : bannerToUse.kind === 'error' ? 'border-red-400/60 bg-red-500/10 text-red-200' : 'border-cyan-400/60 bg-cyan-500/10 text-cyan-200'}`}>
+      <div className={`mb-4 rounded-lg border px-3 py-2 text-sm ${
+        bannerToUse.kind === 'warning'
+          ? 'border-[#FFE3A3] bg-[#FFF3CD] text-[#7A5E00]'
+          : bannerToUse.kind === 'error'
+            ? 'border-[#F5B5B5] bg-[#FDE2E2] text-[#8B0000]'
+            : 'border-[#D6C7B8] bg-[#FAF3E9] text-[#231F20]'
+      }`}>
         <div className="font-semibold">{bannerToUse.title}</div>
         {bannerToUse.details && bannerToUse.details.length > 0 && (
           <ul className="list-disc pl-5">
@@ -376,7 +464,13 @@ const discoverHosts = useCallback(async () => {
   ]
 
   const renderBool = (val) => (
-    <span className={`rounded-md px-2 py-0.5 text-xs ${val ? 'bg-emerald-500/20 text-emerald-200 border border-emerald-400/40' : 'bg-neutral-800 text-neutral-200 border border-neutral-700'}`}>
+    <span
+      className={`rounded-md px-2 py-0.5 text-xs ${
+        val
+          ? 'bg-[#E6F4EA] text-[#1B5E20] border border-[#B7E0C1]'
+          : 'bg-[#FAF3E9] text-[#231F20] border border-[#D6C7B8]'
+      }`}
+    >
       {val ? 'Sí' : 'No'}
     </span>
   )
@@ -397,40 +491,40 @@ const discoverHosts = useCallback(async () => {
         })()
       : '—'
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-        <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-neutral-900 p-6 shadow-2xl">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+        <div className="w-full max-w-lg rounded-2xl border border-[#E1D6C8] bg-white p-6 shadow-2xl text-[#231F20]">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h3 className="text-xl font-semibold text-white">{host.name}</h3>
-              <p className="text-sm text-neutral-400">{host.cluster || 'Sin cluster'}</p>
+              <h3 className="text-xl font-semibold text-[#231F20]">{host.name}</h3>
+              <p className="text-sm text-[#3b3b3b]">{host.cluster || 'Sin cluster'}</p>
             </div>
             <button
               onClick={onClose}
-              className="rounded-lg border border-white/20 px-3 py-1 text-sm text-neutral-200 hover:bg-white/10"
+              className="rounded-lg border border-[#D6C7B8] px-3 py-1 text-sm text-[#231F20] hover:bg-[#FAF3E9]"
             >
               Cerrar
             </button>
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-neutral-200">
-            <div><span className="text-neutral-400">Versión:</span> {host.version || '—'}</div>
-            <div><span className="text-neutral-400">CPU lógicos:</span> {host.logical_processors ?? '—'}</div>
-            <div><span className="text-neutral-400">RAM:</span> {host.memory_capacity_gb ?? '—'} GB</div>
-            <div><span className="text-neutral-400">VMs:</span> {host.total_vms ?? 0}</div>
-            <div><span className="text-neutral-400">CPU uso:</span> {renderPct(host.cpu_usage_pct)}</div>
-            <div><span className="text-neutral-400">RAM uso:</span> {renderPct(host.memory_usage_pct)}</div>
-            <div><span className="text-neutral-400">Migración:</span> {host.vmm_migration_enabled ? 'Sí' : 'No'}</div>
-            <div><span className="text-neutral-400">Uptime:</span> {uptime}</div>
-            <div><span className="text-neutral-400">NICs:</span> {host.nic_count ?? 0}</div>
-            <div><span className="text-neutral-400">Switches:</span> {host.switch_count}</div>
+          <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-[#231F20]">
+            <div><span className="text-[#6b6b6b]">Versión:</span> {host.version || '—'}</div>
+            <div><span className="text-[#6b6b6b]">CPU lógicos:</span> {host.logical_processors ?? '—'}</div>
+            <div><span className="text-[#6b6b6b]">RAM:</span> {host.memory_capacity_gb ?? '—'} GB</div>
+            <div><span className="text-[#6b6b6b]">VMs:</span> {host.total_vms ?? 0}</div>
+            <div><span className="text-[#6b6b6b]">CPU uso:</span> {renderPct(host.cpu_usage_pct)}</div>
+            <div><span className="text-[#6b6b6b]">RAM uso:</span> {renderPct(host.memory_usage_pct)}</div>
+            <div><span className="text-[#6b6b6b]">Migración:</span> {host.vmm_migration_enabled ? 'Sí' : 'No'}</div>
+            <div><span className="text-[#6b6b6b]">Uptime:</span> {uptime}</div>
+            <div><span className="text-[#6b6b6b]">NICs:</span> {host.nic_count ?? 0}</div>
+            <div><span className="text-[#6b6b6b]">Switches:</span> {host.switch_count}</div>
           </div>
           {host.switches && host.switches.length > 0 && (
             <div className="mt-4">
-              <div className="text-xs uppercase text-neutral-400 mb-1">Switches</div>
-              <div className="space-y-2 text-sm text-neutral-200 max-h-40 overflow-auto">
+              <div className="text-xs uppercase text-[#6b6b6b] mb-1">Switches</div>
+              <div className="space-y-2 text-sm text-[#231F20] max-h-40 overflow-auto">
                 {host.switches.map((sw, idx) => (
-                  <div key={idx} className="rounded-lg border border-white/10 bg-white/5 px-3 py-2">
-                    <div className="font-semibold text-white">{sw.Name || sw.name || 'Switch'}</div>
-                    <div className="text-xs text-neutral-400">{sw.NetAdapterInterfaceDescription || sw.description || '—'}</div>
+                  <div key={idx} className="rounded-lg border border-[#E1D6C8] bg-[#FAF3E9] px-3 py-2">
+                    <div className="font-semibold text-[#231F20]">{sw.Name || sw.name || 'Switch'}</div>
+                    <div className="text-xs text-[#6b6b6b]">{sw.NetAdapterInterfaceDescription || sw.description || '—'}</div>
                   </div>
                 ))}
               </div>
@@ -438,14 +532,14 @@ const discoverHosts = useCallback(async () => {
           )}
           {host.nics && host.nics.length > 0 && (
             <div className="mt-4">
-              <div className="text-xs uppercase text-neutral-400 mb-1">NICs</div>
-              <div className="space-y-2 text-sm text-neutral-200 max-h-40 overflow-auto">
+              <div className="text-xs uppercase text-[#6b6b6b] mb-1">NICs</div>
+              <div className="space-y-2 text-sm text-[#231F20] max-h-40 overflow-auto">
                 {host.nics.map((nic, idx) => (
-                  <div key={idx} className="rounded-lg border border-white/10 bg-white/5 px-3 py-2">
-                    <div className="font-semibold text-white">{nic.Name || nic.name || 'NIC'}</div>
-                    <div className="text-xs text-neutral-400">{nic.InterfaceDescription || nic.description || '—'}</div>
-                    <div className="text-xs text-neutral-400">MAC: {nic.MacAddress || '—'}</div>
-                    <div className="text-xs text-neutral-400">Estado: {nic.Status || nic.status || '—'} · Vel: {nic.LinkSpeed || '—'}</div>
+                  <div key={idx} className="rounded-lg border border-[#E1D6C8] bg-[#FAF3E9] px-3 py-2">
+                    <div className="font-semibold text-[#231F20]">{nic.Name || nic.name || 'NIC'}</div>
+                    <div className="text-xs text-[#6b6b6b]">{nic.InterfaceDescription || nic.description || '—'}</div>
+                    <div className="text-xs text-[#6b6b6b]">MAC: {nic.MacAddress || '—'}</div>
+                    <div className="text-xs text-[#6b6b6b]">Estado: {nic.Status || nic.status || '—'} · Vel: {nic.LinkSpeed || '—'}</div>
                   </div>
                 ))}
               </div>
@@ -453,14 +547,14 @@ const discoverHosts = useCallback(async () => {
           )}
           {host.storage && host.storage.length > 0 && (
             <div className="mt-4">
-              <div className="text-xs uppercase text-neutral-400 mb-1">Storage</div>
-              <div className="space-y-2 text-sm text-neutral-200 max-h-40 overflow-auto">
+              <div className="text-xs uppercase text-[#6b6b6b] mb-1">Storage</div>
+              <div className="space-y-2 text-sm text-[#231F20] max-h-40 overflow-auto">
                 {host.storage.map((disk, idx) => (
-                  <div key={idx} className="rounded-lg border border-white/10 bg-white/5 px-3 py-2">
-                    <div className="font-semibold text-white">{disk.FriendlyName || disk.Name || 'Disco'}</div>
-                    <div className="text-xs text-neutral-400">Tamaño: {disk.Size || '—'}</div>
-                    <div className="text-xs text-neutral-400">Estado: {disk.HealthStatus || disk.OperationalStatus || '—'}</div>
-                    <div className="text-xs text-neutral-400">Tipo: {disk.MediaType || '—'}</div>
+                  <div key={idx} className="rounded-lg border border-[#E1D6C8] bg-[#FAF3E9] px-3 py-2">
+                    <div className="font-semibold text-[#231F20]">{disk.FriendlyName || disk.Name || 'Disco'}</div>
+                    <div className="text-xs text-[#6b6b6b]">Tamaño: {disk.Size || '—'}</div>
+                    <div className="text-xs text-[#6b6b6b]">Estado: {disk.HealthStatus || disk.OperationalStatus || '—'}</div>
+                    <div className="text-xs text-[#6b6b6b]">Tipo: {disk.MediaType || '—'}</div>
                   </div>
                 ))}
               </div>
@@ -472,17 +566,17 @@ const discoverHosts = useCallback(async () => {
   }
 
   return (
-    <div className={`${gradientBg} min-h-screen text-white`} data-tutorial-id="hyperv-hosts-root">
+    <div className={`${gradientBg} min-h-screen text-[#231F20]`} data-tutorial-id="hyperv-hosts-root">
       <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-8">
         {statusNode}
         {bannerNode}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-blue-300 drop-shadow">Hosts Hyper-V</h2>
-            <p className="text-sm text-neutral-300">Inventario de hosts Hyper-V con recursos básicos y switches.</p>
+            <h2 className="text-3xl font-bold text-[#E11B22]">Hosts Hyper-V</h2>
+            <p className="text-sm text-[#3b3b3b]">Inventario de hosts Hyper-V con recursos básicos y switches.</p>
           </div>
-          <div className="flex flex-col items-end gap-2 text-xs text-neutral-300">
-            {refreshBusy && <span className="text-cyan-300 animate-pulse">Actualizando…</span>}
+          <div className="flex flex-col items-end gap-2 text-xs text-[#3b3b3b]">
+            {refreshBusy && <span className="text-[#E11B22] animate-pulse">Actualizando…</span>}
             <InventoryMetaBar
               generatedAt={snapshotGeneratedAt}
               source={snapshotSource}
@@ -490,14 +584,14 @@ const discoverHosts = useCallback(async () => {
               stale={snapshotStale}
               staleReason={snapshotStaleReason}
               className="items-end text-right"
-              textClassName="text-xs text-neutral-300"
-              badgeClassName="border-amber-400/60 text-amber-200 bg-amber-500/10"
+              textClassName="text-xs text-[#3b3b3b]"
+              badgeClassName="border-usfq-red/60 text-usfq-red bg-usfq-red/10"
             />
             <button
               onClick={handleRefresh}
               disabled={refreshBusy}
               aria-busy={refreshBusy}
-              className="rounded-lg border border-blue-400/60 px-3 py-1.5 text-sm font-semibold text-blue-200 hover:bg-blue-400/10 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-lg bg-[#E11B22] px-3 py-1.5 text-sm font-semibold text-white hover:bg-[#c9161c] disabled:cursor-not-allowed disabled:opacity-60"
             >
               Refrescar
             </button>
@@ -510,67 +604,67 @@ const discoverHosts = useCallback(async () => {
             return (
               <div
                 key={card.label}
-                className={`rounded-2xl border border-white/10 bg-gradient-to-br ${cardColors[idx % cardColors.length]} p-4 shadow-lg`}
+                className={`rounded-2xl border border-[#E1D6C8] bg-gradient-to-br ${cardColors[idx % cardColors.length]} p-4 shadow-lg`}
               >
                 <div className="flex items-center justify-between">
-                  <Icon className="text-2xl text-blue-200" />
-                  <span className="text-sm uppercase text-neutral-200">{card.label}</span>
+                  <Icon className="text-2xl text-[#E11B22]" />
+                  <span className="text-sm uppercase text-[#E11B22]">{card.label}</span>
                 </div>
-                <div className="mt-2 text-3xl font-semibold text-white">{card.value}</div>
+                <div className="mt-2 text-3xl font-semibold text-[#231F20]">{card.value}</div>
               </div>
             )
           })}
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-2xl border border-[#E1D6C8] bg-[#FAF3E9] p-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <input
             type="text"
             placeholder="Buscar por host o cluster..."
             value={globalSearch}
             onChange={(e) => setGlobalSearch(e.target.value)}
-            className="col-span-2 rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/40"
+            className="col-span-2 rounded-lg border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] placeholder:text-[#939598] focus:border-usfq-red focus:ring-2 focus:ring-usfq-red/40"
           />
-          <select
+          <BeigeSelect
+            id="hyperv-filter-cluster"
             value={filter.cluster || ''}
-            onChange={(e) => setFilter((prev) => ({ ...prev, cluster: e.target.value }))}
-            className="rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white focus:border-blue-400 focus:ring-2 focus:ring-blue-400/40"
-          >
-            <option value="">Cluster (todos)</option>
-            {uniqueClusters.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <select
+            onChange={(value) => setFilter((prev) => ({ ...prev, cluster: value }))}
+            options={[
+              { value: '', label: 'Cluster (todos)' },
+              ...uniqueClusters.map((c) => ({ value: c, label: c })),
+            ]}
+          />
+          <BeigeSelect
+            id="hyperv-filter-group"
             value={groupByOption}
-            onChange={(e) => setGroupByOption(e.target.value)}
-            className="rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white focus:border-blue-400 focus:ring-2 focus:ring-blue-400/40"
-          >
-            <option value="none">Sin agrupación</option>
-            <option value="cluster">Cluster</option>
-            <option value="version">Versión</option>
-          </select>
+            onChange={setGroupByOption}
+            options={[
+              { value: 'none', label: 'Sin agrupación' },
+              { value: 'cluster', label: 'Cluster' },
+              { value: 'version', label: 'Versión' },
+            ]}
+          />
+        </div>
         </div>
 
         {hasFilters && (
-          <div className="flex items-center gap-2 text-xs text-neutral-300">
-            <span className="rounded-full border border-cyan-400/60 bg-cyan-400/10 px-2 py-1 text-cyan-100">Filtros activos</span>
-            <button onClick={clearFilters} className="text-blue-300 underline">
+          <div className="flex items-center gap-2 text-xs text-[#3b3b3b]">
+            <span className="rounded-full border border-[#D6C7B8] bg-[#FAF3E9] px-2 py-1 text-[#231F20]">Filtros activos</span>
+            <button onClick={clearFilters} className="text-usfq-red underline">
               Limpiar
             </button>
           </div>
         )}
 
         {error && (
-          <div className="rounded-lg border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200">
+          <div className="rounded-lg border border-usfq-red/40 bg-usfq-red/10 p-4 text-sm text-usfq-red">
             {error}
           </div>
         )}
 
-        <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-950/80 shadow-2xl">
-          <table className="min-w-full divide-y divide-white/10">
-            <thead className="bg-neutral-900/60 text-xs uppercase text-neutral-300">
+        <div className="overflow-hidden rounded-2xl border border-[#E1D6C8] bg-white shadow-2xl">
+          <table className="min-w-full divide-y divide-[#E1D6C8]">
+            <thead className="bg-[#FAF3E9] text-xs uppercase text-[#E11B22]">
               <tr>
                 {tableHeader.map((col) => (
                   <th
@@ -583,41 +677,41 @@ const discoverHosts = useCallback(async () => {
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 text-sm">
+            <tbody className="divide-y divide-[#E1D6C8] text-sm text-[#231F20]">
               {hasGroups &&
                 entries.map(([group, rows]) => (
-                  <tr key={group} className="bg-neutral-900/60">
+                  <tr key={group} className="bg-[#FAF3E9] text-[#E11B22]">
                     <td colSpan={tableHeader.length} className="px-4 py-2">
                       <button
                         onClick={() => toggleGroup(group)}
-                        className="flex w-full items-center justify-between text-left text-blue-200"
+                        className="flex w-full items-center justify-between text-left text-[#E11B22]"
                       >
                         <span className="font-semibold">{group || 'Sin grupo'}</span>
-                        <span className="text-xs text-neutral-400">
+                        <span className="text-xs text-[#E11B22]/70">
                           {rows.length} hosts · {rows.reduce((acc, r) => acc + (r.total_vms || 0), 0)} VMs
                         </span>
                       </button>
-                      {!rows.length && <div className="text-neutral-400 text-sm mt-2">Sin datos</div>}
+                      {!rows.length && <div className="text-[#E11B22]/70 text-sm mt-2">Sin datos</div>}
                       {rows.length > 0 &&
                         rows.map((host) => (
                           <div
                             key={host.id}
-                            className="mt-2 rounded-lg border border-white/5 bg-neutral-950/70 p-3 transition hover:border-blue-300/40 hover:shadow-lg"
+                            className="mt-2 rounded-lg border border-[#E1D6C8] bg-[#FAF3E9] p-3 transition hover:border-usfq-red/40 hover:shadow-lg text-[#231F20]"
                             onClick={() => setSelected(host)}
                           >
                             <div className="flex flex-wrap items-center gap-3">
                               <div className="flex-1">
-                                <div className="text-sm font-semibold text-white">{host.name}</div>
-                                <div className="text-xs text-neutral-400">{host.cluster || '—'}</div>
+                                <div className="text-sm font-semibold text-[#231F20]">{host.name}</div>
+                                <div className="text-xs text-[#3b3b3b]">{host.cluster || '—'}</div>
                               </div>
-                              <span className="rounded-md border border-white/10 bg-white/5 px-2 py-0.5 text-xs text-neutral-100">
+                              <span className="rounded-md border border-[#D6C7B8] bg-white px-2 py-0.5 text-xs text-[#231F20]">
                                 {host.version || '—'}
                               </span>
-                              <span className="text-xs text-neutral-300">CPU: {host.logical_processors ?? '—'}</span>
-                              <span className="text-xs text-neutral-300">RAM: {host.memory_capacity_gb ?? '—'} GB</span>
-                              <span className="text-xs text-neutral-300">Switches: {host.switch_count}</span>
+                              <span className="text-xs text-[#3b3b3b]">CPU: {host.logical_processors ?? '—'}</span>
+                              <span className="text-xs text-[#3b3b3b]">RAM: {host.memory_capacity_gb ?? '—'} GB</span>
+                              <span className="text-xs text-[#3b3b3b]">Switches: {host.switch_count}</span>
                               {renderBool(host.vmm_migration_enabled)}
-                              <div className="text-sm font-semibold text-blue-200">{host.total_vms} VMs</div>
+                              <div className="text-sm font-semibold text-usfq-red">{host.total_vms} VMs</div>
                             </div>
                           </div>
                         ))}
@@ -628,30 +722,30 @@ const discoverHosts = useCallback(async () => {
               {!hasGroups &&
                 fallbackRows &&
                 fallbackRows.map((host) => (
-                  <tr key={host.id} className="hover:bg-neutral-900/60 cursor-pointer" onClick={() => setSelected(host)}>
-                    <td className="px-4 py-3 font-semibold text-white">{host.name}</td>
-                    <td className="px-4 py-3 text-neutral-200">{host.cluster}</td>
-                    <td className="px-4 py-3 text-neutral-200">{host.version}</td>
-                    <td className="px-4 py-3 text-neutral-200">{host.logical_processors ?? '—'}</td>
-                    <td className="px-4 py-3 text-neutral-200">{host.memory_capacity_gb ?? '—'}</td>
-                    <td className="px-4 py-3 text-neutral-200">{renderPct(host.cpu_usage_pct)}</td>
-                    <td className="px-4 py-3 text-neutral-200">{renderPct(host.memory_usage_pct)}</td>
-                    <td className="px-4 py-3 text-neutral-200">{host.switch_count}</td>
+                  <tr key={host.id} className="odd:bg-white even:bg-[#FAF3E9] hover:bg-[#FAF3E9] cursor-pointer" onClick={() => setSelected(host)}>
+                    <td className="px-4 py-3 font-semibold text-[#231F20]">{host.name}</td>
+                    <td className="px-4 py-3 text-[#3b3b3b]">{host.cluster}</td>
+                    <td className="px-4 py-3 text-[#3b3b3b]">{host.version}</td>
+                    <td className="px-4 py-3 text-[#3b3b3b]">{host.logical_processors ?? '—'}</td>
+                    <td className="px-4 py-3 text-[#3b3b3b]">{host.memory_capacity_gb ?? '—'}</td>
+                    <td className="px-4 py-3 text-[#3b3b3b]">{renderPct(host.cpu_usage_pct)}</td>
+                    <td className="px-4 py-3 text-[#3b3b3b]">{renderPct(host.memory_usage_pct)}</td>
+                    <td className="px-4 py-3 text-[#3b3b3b]">{host.switch_count}</td>
                     <td className="px-4 py-3">{renderBool(host.vmm_migration_enabled)}</td>
-                    <td className="px-4 py-3 text-blue-200 font-semibold">{host.total_vms}</td>
+                    <td className="px-4 py-3 text-usfq-red font-semibold">{host.total_vms}</td>
                   </tr>
                 ))}
 
               {!loading && !error && processed.length === 0 && (
                 <tr>
-                  <td colSpan={tableHeader.length} className="px-4 py-6 text-center text-neutral-400">
+                  <td colSpan={tableHeader.length} className="px-4 py-6 text-center text-[#3b3b3b]">
                     Sin datos de hosts.
                   </td>
                 </tr>
               )}
               {loading && (
                 <tr>
-                  <td colSpan={tableHeader.length} className="px-4 py-6 text-center text-neutral-300">
+                  <td colSpan={tableHeader.length} className="px-4 py-6 text-center text-[#3b3b3b]">
                     Cargando...
                   </td>
                 </tr>

@@ -1,32 +1,33 @@
 import React from 'react'
+import { FaBox, FaBolt, FaPowerOff } from 'react-icons/fa'
 
 export default function VMSummaryCards({ summary }) {
   return (
     <div className="flex flex-wrap justify-start gap-4 mb-6">
-      <div className="bg-white rounded-xl shadow p-4 flex items-center gap-4 flex-1 min-w-[200px] max-w-[300px]">
-        <div className="text-3xl text-gray-600">📦</div>
+      <div className="bg-[#FAF3E9] rounded-xl shadow p-4 flex items-center gap-4 flex-1 min-w-[200px] max-w-[300px]">
+        <FaBox className="text-[2.2rem] text-[#E11B22]" />
         <div>
-          <h4 className="text-sm text-gray-500">Total de VMs</h4>
-          <p className="text-2xl font-bold text-gray-800">{summary.total}</p>
+          <h4 className="text-[1.7rem] leading-tight text-[#E11B22]">Total de VMs</h4>
+          <p className="text-[2.1rem] font-bold text-[#231F20]">{summary.total}</p>
         </div>
       </div>
-      <div className="bg-green-100 rounded-xl shadow p-4 flex items-center gap-4 flex-1 min-w-[200px] max-w-[300px]">
-        <div className="text-3xl text-green-700">⚡</div>
+      <div className="bg-[#FAF3E9] rounded-xl shadow p-4 flex items-center gap-4 flex-1 min-w-[200px] max-w-[300px]">
+        <FaBolt className="text-[2.2rem] text-[#1B5E20]" />
         <div>
-          <h4 className="text-sm text-green-700">Encendidas</h4>
-          <p className="text-2xl font-bold text-green-800">{summary.encendidas}</p>
+          <h4 className="text-[1.7rem] leading-tight text-[#E11B22]">Encendidas</h4>
+          <p className="text-[2.1rem] font-bold text-[#231F20]">{summary.encendidas}</p>
         </div>
       </div>
-      <div className="bg-red-100 rounded-xl shadow p-4 flex items-center gap-4 flex-1 min-w-[200px] max-w-[300px]">
-        <div className="text-3xl text-red-700">⛔</div>
+      <div className="bg-[#FAF3E9] rounded-xl shadow p-4 flex items-center gap-4 flex-1 min-w-[200px] max-w-[300px]">
+        <FaPowerOff className="text-[2.2rem] text-[#E11B22]" />
         <div>
-          <h4 className="text-sm text-red-700">Apagadas</h4>
-          <p className="text-2xl font-bold text-red-800">{summary.apagadas}</p>
+          <h4 className="text-[1.7rem] leading-tight text-[#E11B22]">Apagadas</h4>
+          <p className="text-[2.1rem] font-bold text-[#231F20]">{summary.apagadas}</p>
         </div>
       </div>
-      <div className="bg-blue-50 rounded-xl shadow p-4 flex-1 min-w-[200px] max-w-[300px]">
-        <h4 className="text-sm text-blue-700 mb-2">Por Ambiente</h4>
-        <ul className="text-sm text-blue-800 space-y-1">
+      <div className="bg-[#FAF3E9] rounded-xl shadow p-4 flex-1 min-w-[200px] max-w-[300px]">
+        <h4 className="text-[1.7rem] text-[#E11B22] mb-2">Por Ambiente</h4>
+        <ul className="text-[1.15rem] text-[#231F20] space-y-1">
           {Object.entries(summary.ambientes).map(([amb, count]) => (
             <li key={amb} className="flex justify-between">
               <span>{amb}</span>

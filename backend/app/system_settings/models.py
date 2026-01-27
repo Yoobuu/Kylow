@@ -24,6 +24,8 @@ class SystemSettings(SQLModel, table=True):
     azure_enabled: Optional[bool] = Field(default=None)
 
     hyperv_refresh_interval_minutes: Optional[int] = Field(default=None)
+    hyperv_winrm_https_enabled: Optional[bool] = Field(default=None)
+    hyperv_winrm_http_enabled: Optional[bool] = Field(default=None)
     vmware_refresh_interval_minutes: Optional[int] = Field(default=None)
     vmware_hosts_refresh_interval_minutes: Optional[int] = Field(default=None)
     ovirt_refresh_interval_minutes: Optional[int] = Field(default=None)

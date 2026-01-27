@@ -133,11 +133,9 @@ const isImportantAction = (value) => {
 
 function AuditDetailDrawer({ item, onClose }) {
   const [copied, setCopied] = useState(false);
-  const [showMeta, setShowMeta] = useState(false);
 
   useEffect(() => {
     setCopied(false);
-    setShowMeta(false);
   }, [item]);
 
   useEffect(() => {
@@ -171,19 +169,19 @@ function AuditDetailDrawer({ item, onClose }) {
   const actorLabel = item.actor_username || "—";
 
   return createPortal(
-    <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 bg-black/70" onClick={onClose} />
-      <div className="absolute right-0 top-0 flex h-full w-full flex-col bg-zinc-950 text-zinc-100 shadow-2xl md:w-[70%] lg:w-[60%]">
-        <div className="flex items-start justify-between gap-4 border-b border-zinc-800 px-6 py-5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="relative flex h-full max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-[#E1D6C8] bg-[#FAF3E9] text-[#231F20] shadow-2xl">
+        <div className="flex items-start justify-between gap-4 border-b border-[#E1D6C8] px-6 py-5">
           <div className="space-y-1">
-            <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Detalle de auditoría</p>
-            <h2 className="text-xl font-semibold text-zinc-100">{item.action}</h2>
-            <p className="text-sm text-zinc-400">{item.when}</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">Detalle de auditoría</p>
+            <h2 className="text-xl font-semibold text-[#E11B22]">{item.action}</h2>
+            <p className="text-sm text-[#3b3b3b]">{item.when}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full border border-zinc-700 px-3 py-1 text-sm text-zinc-300 transition hover:border-zinc-500 hover:text-zinc-100"
+            className="rounded-full border border-[#D6C7B8] px-3 py-1 text-sm text-[#231F20] transition hover:border-[#E11B22] hover:text-[#E11B22]"
           >
             Cerrar
           </button>
@@ -191,65 +189,52 @@ function AuditDetailDrawer({ item, onClose }) {
         <div className="flex-1 overflow-y-auto px-6 py-5">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-1">
-              <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Actor</p>
-              <p className="text-sm text-zinc-200">{toTitle(actorLabel)}</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">Actor</p>
+              <p className="text-sm text-[#231F20]">{toTitle(actorLabel)}</p>
             </div>
             <div className="space-y-1">
-              <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Target</p>
-              <p className="text-sm text-zinc-200">
+              <p className="text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">Target</p>
+              <p className="text-sm text-[#231F20]">
                 {toTitle(targetLabel)} {targetValue}
               </p>
             </div>
             {item.ip ? (
               <div className="space-y-1">
-                <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">IP</p>
-                <p className="text-sm text-zinc-200">{item.ip}</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">IP</p>
+                <p className="text-sm text-[#231F20]">{item.ip}</p>
               </div>
             ) : null}
             {item.user_agent ? (
               <div className="space-y-1">
-                <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">User Agent</p>
-                <p className="text-sm text-zinc-200">{item.user_agent}</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">User Agent</p>
+                <p className="text-sm text-[#231F20]">{item.user_agent}</p>
               </div>
             ) : null}
             {item.correlation_id ? (
               <div className="space-y-1 md:col-span-2">
-                <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Correlation ID</p>
-                <p className="text-sm text-zinc-200">{item.correlation_id}</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">Correlation ID</p>
+                <p className="text-sm text-[#231F20]">{item.correlation_id}</p>
               </div>
             ) : null}
             <div className="space-y-1 md:col-span-2">
-              <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Resumen</p>
-              <p className="text-sm text-zinc-200">{summary || "—"}</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">Resumen</p>
+              <p className="text-sm text-[#231F20]">{summary || "—"}</p>
             </div>
           </div>
 
-          <div className="mt-6 rounded-2xl border border-zinc-800 bg-zinc-950/60">
-            <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3">
-              <button
-                type="button"
-                onClick={() => setShowMeta((prev) => !prev)}
-                className="text-sm font-semibold text-zinc-100 transition hover:text-[#FFA300]"
-              >
-                {showMeta ? "Ocultar JSON" : "Ver JSON"}
-              </button>
+          <div className="mt-6 rounded-2xl border border-[#E1D6C8] bg-white">
+            <div className="flex items-center justify-between border-b border-[#E1D6C8] px-4 py-3">
               <button
                 type="button"
                 onClick={handleCopy}
-                className="rounded-full bg-[#FFA300] px-3 py-1 text-xs font-semibold text-black transition hover:bg-[#ffb133]"
+                className="rounded-full bg-[#E11B22] px-3 py-1 text-xs font-semibold text-white transition hover:bg-[#c9161c]"
               >
                 {copied ? "Copiado" : "Copiar JSON"}
               </button>
             </div>
-            {showMeta ? (
-              <pre className="max-h-[50vh] overflow-auto whitespace-pre-wrap break-words px-4 py-4 text-xs text-zinc-200 md:text-sm">
-                {metaText}
-              </pre>
-            ) : (
-              <div className="px-4 py-4 text-xs text-zinc-500">
-                JSON oculto para mantener la vista limpia.
-              </div>
-            )}
+            <pre className="max-h-[50vh] overflow-auto whitespace-pre-wrap break-words px-4 py-4 text-xs text-[#231F20] md:text-sm">
+              {metaText}
+            </pre>
           </div>
         </div>
       </div>
@@ -356,70 +341,70 @@ export default function AuditPage() {
   };
 
   return (
-    <main className="min-h-screen w-full bg-black px-4 py-8 text-zinc-100 md:px-8">
+    <main className="min-h-screen w-full bg-white px-4 py-8 text-[#231F20] md:px-8">
       <div className="space-y-6">
         <header className="flex flex-col gap-3">
           <div>
-            <h1 className="text-3xl font-semibold text-zinc-100">Auditoría</h1>
-            <p className="text-sm text-zinc-400">Eventos recientes de operaciones sensibles.</p>
+            <h1 className="text-3xl font-semibold text-[#E11B22]">Auditoría</h1>
+            <p className="text-sm text-[#3b3b3b]">Eventos recientes de operaciones sensibles.</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3 text-xs text-zinc-400">
-            <span className="rounded-full border border-zinc-800 bg-zinc-950/60 px-3 py-1">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-[#6b6b6b]">
+            <span className="rounded-full border border-[#D6C7B8] bg-[#FAF3E9] px-3 py-1">
               Mostrando {items.length} de {total || "—"}
             </span>
             {activeFilters.length ? (
               activeFilters.map((chip) => (
-                <span key={chip} className="rounded-full border border-zinc-800 bg-zinc-900/60 px-3 py-1">
+                <span key={chip} className="rounded-full border border-[#D6C7B8] bg-[#FAF3E9] px-3 py-1 text-[#231F20]">
                   {chip}
                 </span>
               ))
             ) : (
-              <span className="text-zinc-500">Sin filtros activos</span>
+              <span className="text-[#6b6b6b]">Sin filtros activos</span>
             )}
           </div>
         </header>
 
         <section
-          className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4"
+          className="rounded-2xl border border-[#E1D6C8] bg-[#FAF3E9] p-4"
           data-tutorial-id="audit-filters"
         >
           <form onSubmit={handleSearchSubmit} className="grid gap-4 md:grid-cols-5">
             <div className="md:col-span-2">
-              <label className="text-xs uppercase tracking-[0.2em] text-zinc-500">Action</label>
+              <label className="text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">Action</label>
               <input
                 value={draftAction}
                 onChange={(event) => setDraftAction(event.target.value)}
                 placeholder="system.settings.update"
-                className="mt-2 w-full rounded-lg border border-zinc-800 bg-black px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-[#FFA300] focus:outline-none"
+                className="mt-2 w-full rounded-lg border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] placeholder:text-[#939598] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
               />
             </div>
             <div>
-              <label className="text-xs uppercase tracking-[0.2em] text-zinc-500">Actor</label>
+              <label className="text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">Actor</label>
               <input
                 value={draftActorUsername}
                 onChange={(event) => setDraftActorUsername(event.target.value)}
                 placeholder="admin"
-                className="mt-2 w-full rounded-lg border border-zinc-800 bg-black px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-[#FFA300] focus:outline-none"
+                className="mt-2 w-full rounded-lg border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] placeholder:text-[#939598] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
               />
             </div>
             <div>
-              <label className="text-xs uppercase tracking-[0.2em] text-zinc-500">Target type</label>
+              <label className="text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">Target type</label>
               <input
                 value={draftTargetType}
                 onChange={(event) => setDraftTargetType(event.target.value)}
                 placeholder="system"
-                className="mt-2 w-full rounded-lg border border-zinc-800 bg-black px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-[#FFA300] focus:outline-none"
+                className="mt-2 w-full rounded-lg border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] placeholder:text-[#939598] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
               />
             </div>
             <div>
-              <label className="text-xs uppercase tracking-[0.2em] text-zinc-500">Página</label>
+              <label className="text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">Página</label>
               <select
                 value={limit}
                 onChange={(event) => {
                   setLimit(Number(event.target.value));
                   setOffset(0);
                 }}
-                className="mt-2 w-full rounded-lg border border-zinc-800 bg-black px-3 py-2 text-sm text-zinc-100 focus:border-[#FFA300] focus:outline-none"
+                className="mt-2 w-full rounded-lg border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
               >
                 {LIMIT_OPTIONS.map((option) => (
                   <option key={option} value={option}>
@@ -432,13 +417,13 @@ export default function AuditPage() {
               <button
                 type="button"
                 onClick={handleClearFilters}
-                className="rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-200 transition hover:border-zinc-500"
+                className="rounded-full border border-[#D6C7B8] bg-white px-4 py-2 text-sm text-[#E11B22] transition hover:bg-[#FAF3E9]"
               >
                 Limpiar
               </button>
               <button
                 type="submit"
-                className="rounded-full bg-[#FFA300] px-4 py-2 text-sm font-semibold text-black transition hover:bg-[#ffb133]"
+                className="rounded-full bg-[#E11B22] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#c9161c]"
               >
                 Aplicar
               </button>
@@ -447,20 +432,20 @@ export default function AuditPage() {
         </section>
 
         <section
-          className="rounded-2xl border border-zinc-800 bg-zinc-950/40"
+          className="rounded-2xl border border-[#E1D6C8] bg-white"
           data-tutorial-id="audit-table"
         >
           {loading ? (
-            <div className="p-6 text-sm text-zinc-400">Cargando…</div>
+            <div className="p-6 text-sm text-[#6b6b6b]">Cargando…</div>
           ) : error ? (
-            <div className="p-6 text-sm text-red-400">{error}</div>
+            <div className="p-6 text-sm text-[#E11B22]">{error}</div>
           ) : items.length === 0 ? (
-            <div className="p-6 text-sm text-zinc-400">Sin resultados.</div>
+            <div className="p-6 text-sm text-[#6b6b6b]">Sin resultados.</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
-                <thead className="sticky top-0 z-10 bg-zinc-950">
-                  <tr className="text-left text-xs uppercase tracking-[0.2em] text-zinc-500">
+                <thead className="sticky top-0 z-10 bg-[#FAF3E9]">
+                  <tr className="text-left text-xs uppercase tracking-[0.2em] text-[#E11B22]">
                     <th className="px-4 py-3 whitespace-nowrap">Fecha y hora</th>
                     <th className="px-4 py-3 whitespace-nowrap">Acción</th>
                     <th className="px-4 py-3 whitespace-nowrap">Actor</th>
@@ -470,42 +455,42 @@ export default function AuditPage() {
                     <th className="px-4 py-3 whitespace-nowrap">Correlation</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-900">
-                  {items.map((item) => {
+                <tbody className="divide-y divide-[#E1D6C8]">
+                  {items.map((item, index) => {
                     const metaPreview = buildPreview(item);
                     const highlight = isImportantAction(item.action);
                     return (
                       <tr
                         key={item.id}
                         onClick={() => openDetail(item)}
-                        className="cursor-pointer transition hover:bg-zinc-900/60"
+                        className={`cursor-pointer transition hover:bg-[#FAF3E9] ${index % 2 === 0 ? "bg-white" : "bg-[#FAF3E9]"}`}
                       >
-                        <td className="px-4 py-3 whitespace-nowrap text-zinc-200">
+                        <td className="px-4 py-3 whitespace-nowrap text-[#231F20]">
                           {formatDate(item.when)}
                         </td>
                         <td className="px-4 py-3">
                           <span
                             className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${
                               highlight
-                                ? "border-[#FFA300]/40 bg-[#FFA300]/10 text-[#FFA300]"
-                                : "border-zinc-700 bg-zinc-900 text-zinc-100"
+                                ? "border-[#F5B5B5] bg-[#FDE2E2] text-[#8B0000]"
+                                : "border-[#D6C7B8] bg-[#FAF3E9] text-[#231F20]"
                             }`}
                           >
                             {item.action}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="inline-flex items-center rounded-full border border-zinc-700 bg-zinc-900 px-3 py-1 text-xs text-zinc-200">
+                          <span className="inline-flex items-center rounded-full border border-[#D6C7B8] bg-[#FAF3E9] px-3 py-1 text-xs text-[#231F20]">
                             {item.actor_username || "—"}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-zinc-300">{item.target_type || "—"}</td>
-                        <td className="px-4 py-3 font-mono text-xs text-zinc-300">
+                        <td className="px-4 py-3 text-[#3b3b3b]">{item.target_type || "—"}</td>
+                        <td className="px-4 py-3 font-mono text-xs text-[#3b3b3b]">
                           {item.target_id || "—"}
                         </td>
-                        <td className="px-4 py-3 text-zinc-300">
+                        <td className="px-4 py-3 text-[#3b3b3b]">
                           <div className="flex min-w-0 items-center gap-3">
-                    <span className="min-w-0 flex-1 truncate text-xs text-zinc-400">
+                    <span className="min-w-0 flex-1 truncate text-xs text-[#6b6b6b]">
                       {metaPreview}
                     </span>
                             <button
@@ -514,13 +499,13 @@ export default function AuditPage() {
                                 event.stopPropagation();
                                 openDetail(item);
                               }}
-                              className="shrink-0 rounded-full border border-zinc-700 px-3 py-1 text-xs text-zinc-200 transition hover:border-[#FFA300] hover:text-[#FFA300]"
+                              className="shrink-0 rounded-full border border-[#D6C7B8] px-3 py-1 text-xs text-[#E11B22] transition hover:border-[#E11B22]"
                             >
                               Ver
                             </button>
                           </div>
                         </td>
-                        <td className="px-4 py-3 font-mono text-xs text-zinc-400">
+                        <td className="px-4 py-3 font-mono text-xs text-[#6b6b6b]">
                           {item.correlation_id || "—"}
                         </td>
                       </tr>
@@ -532,12 +517,12 @@ export default function AuditPage() {
           )}
         </section>
 
-        <footer className="flex flex-wrap items-center justify-between gap-3 text-sm text-zinc-400">
+        <footer className="flex flex-wrap items-center justify-between gap-3 text-sm text-[#6b6b6b]">
           <button
             type="button"
             onClick={() => setOffset((prev) => Math.max(0, prev - limit))}
             disabled={!canGoBack}
-            className="rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-200 transition hover:border-zinc-500 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-full border border-[#D6C7B8] bg-white px-4 py-2 text-sm text-[#E11B22] transition hover:bg-[#FAF3E9] disabled:cursor-not-allowed disabled:opacity-50"
           >
             Anterior
           </button>
@@ -548,7 +533,7 @@ export default function AuditPage() {
             type="button"
             onClick={() => setOffset((prev) => prev + limit)}
             disabled={!canGoForward}
-            className="rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-200 transition hover:border-zinc-500 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-full border border-[#D6C7B8] bg-white px-4 py-2 text-sm text-[#E11B22] transition hover:bg-[#FAF3E9] disabled:cursor-not-allowed disabled:opacity-50"
           >
             Siguiente
           </button>

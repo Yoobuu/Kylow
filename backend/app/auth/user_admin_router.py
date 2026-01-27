@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+import re
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from passlib.hash import bcrypt
+from pydantic import BaseModel, Field, field_validator
 from sqlmodel import Session, select
 
 from app.audit.service import log_audit
+from app.auth.password_policy import check_password_policy
 from app.auth.user_model import User
 from app.db import get_session
 from app.dependencies import (
@@ -18,8 +22,28 @@ from app.permissions.service import (
     list_permission_codes,
     user_has_all_permissions,
 )
+from app.settings import settings
 
 router = APIRouter(prefix="/api/users", tags=["users"])
+
+_USERNAME_RE = re.compile(r"^[a-zA-Z0-9._-]+$")
+
+
+class CreateUserRequest(BaseModel):
+    username: str = Field(min_length=3, max_length=64)
+    password: str = Field(min_length=1, max_length=256)
+
+    @field_validator("username")
+    @classmethod
+    def validate_username(cls, value: str) -> str:
+        trimmed = value.strip()
+        if not _USERNAME_RE.match(trimmed):
+            raise ValueError("username invalido")
+        return trimmed
+
+
+class ResetPasswordRequest(BaseModel):
+    new_password: str = Field(min_length=1, max_length=256)
 
 
 @router.get("/", dependencies=[Depends(require_permission(PermissionCode.USERS_MANAGE))])
@@ -37,18 +61,22 @@ def list_users(session: Session = Depends(get_session)):
 
 @router.post("/")
 def create_user(
-    payload: dict,
+    payload: CreateUserRequest,
     session: Session = Depends(get_session),
     current_user: User = Depends(require_permission(PermissionCode.USERS_MANAGE)),
     audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
-    username = (payload.get("username") or "").strip()
-    password = payload.get("password")
-
-    if not username or not password:
+    username = payload.username
+    password = payload.password
+    policy_errors = check_password_policy(
+        password,
+        min_length=settings.password_min_length,
+        require_classes=settings.password_require_classes,
+    )
+    if policy_errors:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="username y password requeridos",
+            detail={"error": "password_policy", "messages": policy_errors},
         )
 
     existing = session.exec(select(User).where(User.username == username)).first()
@@ -89,16 +117,21 @@ def create_user(
 @router.post("/{user_id}/reset-password")
 def reset_password(
     user_id: int,
-    payload: dict,
+    payload: ResetPasswordRequest,
     session: Session = Depends(get_session),
     current_user: User = Depends(require_permission(PermissionCode.USERS_MANAGE)),
     audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
-    new_password = payload.get("new_password")
-    if not new_password:
+    new_password = payload.new_password
+    policy_errors = check_password_policy(
+        new_password,
+        min_length=settings.password_min_length,
+        require_classes=settings.password_require_classes,
+    )
+    if policy_errors:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="falta new_password",
+            detail={"error": "password_policy", "messages": policy_errors},
         )
 
     user = session.get(User, user_id)

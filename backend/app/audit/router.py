@@ -7,9 +7,11 @@ from sqlalchemy import func
 from sqlalchemy.sql import Select
 from sqlmodel import Session, SQLModel, select
 
+from app.audit.service import log_audit
 from app.audit.models import AuditLog
 from app.db import get_session
-from app.dependencies import require_permission
+from app.dependencies import AuditRequestContext, get_request_audit_context, require_permission
+from app.auth.user_model import User
 from app.permissions.models import PermissionCode
 
 router = APIRouter(prefix="/api/audit", tags=["audit"])
@@ -52,7 +54,6 @@ def _apply_filters(statement: Select[AuditLog], *, action: Optional[str], target
 @router.get(
     "/",
     response_model=AuditLogListResponse,
-    dependencies=[Depends(require_permission(PermissionCode.AUDIT_VIEW))],
 )
 def list_audit_logs(
     limit: int = Query(50, ge=1, le=200),
@@ -61,7 +62,27 @@ def list_audit_logs(
     target_type: Optional[str] = Query(None),
     actor_username: Optional[str] = Query(None),
     session: Session = Depends(get_session),
+    current_user: User = Depends(require_permission(PermissionCode.AUDIT_VIEW)),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
+    log_audit(
+        session,
+        actor=current_user,
+        action="audit.view",
+        target_type="audit",
+        target_id="list",
+        meta={
+            "limit": limit,
+            "offset": offset,
+            "action": action,
+            "target_type": target_type,
+            "actor_username": actor_username,
+        },
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
     base_stmt = select(AuditLog)
     base_stmt = _apply_filters(base_stmt, action=action, target_type=target_type, actor_username=actor_username)
 

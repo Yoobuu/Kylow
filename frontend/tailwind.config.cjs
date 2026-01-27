@@ -4,6 +4,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        usfq: {
+          red: 'rgb(var(--usfq-red) / <alpha-value>)',
+          black: 'rgb(var(--usfq-black) / <alpha-value>)',
+          gray: 'rgb(var(--usfq-gray) / <alpha-value>)',
+          white: 'rgb(var(--usfq-white) / <alpha-value>)',
+          grayLight: 'rgb(var(--usfq-gray-light) / <alpha-value>)',
+        },
         surface: {
           base: '#f8fafc',
           card: '#ffffff',
@@ -25,6 +32,12 @@ module.exports = {
           600: '#0284c7',
           700: '#0369a1',
         },
+      },
+      fontFamily: {
+        usfqTitle: ['"USFQ Title"', '"University Roman"', '"Baskerville"', 'serif'],
+        usfqBody: ['"USFQ Body"', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+        usfqSerif: ['"University Roman"', '"Baskerville"', '"Times New Roman"', 'Times', 'serif'],
+        usfqSans: ['"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
       },
       fontSize: {
         table: ['14px', { lineHeight: '20px', letterSpacing: '0' }],

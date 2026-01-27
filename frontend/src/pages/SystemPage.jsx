@@ -9,14 +9,14 @@ const TIMEOUT_MS = 60 * 1000;
 
 function Modal({ title, children, onClose }) {
   return (
-    <div className="fixed inset-0 z-40 flex items-start justify-center bg-black/50 px-4 py-10">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4 py-10">
+      <div className="w-full max-w-md rounded-lg border border-[#E1D6C8] bg-[#FAF3E9] p-6 shadow-xl">
         <div className="flex items-start justify-between gap-4">
-          <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+          <h2 className="text-lg font-semibold text-[#E11B22]">{title}</h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-gray-500 transition hover:text-gray-800"
+            className="text-[#6b6b6b] transition hover:text-[#E11B22]"
             aria-label="Cerrar"
           >
             x
@@ -32,25 +32,25 @@ function RestartOverlay({ state, onRetry }) {
   const isTimeout = state === "timeout";
   const isReady = state === "ready";
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/90 px-6 text-center text-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-6 text-center text-[#231F20]">
       <div className="max-w-md space-y-3">
         <h2 className="text-xl font-semibold">
           {isReady ? "Servicio listo" : "Reiniciando backend..."}
         </h2>
-        <p className="text-sm text-neutral-300">
+        <p className="text-sm text-[#3b3b3b]">
           {isReady
             ? "Redirigiendo a login para revalidar sesión."
             : "La UI quedará temporalmente inactiva mientras el servicio se reinicia."}
         </p>
         {isTimeout && (
           <div className="space-y-3">
-            <p className="text-sm text-amber-300">
+            <p className="text-sm text-[#7A5E00]">
               El reinicio está tardando más de lo esperado.
             </p>
             <button
               type="button"
               onClick={onRetry}
-              className="rounded-lg bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20"
+              className="rounded-lg bg-[#E11B22] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#c9161c]"
             >
               Reintentar
             </button>
@@ -168,32 +168,29 @@ export default function SystemPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-10">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-10 bg-white">
       <header data-tutorial-id="system-header">
-        <h1 className="text-3xl font-semibold text-neutral-900">Sistema</h1>
-        <p className="mt-2 text-sm text-neutral-600">
+        <h1 className="text-3xl font-semibold text-[#E11B22]">Sistema</h1>
+        <p className="mt-2 text-sm text-[#3b3b3b]">
           Cambios de configuración requieren reiniciar el backend para aplicar nuevos valores.
         </p>
       </header>
 
-      <section
-        className="rounded-xl border border-neutral-200 bg-white p-6 shadow"
-        data-tutorial-id="system-settings"
-      >
+      <section className="rounded-xl border border-[#E1D6C8] bg-[#FAF3E9] p-6 shadow" data-tutorial-id="system-settings">
         <div className="flex flex-col gap-3">
-          <h2 className="text-lg font-semibold text-neutral-900">Configuración</h2>
-          <p className="text-sm text-neutral-600">
+          <h2 className="text-lg font-semibold text-[#E11B22]">Configuración</h2>
+          <p className="text-sm text-[#3b3b3b]">
             Ajusta los parámetros base. Los cambios requieren reinicio del backend.
           </p>
-          {loading && <p className="text-sm text-neutral-500">Cargando...</p>}
+          {loading && <p className="text-sm text-[#6b6b6b]">Cargando...</p>}
           {settings && (
-            <div className="mt-4 space-y-6">
-              <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-neutral-800">Global</h3>
+            <div className="mt-4 grid gap-6 md:grid-cols-2">
+              <div className="space-y-3 rounded-xl border border-[#E1D6C8] bg-white p-4">
+                <h3 className="text-sm font-semibold text-[#231F20]">Global</h3>
                 <label className="flex items-start justify-between gap-4 text-sm">
                   <div className="max-w-md">
-                    <span className="font-medium text-neutral-800">Warmup automatico</span>
-                    <p className="mt-1 text-xs text-neutral-500">
+                    <span className="font-medium text-[#231F20]">Warmup automatico</span>
+                    <p className="mt-1 text-xs text-[#6b6b6b]">
                       Ejecuta refrescos automaticos al iniciar y mantiene el warmup activo.
                     </p>
                   </div>
@@ -208,8 +205,8 @@ export default function SystemPage() {
                 </label>
                 <label className="flex items-start justify-between gap-4 text-sm">
                   <div className="max-w-md">
-                    <span className="font-medium text-neutral-800">Scheduler de notificaciones</span>
-                    <p className="mt-1 text-xs text-neutral-500">
+                    <span className="font-medium text-[#231F20]">Scheduler de notificaciones</span>
+                    <p className="mt-1 text-xs text-[#6b6b6b]">
                       Activa la tarea periodica que revisa y genera notificaciones.
                     </p>
                   </div>
@@ -224,12 +221,12 @@ export default function SystemPage() {
                 </label>
               </div>
 
-              <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-neutral-800">Providers</h3>
+              <div className="space-y-3 rounded-xl border border-[#E1D6C8] bg-white p-4">
+                <h3 className="text-sm font-semibold text-[#231F20]">Providers</h3>
                 <label className="flex items-start justify-between gap-4 text-sm">
                   <div className="max-w-md">
-                    <span className="font-medium text-neutral-800">Hyper-V habilitado</span>
-                    <p className="mt-1 text-xs text-neutral-500">
+                    <span className="font-medium text-[#231F20]">Hyper-V habilitado</span>
+                    <p className="mt-1 text-xs text-[#6b6b6b]">
                       Permite jobs y refresh de Hyper-V (requiere credenciales configuradas).
                     </p>
                   </div>
@@ -242,10 +239,57 @@ export default function SystemPage() {
                     disabled={!canEdit}
                   />
                 </label>
+                {"hyperv_winrm_https_enabled" in settings && (
+                  <label className="flex items-start justify-between gap-4 text-sm">
+                    <div className="max-w-md">
+                      <span className="font-medium text-[#231F20]">WinRM HTTPS (5986)</span>
+                      <p className="mt-1 text-xs text-[#6b6b6b]">
+                        Recomendado. Requiere TLS válido (usa HYPERV_CA_BUNDLE si aplica).
+                      </p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={Boolean(settings.hyperv_winrm_https_enabled)}
+                      onChange={(event) =>
+                        setSettings((prev) => ({
+                          ...prev,
+                          hyperv_winrm_https_enabled: event.target.checked,
+                        }))
+                      }
+                      disabled={!canEdit}
+                    />
+                  </label>
+                )}
+                {"hyperv_winrm_http_enabled" in settings && (
+                  <label className="flex items-start justify-between gap-4 text-sm">
+                    <div className="max-w-md">
+                      <span className="font-medium text-[#231F20]">WinRM HTTP (5985) — temporal</span>
+                      <p className="mt-1 text-xs text-[#6b6b6b]">
+                        Menos seguro. Usa solo como fallback temporal mientras habilitas 5986.
+                      </p>
+                      {Boolean(settings.hyperv_winrm_http_enabled) && (
+                        <p className="mt-1 text-xs font-semibold text-[#7A5E00]">
+                          Advertencia: WinRM HTTP está habilitado (menos seguro).
+                        </p>
+                      )}
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={Boolean(settings.hyperv_winrm_http_enabled)}
+                      onChange={(event) =>
+                        setSettings((prev) => ({
+                          ...prev,
+                          hyperv_winrm_http_enabled: event.target.checked,
+                        }))
+                      }
+                      disabled={!canEdit}
+                    />
+                  </label>
+                )}
                 <label className="flex items-start justify-between gap-4 text-sm">
                   <div className="max-w-md">
-                    <span className="font-medium text-neutral-800">VMware habilitado</span>
-                    <p className="mt-1 text-xs text-neutral-500">
+                    <span className="font-medium text-[#231F20]">VMware habilitado</span>
+                    <p className="mt-1 text-xs text-[#6b6b6b]">
                       Permite jobs y refresh de VMware VMs (requiere credenciales configuradas).
                     </p>
                   </div>
@@ -260,8 +304,8 @@ export default function SystemPage() {
                 </label>
                 <label className="flex items-start justify-between gap-4 text-sm">
                   <div className="max-w-md">
-                    <span className="font-medium text-neutral-800">oVirt / KVM habilitado</span>
-                    <p className="mt-1 text-xs text-neutral-500">
+                    <span className="font-medium text-[#231F20]">oVirt / KVM habilitado</span>
+                    <p className="mt-1 text-xs text-[#6b6b6b]">
                       Permite jobs y refresh de oVirt (requiere credenciales configuradas).
                     </p>
                   </div>
@@ -276,8 +320,8 @@ export default function SystemPage() {
                 </label>
                 <label className="flex items-start justify-between gap-4 text-sm">
                   <div className="max-w-md">
-                    <span className="font-medium text-neutral-800">Cedia habilitado</span>
-                    <p className="mt-1 text-xs text-neutral-500">
+                    <span className="font-medium text-[#231F20]">Cedia habilitado</span>
+                    <p className="mt-1 text-xs text-[#6b6b6b]">
                       Permite jobs y refresh de Cedia (requiere credenciales configuradas).
                     </p>
                   </div>
@@ -292,8 +336,8 @@ export default function SystemPage() {
                 </label>
                 <label className="flex items-start justify-between gap-4 text-sm">
                   <div className="max-w-md">
-                    <span className="font-medium text-neutral-800">Azure habilitado</span>
-                    <p className="mt-1 text-xs text-neutral-500">
+                    <span className="font-medium text-[#231F20]">Azure habilitado</span>
+                    <p className="mt-1 text-xs text-[#6b6b6b]">
                       Permite jobs y refresh de Azure (requiere credenciales configuradas).
                     </p>
                   </div>
@@ -308,8 +352,8 @@ export default function SystemPage() {
                 </label>
               </div>
 
-              <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-neutral-800">Intervalos (minutos)</h3>
+              <div className="space-y-3 rounded-xl border border-[#E1D6C8] bg-white p-4 md:col-span-2">
+                <h3 className="text-sm font-semibold text-[#231F20]">Intervalos (minutos)</h3>
                 {[
                   [
                     "hyperv_refresh_interval_minutes",
@@ -349,8 +393,8 @@ export default function SystemPage() {
                 ].map(([key, label, helpText]) => (
                   <label key={key} className="flex items-start justify-between gap-4 text-sm">
                     <div className="max-w-md">
-                      <span className="font-medium text-neutral-800">{label}</span>
-                      <p className="mt-1 text-xs text-neutral-500">{helpText}</p>
+                      <span className="font-medium text-[#231F20]">{label}</span>
+                      <p className="mt-1 text-xs text-[#6b6b6b]">{helpText}</p>
                     </div>
                     <input
                       type="number"
@@ -363,7 +407,7 @@ export default function SystemPage() {
                           [key]: Number(event.target.value || 0),
                         }))
                       }
-                      className="w-28 rounded border border-neutral-300 px-2 py-1 text-sm"
+                      className="w-28 rounded border border-[#D6C7B8] bg-white px-2 py-1 text-sm text-[#231F20] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
                       disabled={!canEdit}
                     />
                   </label>
@@ -371,8 +415,8 @@ export default function SystemPage() {
                 {"ovirt_host_vm_count_mode" in settings && (
                   <label className="flex items-start justify-between gap-4 text-sm">
                     <div className="max-w-md">
-                      <span className="font-medium text-neutral-800">oVirt conteo de VMs por host</span>
-                      <p className="mt-1 text-xs text-neutral-500">
+                      <span className="font-medium text-[#231F20]">oVirt conteo de VMs por host</span>
+                      <p className="mt-1 text-xs text-[#6b6b6b]">
                         runtime = solo VMs con host asignado; cluster = contar por cluster.
                       </p>
                     </div>
@@ -384,7 +428,7 @@ export default function SystemPage() {
                           ovirt_host_vm_count_mode: event.target.value || null,
                         }))
                       }
-                      className="w-48 rounded border border-neutral-300 px-2 py-1 text-sm"
+                      className="w-48 rounded border border-[#D6C7B8] bg-white px-2 py-1 text-sm text-[#231F20] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
                       disabled={!canEdit}
                     >
                       <option value="">—</option>
@@ -395,7 +439,7 @@ export default function SystemPage() {
                 )}
               </div>
 
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3 md:col-span-2">
                 <button
                   type="button"
                   onClick={async () => {
@@ -418,23 +462,23 @@ export default function SystemPage() {
                   }}
                   disabled={!canSave}
                   className={`rounded-lg px-4 py-2 text-sm font-semibold text-white ${
-                    canSave ? "bg-neutral-900 hover:bg-neutral-800" : "bg-neutral-400"
+                    canSave ? "bg-[#E11B22] hover:bg-[#c9161c]" : "bg-[#E1E1E1] text-[#6b6b6b]"
                   }`}
                 >
                   Guardar
                 </button>
-                {saveMessage && <span className="text-sm text-amber-700">{saveMessage}</span>}
+                {saveMessage && <span className="text-sm text-[#7A5E00]">{saveMessage}</span>}
               </div>
             </div>
           )}
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-[#E11B22]">{error}</p>}
         </div>
       </section>
 
-      <section className="rounded-xl border border-neutral-200 bg-white p-6 shadow">
+      <section className="rounded-xl border border-[#E1D6C8] bg-[#FAF3E9] p-6 shadow">
         <div className="flex flex-col gap-3">
-          <h2 className="text-lg font-semibold text-neutral-900">Reinicio del backend</h2>
-          <p className="text-sm text-neutral-600">
+          <h2 className="text-lg font-semibold text-[#E11B22]">Reinicio del backend</h2>
+          <p className="text-sm text-[#3b3b3b]">
             El reinicio detendrá el proceso actual y Kubernetes lo levantará nuevamente.
           </p>
           <button
@@ -442,28 +486,28 @@ export default function SystemPage() {
             onClick={() => setModalOpen(true)}
             disabled={!canRestart}
             className={`mt-2 inline-flex w-fit items-center rounded-lg px-4 py-2 text-sm font-semibold text-white shadow transition ${
-              canRestart ? "bg-amber-600 hover:bg-amber-500" : "bg-neutral-400"
+              canRestart ? "bg-[#E11B22] hover:bg-[#c9161c]" : "bg-[#E1E1E1] text-[#6b6b6b]"
             }`}
           >
             Aplicar cambios (reiniciar backend)
           </button>
           {!canRestart && (
-            <p className="text-xs text-neutral-500">Necesitas el permiso system.restart para reiniciar.</p>
+            <p className="text-xs text-[#6b6b6b]">Necesitas el permiso system.restart para reiniciar.</p>
           )}
         </div>
       </section>
 
       {modalOpen && (
         <Modal title="Confirmar reinicio" onClose={() => setModalOpen(false)}>
-          <p className="text-sm text-neutral-600">
+          <p className="text-sm text-[#3b3b3b]">
             El backend se reiniciará. La UI quedará temporalmente inactiva.
           </p>
           <div className="mt-4">
-            <label className="text-xs font-semibold text-neutral-700">Escribe RESTART para confirmar</label>
+            <label className="text-xs font-semibold text-[#231F20]">Escribe RESTART para confirmar</label>
             <input
               value={confirmText}
               onChange={(event) => setConfirmText(event.target.value)}
-              className="mt-2 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+              className="mt-2 w-full rounded-lg border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
               placeholder="RESTART"
             />
           </div>
@@ -471,7 +515,7 @@ export default function SystemPage() {
             <button
               type="button"
               onClick={() => setModalOpen(false)}
-              className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-semibold text-neutral-700 hover:bg-neutral-100"
+              className="rounded-lg border border-[#D6C7B8] bg-white px-4 py-2 text-sm font-semibold text-[#E11B22] hover:bg-[#FAF3E9]"
             >
               Cancelar
             </button>
@@ -480,7 +524,7 @@ export default function SystemPage() {
               onClick={handleStart}
               disabled={!canSubmit}
               className={`rounded-lg px-4 py-2 text-sm font-semibold text-white ${
-                canSubmit ? "bg-neutral-900 hover:bg-neutral-800" : "bg-neutral-400"
+                canSubmit ? "bg-[#E11B22] hover:bg-[#c9161c]" : "bg-[#E1E1E1] text-[#6b6b6b]"
               }`}
             >
               Reiniciar

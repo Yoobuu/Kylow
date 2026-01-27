@@ -11,8 +11,9 @@ from fastapi import APIRouter, Depends, HTTPException, Response, Request, Path, 
 from pydantic import BaseModel
 from sqlmodel import Session
 
+from app.audit.service import log_audit
 from app.auth.user_model import User
-from app.dependencies import require_permission, get_current_user
+from app.dependencies import AuditRequestContext, get_request_audit_context, require_permission, get_current_user
 from app.db import get_session
 from app.permissions.models import PermissionCode
 from app.settings import settings
@@ -119,13 +120,52 @@ def _job_deadline(start: datetime) -> datetime:
 
 
 @router.get("/snapshot")
-def get_ovirt_hosts_snapshot():
+def get_ovirt_hosts_snapshot(
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
+):
     if not settings.ovirt_enabled or not settings.ovirt_configured:
+        log_audit(
+            session,
+            actor=None,
+            action="ovirt.hosts.snapshot.view",
+            target_type="snapshot",
+            target_id="ovirt-hosts",
+            meta={"available": False, "reason": "disabled_or_unconfigured"},
+            ip=audit_ctx.ip,
+            ua=audit_ctx.user_agent,
+            corr=audit_ctx.correlation_id,
+        )
+        session.commit()
         return Response(status_code=204)
     scope_key = _scope_key()
     snap = _SNAPSHOT_STORE.get_snapshot(scope_key)
     if snap is None:
+        log_audit(
+            session,
+            actor=None,
+            action="ovirt.hosts.snapshot.view",
+            target_type="snapshot",
+            target_id="ovirt-hosts",
+            meta={"available": False, "reason": "empty"},
+            ip=audit_ctx.ip,
+            ua=audit_ctx.user_agent,
+            corr=audit_ctx.correlation_id,
+        )
+        session.commit()
         return Response(status_code=204)
+    log_audit(
+        session,
+        actor=None,
+        action="ovirt.hosts.snapshot.view",
+        target_type="snapshot",
+        target_id="ovirt-hosts",
+        meta={"available": True},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
     return snap
 
 
@@ -133,9 +173,23 @@ def get_ovirt_hosts_snapshot():
 def get_ovirt_host_detail(
     host_id: str = Path(..., description="ID del host"),
     refresh: bool = Query(False, description="Forzar refresco del cache"),
-    _user: User = Depends(require_permission(PermissionCode.VMS_VIEW)),
+    current_user: User = Depends(require_permission(PermissionCode.VMS_VIEW)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     logger.debug("GET /api/ovirt/hosts/%s (refresh=%s)", host_id, refresh)
+    log_audit(
+        session,
+        actor=current_user,
+        action="ovirt.host.detail.view",
+        target_type="host",
+        target_id=host_id,
+        meta={"refresh": refresh},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
     return ovirt_host_service.get_host_detail(host_id, refresh=refresh)
 
 
@@ -143,20 +197,48 @@ def get_ovirt_host_detail(
 def get_ovirt_host_deep(
     host_id: str = Path(..., description="ID del host"),
     refresh: bool = Query(False, description="Forzar refresco del cache deep"),
-    _user: User = Depends(require_permission(PermissionCode.VMS_VIEW)),
+    current_user: User = Depends(require_permission(PermissionCode.VMS_VIEW)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     logger.debug("GET /api/ovirt/hosts/%s/deep (refresh=%s)", host_id, refresh)
+    log_audit(
+        session,
+        actor=current_user,
+        action="ovirt.host.deep.view",
+        target_type="host",
+        target_id=host_id,
+        meta={"refresh": refresh},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
     return ovirt_host_service.get_host_deep(host_id, refresh=refresh)
 
 
 @router.get("/jobs/{job_id}")
 def get_ovirt_hosts_job(
     job_id: str,
-    _user: User = Depends(require_permission(PermissionCode.VMS_VIEW)),
+    current_user: User = Depends(require_permission(PermissionCode.VMS_VIEW)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     job = _JOB_STORE.get(job_id)
     if job is None:
         raise HTTPException(status_code=404, detail="Job no encontrado")
+    log_audit(
+        session,
+        actor=current_user,
+        action="ovirt.hosts.job.view",
+        target_type="job",
+        target_id=job_id,
+        meta={"scope": getattr(job, "scope", None)},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
     return job
 
 
@@ -179,7 +261,7 @@ def trigger_ovirt_hosts_refresh(
     scheme, _, token = auth_header.partition(" ")
     if scheme.lower() != "bearer" or not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    current_user = get_current_user(token=token, session=session)
+    current_user = get_current_user(token=token, session=session, request=request)
     _REQUIRE_SUPERADMIN(current_user=current_user, session=session)
     scope_key = _scope_key()
 

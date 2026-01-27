@@ -1,38 +1,35 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import api from "../api/axios";
+import {
+  getMustChangePassword,
+  getToken,
+  setMustChangePassword as persistMustChangeStorage,
+  setToken as persistTokenStorage,
+  MUST_CHANGE_STORAGE_KEY,
+  TOKEN_KEY,
+} from "../auth/tokenStorage";
 
 const AuthContext = createContext(null);
-const MUST_CHANGE_STORAGE_KEY = "mustChangePassword";
-
 const normalizeUser = (rawUser) => (rawUser ? { ...rawUser } : null);
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [token, setToken] = useState(() => getToken());
   const [user, setUser] = useState(null);
   const [permissions, setPermissions] = useState([]);
   const [mustChangePassword, setMustChangePassword] = useState(
-    () => localStorage.getItem(MUST_CHANGE_STORAGE_KEY) === "true"
+    () => getMustChangePassword() === "true"
   );
-  const [initializing, setInitializing] = useState(!!localStorage.getItem("token"));
+  const [initializing, setInitializing] = useState(!!getToken());
 
   const persistToken = useCallback((value) => {
-    if (value) {
-      localStorage.setItem("token", value);
-    } else {
-      localStorage.removeItem("token");
-    }
+    persistTokenStorage(value);
     setToken(value || null);
   }, []);
 
   const persistMustChange = useCallback((value) => {
-    if (value) {
-      localStorage.setItem(MUST_CHANGE_STORAGE_KEY, "true");
-      setMustChangePassword(true);
-    } else {
-      localStorage.removeItem(MUST_CHANGE_STORAGE_KEY);
-      setMustChangePassword(false);
-    }
+    persistMustChangeStorage(value);
+    setMustChangePassword(Boolean(value));
   }, []);
 
   const applySession = useCallback(
@@ -66,6 +63,30 @@ export function AuthProvider({ children }) {
         permissions: nextPermissions,
         requirePasswordChange: Boolean(requirePasswordChange),
       });
+    },
+    [applySession]
+  );
+
+  const applyLoginResponse = useCallback(
+    (payload) => {
+      if (!payload) return null;
+      const accessToken = payload.access_token ?? payload.token ?? payload.accessToken ?? null;
+      const user = payload.user ?? null;
+      const permissions = Array.isArray(payload.permissions) ? payload.permissions : [];
+      const requirePasswordChange =
+        payload.require_password_change ?? payload.requirePasswordChange ?? false;
+      applySession({
+        token: accessToken,
+        user,
+        permissions,
+        requirePasswordChange,
+      });
+      return {
+        accessToken,
+        user,
+        permissions,
+        requirePasswordChange: Boolean(requirePasswordChange),
+      };
     },
     [applySession]
   );
@@ -126,7 +147,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const handleStorage = (event) => {
-      if (event.key === "token") {
+      if (event.key === TOKEN_KEY) {
         setToken(event.newValue);
       }
       if (event.key === MUST_CHANGE_STORAGE_KEY) {
@@ -166,6 +187,7 @@ export function AuthProvider({ children }) {
       permissions,
       mustChangePassword,
       login,
+      applyLoginResponse,
       logout,
       applyNewToken,
       refreshMe,
@@ -179,6 +201,7 @@ export function AuthProvider({ children }) {
       permissions,
       mustChangePassword,
       login,
+      applyLoginResponse,
       logout,
       applyNewToken,
       refreshMe,

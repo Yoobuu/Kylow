@@ -59,6 +59,28 @@ def _ensure_min(name: str, value: int, minimum: int) -> int:
     return value
 
 
+def _ensure_range(name: str, value: int, minimum: int, maximum: int) -> int:
+    if value < minimum:
+        logger.warning(
+            "%s (%s) is lower than minimum %s; using %s",
+            name,
+            value,
+            minimum,
+            minimum,
+        )
+        return minimum
+    if value > maximum:
+        logger.warning(
+            "%s (%s) is higher than maximum %s; using %s",
+            name,
+            value,
+            maximum,
+            maximum,
+        )
+        return maximum
+    return value
+
+
 def _normalize_ovirt_host_vm_count_mode(value: Optional[str]) -> str:
     if value is None:
         return "runtime"
@@ -100,6 +122,14 @@ class Settings:
     secret_key: Optional[str]
     jwt_algorithm: str
     access_token_expire_minutes: int
+    password_min_length: int
+    password_require_classes: int
+    auth_login_rate_limit_max: int
+    auth_login_rate_limit_window_sec: int
+    security_headers_enabled: bool
+    hsts_max_age: int
+    hsts_include_subdomains: bool
+    hsts_preload: bool
     cors_allow_origins: List[str]
     refresh_interval_minutes: int
 
@@ -124,6 +154,7 @@ class Settings:
     vcenter_host: Optional[str]
     vcenter_user: Optional[str]
     vcenter_pass: Optional[str]
+    vcenter_ca_bundle: Optional[str]
     vmware_job_max_global: int
     vmware_job_max_per_scope: int
     vmware_job_host_timeout: int
@@ -137,6 +168,7 @@ class Settings:
     ovirt_base_url: Optional[str]
     ovirt_user: Optional[str]
     ovirt_pass: Optional[str]
+    ovirt_ca_bundle: Optional[str]
     ovirt_job_max_global: int
     ovirt_job_max_per_scope: int
     ovirt_job_host_timeout: int
@@ -163,6 +195,9 @@ class Settings:
     hyperv_user: Optional[str]
     hyperv_pass: Optional[str]
     hyperv_transport: str
+    hyperv_winrm_https_enabled: bool
+    hyperv_winrm_http_enabled: bool
+    hyperv_ca_bundle: Optional[str]
     hyperv_ps_path: Optional[str]
     hyperv_cache_ttl: int
     hyperv_cache_ttl_summary: int
@@ -196,6 +231,11 @@ class Settings:
     azure_job_host_timeout: int
     azure_job_max_duration: int
     azure_refresh_interval_minutes: int
+
+    # Entra login (federated auth)
+    entra_login_tenant_id: Optional[str]
+    entra_login_client_id: Optional[str]
+    entra_allowed_tenants: List[str]
 
     # Notifications
     notif_sched_enabled: bool
@@ -249,6 +289,7 @@ def _build_settings() -> Settings:
     vcenter_host = os.getenv("VCENTER_HOST")
     vcenter_user = os.getenv("VCENTER_USER")
     vcenter_pass = os.getenv("VCENTER_PASS")
+    vcenter_ca_bundle = os.getenv("VCENTER_CA_BUNDLE")
 
     cedia_base = os.getenv("CEDIA_BASE")
     cedia_user = os.getenv("CEDIA_USER")
@@ -257,11 +298,13 @@ def _build_settings() -> Settings:
     ovirt_base_url = os.getenv("OVIRT_BASE_URL")
     ovirt_user = os.getenv("OVIRT_USER")
     ovirt_pass = os.getenv("OVIRT_PASS")
+    ovirt_ca_bundle = os.getenv("OVIRT_CA_BUNDLE")
 
     hyperv_hosts = _split_hosts(os.getenv("HYPERV_HOSTS"))
     hyperv_host = os.getenv("HYPERV_HOST")
     hyperv_user = os.getenv("HYPERV_USER")
     hyperv_pass = os.getenv("HYPERV_PASS")
+    hyperv_ca_bundle = os.getenv("HYPERV_CA_BUNDLE")
 
     azure_tenant_id = os.getenv("AZURE_TENANT_ID")
     azure_client_id = os.getenv("AZURE_CLIENT_ID")
@@ -272,11 +315,25 @@ def _build_settings() -> Settings:
     azure_api_version_compute = (os.getenv("AZURE_API_VERSION_COMPUTE") or "2025-04-01").strip() or "2025-04-01"
     azure_api_version_network = (os.getenv("AZURE_API_VERSION_NETWORK") or "2024-05-01").strip() or "2024-05-01"
 
+    entra_login_tenant_id = os.getenv("ENTRA_LOGIN_TENANT_ID") or azure_tenant_id
+    entra_login_client_id = os.getenv("ENTRA_LOGIN_CLIENT_ID") or azure_client_id
+    entra_allowed_tenants = _split_list(os.getenv("ENTRA_ALLOWED_TENANTS"))
+    if not entra_allowed_tenants and entra_login_tenant_id:
+        entra_allowed_tenants = [entra_login_tenant_id]
+
     vmware_enabled = _as_bool_default_true(os.getenv("VMWARE_ENABLED"), name="VMWARE_ENABLED")
     ovirt_enabled = _as_bool_default_true(os.getenv("OVIRT_ENABLED"), name="OVIRT_ENABLED")
     cedia_enabled = _as_bool_default_true(os.getenv("CEDIA_ENABLED"), name="CEDIA_ENABLED")
     hyperv_enabled = _as_bool_default_true(os.getenv("HYPERV_ENABLED"), name="HYPERV_ENABLED")
     azure_enabled = _as_bool_default_true(os.getenv("AZURE_ENABLED"), name="AZURE_ENABLED")
+    raw_hyperv_winrm_https_enabled = os.getenv("HYPERV_WINRM_HTTPS_ENABLED")
+    hyperv_winrm_https_enabled = (
+        _as_bool(raw_hyperv_winrm_https_enabled) if raw_hyperv_winrm_https_enabled is not None else False
+    )
+    raw_hyperv_winrm_http_enabled = os.getenv("HYPERV_WINRM_HTTP_ENABLED")
+    hyperv_winrm_http_enabled = (
+        _as_bool(raw_hyperv_winrm_http_enabled) if raw_hyperv_winrm_http_enabled is not None else True
+    )
 
     vmware_missing_envs = []
     if not vcenter_host:
@@ -404,6 +461,36 @@ def _build_settings() -> Settings:
         secret_key=os.getenv("SECRET_KEY"),
         jwt_algorithm=os.getenv("JWT_ALGORITHM", "HS256"),
         access_token_expire_minutes=_as_int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"), 60),
+        password_min_length=_ensure_min(
+            "PASSWORD_MIN_LENGTH",
+            _as_int(os.getenv("PASSWORD_MIN_LENGTH"), 12),
+            8,
+        ),
+        password_require_classes=_ensure_range(
+            "PASSWORD_REQUIRE_CLASSES",
+            _as_int(os.getenv("PASSWORD_REQUIRE_CLASSES"), 3),
+            0,
+            4,
+        ),
+        auth_login_rate_limit_max=_ensure_min(
+            "AUTH_LOGIN_RATE_LIMIT_MAX",
+            _as_int(os.getenv("AUTH_LOGIN_RATE_LIMIT_MAX"), 10),
+            1,
+        ),
+        auth_login_rate_limit_window_sec=_ensure_min(
+            "AUTH_LOGIN_RATE_LIMIT_WINDOW_SEC",
+            _as_int(os.getenv("AUTH_LOGIN_RATE_LIMIT_WINDOW_SEC"), 600),
+            60,
+        ),
+        security_headers_enabled=_as_bool(os.getenv("SECURE_HEADERS_ENABLED")) or os.getenv("SECURE_HEADERS_ENABLED") is None,
+        hsts_max_age=_ensure_range(
+            "HSTS_MAX_AGE",
+            _as_int(os.getenv("HSTS_MAX_AGE"), 31536000),
+            0,
+            63072000,
+        ),
+        hsts_include_subdomains=_as_bool(os.getenv("HSTS_INCLUDE_SUBDOMAINS")),
+        hsts_preload=_as_bool(os.getenv("HSTS_PRELOAD")),
         cors_allow_origins=cors_allow_origins,
         refresh_interval_minutes=refresh_interval_minutes,
         vmware_enabled=overrides.get("vmware_enabled", vmware_enabled) if overrides else vmware_enabled,
@@ -424,6 +511,7 @@ def _build_settings() -> Settings:
         vcenter_host=vcenter_host,
         vcenter_user=vcenter_user,
         vcenter_pass=vcenter_pass,
+        vcenter_ca_bundle=vcenter_ca_bundle,
         vmware_job_max_global=_as_int(os.getenv("VMWARE_JOB_MAX_GLOBAL"), 4),
         vmware_job_max_per_scope=_as_int(os.getenv("VMWARE_JOB_MAX_PER_SCOPE"), 2),
         vmware_job_host_timeout=_as_int(os.getenv("VMWARE_JOB_HOST_TIMEOUT"), 150),
@@ -462,6 +550,7 @@ def _build_settings() -> Settings:
         ovirt_base_url=ovirt_base_url,
         ovirt_user=ovirt_user,
         ovirt_pass=ovirt_pass,
+        ovirt_ca_bundle=ovirt_ca_bundle,
         ovirt_job_max_global=_as_int(os.getenv("OVIRT_JOB_MAX_GLOBAL"), 4),
         ovirt_job_max_per_scope=_as_int(os.getenv("OVIRT_JOB_MAX_PER_SCOPE"), 2),
         ovirt_job_host_timeout=_as_int(os.getenv("OVIRT_JOB_HOST_TIMEOUT"), 150),
@@ -541,11 +630,25 @@ def _build_settings() -> Settings:
                 10,
             )
         ),
+        entra_login_tenant_id=entra_login_tenant_id,
+        entra_login_client_id=entra_login_client_id,
+        entra_allowed_tenants=entra_allowed_tenants,
         hyperv_hosts=hyperv_hosts,
         hyperv_host=hyperv_host,
         hyperv_user=hyperv_user,
         hyperv_pass=hyperv_pass,
         hyperv_transport=os.getenv("HYPERV_TRANSPORT", "ntlm"),
+        hyperv_winrm_https_enabled=(
+            overrides.get("hyperv_winrm_https_enabled", hyperv_winrm_https_enabled)
+            if overrides
+            else hyperv_winrm_https_enabled
+        ),
+        hyperv_winrm_http_enabled=(
+            overrides.get("hyperv_winrm_http_enabled", hyperv_winrm_http_enabled)
+            if overrides
+            else hyperv_winrm_http_enabled
+        ),
+        hyperv_ca_bundle=hyperv_ca_bundle,
         hyperv_ps_path=os.getenv("HYPERV_PS_PATH"),
         hyperv_cache_ttl=_as_int(os.getenv("HYPERV_CACHE_TTL"), 300),
         hyperv_cache_ttl_summary=_as_int(os.getenv("HYPERV_CACHE_TTL_SUMMARY"), 300),

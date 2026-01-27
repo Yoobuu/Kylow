@@ -293,12 +293,25 @@ def _evaluate_clear_candidates(
 def clear_resolved_notifications(
     payload: ClearResolvedRequest,
     session: Session = Depends(get_session),
-    _user: User = Depends(require_permission(PermissionCode.NOTIFICATIONS_CLEAR)),
+    current_user: User = Depends(require_permission(PermissionCode.NOTIFICATIONS_CLEAR)),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     open_notifications = session.exec(
         select(Notification).where(Notification.status == NotificationStatus.OPEN)
     ).all()
     if not open_notifications:
+        log_audit(
+            session,
+            actor=current_user,
+            action="notifications.clear_resolved",
+            target_type="notifications",
+            target_id="open",
+            meta={"dry_run": payload.dry_run, "cleared_count": 0},
+            ip=audit_ctx.ip,
+            ua=audit_ctx.user_agent,
+            corr=audit_ctx.correlation_id,
+        )
+        session.commit()
         return ClearResolvedResponse(cleared_count=0, dry_run=payload.dry_run)
 
     try:
@@ -314,12 +327,36 @@ def clear_resolved_notifications(
     cleared_count = len(candidates)
 
     if payload.dry_run or cleared_count == 0:
+        log_audit(
+            session,
+            actor=current_user,
+            action="notifications.clear_resolved",
+            target_type="notifications",
+            target_id="open",
+            meta={"dry_run": payload.dry_run, "cleared_count": cleared_count},
+            ip=audit_ctx.ip,
+            ua=audit_ctx.user_agent,
+            corr=audit_ctx.correlation_id,
+        )
+        session.commit()
         return ClearResolvedResponse(cleared_count=cleared_count, dry_run=payload.dry_run)
 
     for notif in candidates:
         notif.status = NotificationStatus.CLEARED
         notif.ack_at = None
         session.add(notif)
+    session.commit()
+    log_audit(
+        session,
+        actor=current_user,
+        action="notifications.clear_resolved",
+        target_type="notifications",
+        target_id="open",
+        meta={"dry_run": False, "cleared_count": cleared_count},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
     session.commit()
 
     return ClearResolvedResponse(cleared_count=cleared_count, dry_run=payload.dry_run)

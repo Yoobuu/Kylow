@@ -15,6 +15,8 @@ SYSTEM_SETTINGS_FIELDS: Iterable[str] = (
     "cedia_enabled",
     "azure_enabled",
     "hyperv_refresh_interval_minutes",
+    "hyperv_winrm_https_enabled",
+    "hyperv_winrm_http_enabled",
     "vmware_refresh_interval_minutes",
     "vmware_hosts_refresh_interval_minutes",
     "ovirt_refresh_interval_minutes",

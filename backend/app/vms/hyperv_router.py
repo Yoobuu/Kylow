@@ -18,7 +18,7 @@ from pydantic import BaseModel, Field
 from app.audit.service import log_audit
 from app.auth.user_model import User
 from app.db import get_session
-from app.dependencies import require_permission, get_current_user
+from app.dependencies import require_permission, get_current_user, AuditRequestContext, get_request_audit_context
 from app.permissions.models import PermissionCode
 from app.providers.hyperv.remote import HostUnreachableError, RemoteCreds, run_power_action
 from app.providers.hyperv.schema import VMRecord, VMRecordDetail, VMRecordSummary, VMRecordDeep
@@ -119,7 +119,10 @@ def _build_inventory_creds(host: str) -> RemoteCreds:
         username=settings.hyperv_user,
         password=settings.hyperv_pass,
         transport=settings.hyperv_transport,
+        winrm_https_enabled=settings.hyperv_winrm_https_enabled,
+        winrm_http_enabled=settings.hyperv_winrm_http_enabled,
         use_winrm=True,
+        ca_trust_path=settings.hyperv_ca_bundle,
         connect_timeout=HYPERV_CONNECT_TIMEOUT,
         read_timeout=HYPERV_INVENTORY_READ_TIMEOUT,
         retries=HYPERV_INVENTORY_RETRIES,
@@ -133,7 +136,10 @@ def _build_power_creds(host: str) -> RemoteCreds:
         username=settings.hyperv_user,
         password=settings.hyperv_pass,
         transport=settings.hyperv_transport,
+        winrm_https_enabled=settings.hyperv_winrm_https_enabled,
+        winrm_http_enabled=settings.hyperv_winrm_http_enabled,
         use_winrm=True,
+        ca_trust_path=settings.hyperv_ca_bundle,
         connect_timeout=HYPERV_CONNECT_TIMEOUT,
         read_timeout=HYPERV_POWER_READ_TIMEOUT,
         retries=0,
@@ -227,10 +233,24 @@ def list_hyperv_vms(
     refresh: bool = Query(False, description="Forzar refresco desde los hosts, ignorando cache"),
     level: str = Query("summary", description="Nivel de detalle: summary, detail o deep"),
     creds: RemoteCreds = Depends(get_creds),
-    _user: User = Depends(require_permission(PermissionCode.JOBS_TRIGGER)),
+    current_user: User = Depends(require_permission(PermissionCode.JOBS_TRIGGER)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     lvl = _normalize_level(level, {"summary", "detail", "deep"})
     ps_content = _load_ps_content()
+    log_audit(
+        session,
+        actor=current_user,
+        action="hyperv.vms.view",
+        target_type="hyperv",
+        target_id=creds.host,
+        meta={"level": lvl, "refresh": refresh},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
     try:
         items = collect_hyperv_inventory_for_host(
             creds,
@@ -322,13 +342,32 @@ def list_hyperv_vms_batch(
     max_workers: int = Query(4, ge=1, le=16, description="Paralelismo de consultas"),
     refresh: bool = Query(False, description="Forzar refresco y omitir cache"),
     level: str = Query("summary", description="Nivel soportado solo summary en batch"),
-    _user: User = Depends(require_permission(PermissionCode.JOBS_TRIGGER)),
+    current_user: User = Depends(require_permission(PermissionCode.JOBS_TRIGGER)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     lvl = _normalize_level(level, {"summary"})
     # 1) resolver lista de hosts
     host_list = _resolve_host_list(hosts)
     if not host_list:
         raise HTTPException(400, "No hay hosts. Define HYPERV_HOSTS en .env o pasa ?hosts=...")
+    log_audit(
+        session,
+        actor=current_user,
+        action="hyperv.vms.batch.view",
+        target_type="hyperv",
+        target_id="batch",
+        meta={
+            "hosts": host_list,
+            "level": lvl,
+            "refresh": refresh,
+            "max_workers": max_workers,
+        },
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
 
     cache_key = (tuple(sorted(host_list)), lvl)
     if not refresh and cache_key in _BATCH_CACHE:
@@ -390,11 +429,25 @@ def list_hyperv_vms_by_host(
     hvhost: str,
     level: str = Query("summary", description="Nivel de detalle: summary o detail"),
     refresh: bool = Query(False, description="Forzar refresco desde el host"),
-    _user: User = Depends(require_permission(PermissionCode.JOBS_TRIGGER)),
+    current_user: User = Depends(require_permission(PermissionCode.JOBS_TRIGGER)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     lvl = _normalize_level(level, {"summary", "detail"})
     ps_content = _load_ps_content()
     creds = _build_inventory_creds(hvhost)
+    log_audit(
+        session,
+        actor=current_user,
+        action="hyperv.vms.host.view",
+        target_type="hyperv",
+        target_id=hvhost,
+        meta={"level": lvl, "refresh": refresh},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
     try:
         items = collect_hyperv_inventory_for_host(
             creds,
@@ -416,6 +469,8 @@ def hyperv_vm_power_action(
     action: str = PathParam(..., description="Acción: start, stop o reset"),
     refresh: bool = Query(False, description="Forzar refresco de inventario antes de actuar"),
     _user: User = Depends(require_permission(PermissionCode.HYPERV_POWER)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     """
     Ejecuta una acción de energía ('start', 'stop', 'reset') sobre una VM específica
@@ -433,13 +488,26 @@ def hyperv_vm_power_action(
     ps_content = _load_ps_content()
 
     try:
-        return hyperv_power_action(
+        result = hyperv_power_action(
             creds=creds,
             vm_name=vm_name,
             action=action,
             ps_content_inventory=ps_content,
             use_cache=not refresh,
         )
+        log_audit(
+            session,
+            actor=_user,
+            action="hyperv.power_action",
+            target_type="vm",
+            target_id=vm_name,
+            meta={"host": hvhost, "action": action},
+            ip=audit_ctx.ip,
+            ua=audit_ctx.user_agent,
+            corr=audit_ctx.correlation_id,
+        )
+        session.commit()
+        return result
     except HTTPException as exc:
         if str(exc.detail).strip().lower() == "unreachable":
             return _unreachable_response(hvhost, error=str(exc.detail))
@@ -457,7 +525,10 @@ def _build_detail_creds(host: str) -> RemoteCreds:
         username=settings.hyperv_user,
         password=settings.hyperv_pass,
         transport=settings.hyperv_transport,
+        winrm_https_enabled=settings.hyperv_winrm_https_enabled,
+        winrm_http_enabled=settings.hyperv_winrm_http_enabled,
         use_winrm=True,
+        ca_trust_path=settings.hyperv_ca_bundle,
         connect_timeout=HYPERV_CONNECT_TIMEOUT,
         read_timeout=settings.hyperv_detail_timeout,
         retries=0, # Sin reintentos para feedback rápido
@@ -469,11 +540,25 @@ def hyperv_vm_detail(
     hvhost: str,
     vm_name: str,
     refresh: bool = Query(False, description="Forzar refresco"),
-    _user: User = Depends(require_permission(PermissionCode.JOBS_TRIGGER)),
+    current_user: User = Depends(require_permission(PermissionCode.JOBS_TRIGGER)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     ps_content = _load_ps_content()
     # Usamos timeout corto para no colgar la UI si el host está muerto
     creds = _build_detail_creds(hvhost)
+    log_audit(
+        session,
+        actor=current_user,
+        action="hyperv.vm.detail.view",
+        target_type="vm",
+        target_id=vm_name,
+        meta={"host": hvhost, "refresh": refresh},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
     try:
         records = collect_hyperv_inventory_for_host(
             creds,
@@ -497,10 +582,24 @@ def hyperv_vm_deep(
     hvhost: str,
     vm_name: str,
     refresh: bool = Query(False, description="Forzar refresco"),
-    _user: User = Depends(require_permission(PermissionCode.JOBS_TRIGGER)),
+    current_user: User = Depends(require_permission(PermissionCode.JOBS_TRIGGER)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     ps_content = _load_ps_content()
     creds = _build_inventory_creds(hvhost)
+    log_audit(
+        session,
+        actor=current_user,
+        action="hyperv.vm.deep.view",
+        target_type="vm",
+        target_id=vm_name,
+        meta={"host": hvhost, "refresh": refresh},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
     try:
         records = collect_hyperv_inventory_for_host(
             creds,
@@ -521,12 +620,26 @@ def hyperv_vm_deep(
 
 @router.get("/config")
 def hyperv_config(
-    _user: User = Depends(require_permission(PermissionCode.HYPERV_VIEW)),
+    current_user: User = Depends(require_permission(PermissionCode.HYPERV_VIEW)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     """
     Devuelve hosts configurados sin disparar WinRM.
     """
     hosts = _resolve_host_list(None)
+    log_audit(
+        session,
+        actor=current_user,
+        action="hyperv.config.view",
+        target_type="hyperv",
+        target_id="config",
+        meta={"hosts": hosts},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
     return {
         "hosts": hosts,
         "refresh_interval_min": REFRESH_INTERVAL_MINUTES,
@@ -546,8 +659,28 @@ def get_hyperv_snapshot(
     scope: str = Query(..., description="Scope: vms|hosts"),
     hosts: str | None = Query(None, description="Lista de hosts separada por comas"),
     level: str = Query("summary", description="Nivel de detalle, solo summary"),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     if not settings.hyperv_enabled or not settings.hyperv_configured:
+        log_audit(
+            session,
+            actor=None,
+            action="hyperv.snapshot.view",
+            target_type="snapshot",
+            target_id="hyperv",
+            meta={
+                "available": False,
+                "reason": "disabled_or_unconfigured",
+                "scope": scope,
+                "hosts": hosts,
+                "level": level,
+            },
+            ip=audit_ctx.ip,
+            ua=audit_ctx.user_agent,
+            corr=audit_ctx.correlation_id,
+        )
+        session.commit()
         return Response(status_code=204)
     scope_name = _parse_scope(scope)
     lvl = _normalize_level(level, {"summary", "detail"})
@@ -560,18 +693,67 @@ def get_hyperv_snapshot(
     scope_key = ScopeKey.from_parts(scope_name, host_list, lvl)
     snap = _SNAPSHOT_STORE.get_snapshot(scope_key)
     if snap is None:
+        log_audit(
+            session,
+            actor=None,
+            action="hyperv.snapshot.view",
+            target_type="snapshot",
+            target_id="hyperv",
+            meta={
+                "available": False,
+                "reason": "empty",
+                "scope": scope_name.value,
+                "hosts": host_list,
+                "level": lvl,
+            },
+            ip=audit_ctx.ip,
+            ua=audit_ctx.user_agent,
+            corr=audit_ctx.correlation_id,
+        )
+        session.commit()
         return Response(status_code=204)
+    log_audit(
+        session,
+        actor=None,
+        action="hyperv.snapshot.view",
+        target_type="snapshot",
+        target_id="hyperv",
+        meta={
+            "available": True,
+            "scope": scope_name.value,
+            "hosts": host_list,
+            "level": lvl,
+        },
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
     return snap
 
 
 @router.get("/jobs/{job_id}")
 def get_hyperv_job(
     job_id: str,
-    _user: User = Depends(require_permission(PermissionCode.HYPERV_VIEW)),
+    current_user: User = Depends(require_permission(PermissionCode.HYPERV_VIEW)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     job = _JOB_STORE.get(job_id)
     if job is None:
         raise HTTPException(status_code=404, detail="Job no encontrado")
+    log_audit(
+        session,
+        actor=current_user,
+        action="hyperv.job.view",
+        target_type="job",
+        target_id=job_id,
+        meta={"scope": getattr(job, "scope", None)},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
     return job
 
 
@@ -594,7 +776,7 @@ def trigger_hyperv_refresh(
     scheme, _, token = auth_header.partition(" ")
     if scheme.lower() != "bearer" or not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    current_user = get_current_user(token=token, session=session)
+    current_user = get_current_user(token=token, session=session, request=request)
     _REQUIRE_SUPERADMIN(current_user=current_user, session=session)
     scope_name = payload.scope
     lvl = _normalize_level(payload.level, {"summary", "detail"})
@@ -1154,11 +1336,25 @@ def list_hyperv_hosts(
     ),
     refresh: bool = Query(False, description="Forzar refresco (omite cache de host)"),
     max_workers: int = Query(4, ge=1, le=16, description="Paralelismo de consultas"),
-    _user: User = Depends(require_permission(PermissionCode.JOBS_TRIGGER)),
+    current_user: User = Depends(require_permission(PermissionCode.JOBS_TRIGGER)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     host_list = _resolve_host_list(hosts)
     if not host_list:
         raise HTTPException(400, "No hay hosts. Define HYPERV_HOSTS o HYPERV_HOST en .env o pasa ?hosts=...")
+    log_audit(
+        session,
+        actor=current_user,
+        action="hyperv.hosts.view",
+        target_type="hyperv",
+        target_id="hosts",
+        meta={"hosts": host_list, "refresh": refresh, "max_workers": max_workers},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
 
     ps_content = _load_ps_content()
 
@@ -1206,11 +1402,25 @@ def list_hyperv_hosts(
 def hyperv_host_detail(
     hvhost: str,
     refresh: bool = Query(False, description="Forzar refresco"),
-    _user: User = Depends(require_permission(PermissionCode.HYPERV_VIEW)),
+    current_user: User = Depends(require_permission(PermissionCode.HYPERV_VIEW)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     ps_content = _load_ps_content()
     creds = _build_inventory_creds(hvhost)
     try:
+        log_audit(
+            session,
+            actor=current_user,
+            action="hyperv.host.detail.view",
+            target_type="host",
+            target_id=hvhost,
+            meta={"refresh": refresh},
+            ip=audit_ctx.ip,
+            ua=audit_ctx.user_agent,
+            corr=audit_ctx.correlation_id,
+        )
+        session.commit()
         return collect_hyperv_host_info(
             creds,
             ps_content=ps_content,
@@ -1229,6 +1439,8 @@ def lab_power_action(
     vm_name: str,
     action: str,
     _user: User = Depends(require_permission(PermissionCode.HYPERV_POWER)),
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     """
     Endpoint TEMPORAL de laboratorio (solo local).
@@ -1242,6 +1454,18 @@ def lab_power_action(
     creds = _build_power_creds(hvhost)
 
     ok, msg = run_power_action(creds, vm_name, action)
+    log_audit(
+        session,
+        actor=_user,
+        action="hyperv.lab_power_action",
+        target_type="vm",
+        target_id=vm_name,
+        meta={"host": hvhost, "action": action, "ok": ok},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
     if not ok:
         raise HTTPException(status_code=502, detail=msg)
 

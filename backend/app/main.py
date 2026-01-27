@@ -17,7 +17,8 @@ load_dotenv(BASE_DIR / ".env")
 from app.db import get_engine
 from app.audit import router as audit_router  # /api/audit
 from app.auth import auth_router, user_admin_router  # /api/auth/...
-from app.middleware import install_audit_middleware
+from app.auth.microsoft_router import router as microsoft_router
+from app.middleware import install_audit_middleware, install_security_headers
 from app.hosts import router as host_router  # /api/hosts
 from app.hosts.vmware_host_snapshot_router import router as vmware_hosts_router  # /api/vmware/hosts
 from app.hosts.ovirt_host_snapshot_router import router as ovirt_hosts_router  # /api/ovirt/hosts
@@ -48,6 +49,7 @@ APP_ENV = settings.app_env
 app = FastAPI(title="VM Inventory API")
 register_startup_events(app)
 install_audit_middleware(app)
+install_security_headers(app)
 
 
 # Health checks
@@ -79,7 +81,7 @@ def ready():
 
 
 # CORS
-allow_origins = list(settings.cors_allow_origins)
+allow_origins = [origin for origin in settings.cors_allow_origins if origin != "*"]
 if APP_ENV not in {"prod", "production"}:
     for origin in ("http://localhost:5173", "http://127.0.0.1:5173"):
         if origin not in allow_origins:
@@ -88,13 +90,14 @@ if APP_ENV not in {"prod", "production"}:
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allow_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "Accept", "X-Correlation-Id"],
 )
 
 # Routers (orden no importa, pero manténlos agrupados)
 app.include_router(auth_router.router, prefix="/api/auth")  # /api/auth/...
+app.include_router(microsoft_router)  # /api/auth/microsoft/...
 app.include_router(user_admin_router.router)  # /api/users (Admin)
 app.include_router(vm_router.router, prefix="/api")  # /api/vms (VMware)
 app.include_router(host_router, prefix="/api")  # /api/hosts (ESXi)

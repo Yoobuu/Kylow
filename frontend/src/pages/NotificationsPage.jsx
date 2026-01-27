@@ -26,29 +26,29 @@ const STATUS_META = {
   [NOTIFICATION_STATUS.OPEN]: {
     value: NOTIFICATION_STATUS.OPEN,
     label: "Alerta activa",
-    icon: "🟡",
-    badgeClass: "border-amber-300 bg-amber-100 text-amber-800",
+    icon: <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#E11B22]" />,
+    badgeClass: "border-[#F5B5B5] bg-[#FDE2E2] text-[#8B0000]",
     tooltip: "Generada automáticamente y pendiente de revisión.",
   },
   [NOTIFICATION_STATUS.ACK]: {
     value: NOTIFICATION_STATUS.ACK,
     label: "En revisión",
-    icon: "🔵",
-    badgeClass: "border-sky-300 bg-sky-100 text-sky-800",
+    icon: <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#7A5E00]" />,
+    badgeClass: "border-[#FFE3A3] bg-[#FFF3CD] text-[#7A5E00]",
     tooltip: "Alguien del equipo está trabajando en esta alerta.",
   },
   [NOTIFICATION_STATUS.CLEARED]: {
     value: NOTIFICATION_STATUS.CLEARED,
     label: "Resuelta",
-    icon: "🟢",
-    badgeClass: "border-emerald-300 bg-emerald-100 text-emerald-800",
+    icon: <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#1B5E20]" />,
+    badgeClass: "border-[#B7E0C1] bg-[#E6F4EA] text-[#1B5E20]",
     tooltip: "El backend marcó la alerta como resuelta.",
   },
   DEFAULT: {
     value: "UNKNOWN",
     label: "Estado desconocido",
-    icon: "⚪",
-    badgeClass: "border-gray-300 bg-gray-100 text-gray-700",
+    icon: <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#939598]" />,
+    badgeClass: "border-[#D6C7B8] bg-[#FAF3E9] text-[#6b6b6b]",
     tooltip: "El estado recibido no está reconocido por la interfaz.",
   },
 };
@@ -99,25 +99,27 @@ function ToastStack({ toasts, onDismiss }) {
         const isError = toast.type === "error";
         const isSuccess = toast.type === "success";
         const toneClass = isError
-          ? "border-rose-200 bg-rose-50 text-rose-800"
+          ? "border-[#F5B5B5] bg-[#FDE2E2] text-[#8B0000]"
           : isSuccess
-          ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-          : "border-slate-200 bg-white text-slate-800";
-        const icon = isError ? "⚠️" : isSuccess ? "✅" : "ℹ️";
+          ? "border-[#B7E0C1] bg-[#E6F4EA] text-[#1B5E20]"
+          : "border-[#E1D6C8] bg-[#FAF3E9] text-[#231F20]";
+        const iconClass = isError
+          ? "bg-[#E11B22]"
+          : isSuccess
+          ? "bg-[#1B5E20]"
+          : "bg-[#7A5E00]";
         return (
           <div
             key={toast.id}
             className={`flex items-start gap-3 rounded-lg border px-4 py-3 text-sm shadow-lg ${toneClass}`}
             role={isError ? "alert" : "status"}
           >
-            <span aria-hidden="true" className="text-lg">
-              {icon}
-            </span>
+            <span aria-hidden="true" className={`mt-1 inline-block h-2.5 w-2.5 rounded-full ${iconClass}`} />
             <div className="flex-1">{toast.message}</div>
             <button
               type="button"
               onClick={() => onDismiss(toast.id)}
-              className="text-lg font-semibold text-slate-500 transition hover:text-slate-900"
+              className="text-lg font-semibold text-[#6b6b6b] transition hover:text-[#231F20]"
               aria-label="Cerrar notificación"
             >
               ×
@@ -334,9 +336,9 @@ export default function NotificationsPage() {
   if (!canViewNotifications) {
     return (
       <div className="flex flex-1 items-center justify-center px-6 py-20">
-        <div className="max-w-md rounded-lg border border-gray-200 bg-white p-8 text-center shadow">
-          <h2 className="text-lg font-semibold text-gray-900">Acceso denegado</h2>
-          <p className="mt-2 text-sm text-gray-600">
+        <div className="max-w-md rounded-lg border border-[#E1D6C8] bg-[#FAF3E9] p-8 text-center shadow">
+          <h2 className="text-lg font-semibold text-[#E11B22]">Acceso denegado</h2>
+          <p className="mt-2 text-sm text-[#3b3b3b]">
             Necesitas el permiso <strong>notifications.view</strong> para acceder a esta sección.
           </p>
         </div>
@@ -345,19 +347,19 @@ export default function NotificationsPage() {
   }
 
   return (
-    <main className="flex-1 px-6 py-8">
+    <main className="flex-1 px-6 py-8 bg-white">
       <ToastStack toasts={toasts} onDismiss={dismissToast} />
 
       <div className="mx-auto w-full max-w-6xl space-y-6">
         <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-semibold text-gray-900">Notificaciones</h1>
-            <p className="text-sm text-gray-600">
+            <h1 className="text-3xl font-semibold text-[#E11B22]">Notificaciones</h1>
+            <p className="text-sm text-[#3b3b3b]">
               Supervisión de alertas provenientes del inventario VMware / Hyper-V.
             </p>
             {lastCreatedAt && (
-              <p className="mt-2 text-xs text-gray-500">
-                Última corrida registrada: <span className="font-medium">{formatDate(lastCreatedAt)}</span>
+              <p className="mt-2 text-xs text-[#6b6b6b]">
+                Última corrida registrada: <span className="font-medium text-[#231F20]">{formatDate(lastCreatedAt)}</span>
               </p>
             )}
           </div>
@@ -365,7 +367,7 @@ export default function NotificationsPage() {
             <button
               type="button"
               onClick={fetchData}
-              className="rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-blue-500 disabled:opacity-60"
+              className="rounded bg-[#E11B22] px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-[#c9161c] disabled:opacity-60"
               disabled={loading}
             >
               {loading ? "Actualizando..." : "Actualizar"}
@@ -373,8 +375,8 @@ export default function NotificationsPage() {
           </div>
         </header>
 
-        <div className="rounded-lg border border-gray-200 bg-white px-4 py-3 text-xs text-gray-700 shadow">
-          <span className="font-semibold text-gray-900">Leyenda:</span>
+        <div className="rounded-lg border border-[#E1D6C8] bg-[#FAF3E9] px-4 py-3 text-xs text-[#231F20] shadow">
+          <span className="font-semibold text-[#E11B22]">Leyenda:</span>
           {STATUS_ORDER.map((status) => {
             const meta = STATUS_META[status];
             return (
@@ -387,22 +389,22 @@ export default function NotificationsPage() {
         </div>
 
         <section
-          className="rounded-lg border border-gray-200 bg-white p-4 shadow"
+          className="rounded-lg border border-[#E1D6C8] bg-[#FAF3E9] p-4 shadow"
           data-tutorial-id="notifications-filters"
         >
           <div className="grid gap-4 md:grid-cols-4">
             <div className="md:col-span-2">
-              <span className="block text-xs font-semibold uppercase text-gray-600">Estados</span>
+              <span className="block text-xs font-semibold uppercase text-[#6b6b6b]">Estados</span>
               <div className="mt-2 flex flex-wrap gap-3">
                 {STATUS_ORDER.map((status) => {
                   const meta = STATUS_META[status];
                   return (
-                    <label key={status} className="inline-flex items-center gap-2 text-sm text-gray-700">
+                    <label key={status} className="inline-flex items-center gap-2 text-sm text-[#231F20]">
                       <input
                         type="checkbox"
                         checked={filters.statuses.includes(status)}
                         onChange={() => toggleStatus(status)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="rounded border-[#D6C7B8] text-[#E11B22] focus:ring-[#E11B22]/40"
                       />
                       <span className="inline-flex items-center gap-1">
                         <span aria-hidden="true">{meta.icon}</span>
@@ -414,11 +416,11 @@ export default function NotificationsPage() {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase text-gray-600">Proveedor</label>
+              <label className="block text-xs font-semibold uppercase text-[#6b6b6b]">Proveedor</label>
               <select
                 value={filters.provider}
                 onChange={(event) => updateFilter("provider", event.target.value)}
-                className="mt-2 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-2 w-full rounded border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
               >
                 {PROVIDER_OPTIONS.map((option) => (
                   <option key={option || "any"} value={option}>
@@ -428,11 +430,11 @@ export default function NotificationsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase text-gray-600">Métrica</label>
+              <label className="block text-xs font-semibold uppercase text-[#6b6b6b]">Métrica</label>
               <select
                 value={filters.metric}
                 onChange={(event) => updateFilter("metric", event.target.value)}
-                className="mt-2 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-2 w-full rounded border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
               >
                 {METRIC_OPTIONS.map((option) => (
                   <option key={option || "any"} value={option}>
@@ -442,49 +444,49 @@ export default function NotificationsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase text-gray-600">VM</label>
+              <label className="block text-xs font-semibold uppercase text-[#6b6b6b]">VM</label>
               <input
                 type="text"
                 value={filters.vm}
                 onChange={(event) => updateFilter("vm", event.target.value)}
                 placeholder="Substring..."
-                className="mt-2 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-2 w-full rounded border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase text-gray-600">Ambiente</label>
+              <label className="block text-xs font-semibold uppercase text-[#6b6b6b]">Ambiente</label>
               <input
                 type="text"
                 value={filters.env}
                 onChange={(event) => updateFilter("env", event.target.value)}
                 placeholder="Substring..."
-                className="mt-2 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-2 w-full rounded border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase text-gray-600">Desde (UTC)</label>
+              <label className="block text-xs font-semibold uppercase text-[#6b6b6b]">Desde (UTC)</label>
               <input
                 type="datetime-local"
                 value={filters.from}
                 onChange={(event) => updateFilter("from", event.target.value)}
-                className="mt-2 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-2 w-full rounded border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase text-gray-600">Hasta (UTC)</label>
+              <label className="block text-xs font-semibold uppercase text-[#6b6b6b]">Hasta (UTC)</label>
               <input
                 type="datetime-local"
                 value={filters.to}
                 onChange={(event) => updateFilter("to", event.target.value)}
-                className="mt-2 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-2 w-full rounded border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase text-gray-600">Por página</label>
+              <label className="block text-xs font-semibold uppercase text-[#6b6b6b]">Por página</label>
               <select
                 value={filters.limit}
                 onChange={(event) => updateFilter("limit", Number(event.target.value))}
-                className="mt-2 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-2 w-full rounded border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
               >
                 {LIMIT_OPTIONS.map((option) => (
                   <option key={option} value={option}>
@@ -497,7 +499,7 @@ export default function NotificationsPage() {
         </section>
 
         <section
-          className="rounded-lg border border-gray-200 bg-white shadow"
+          className="rounded-lg border border-[#E1D6C8] bg-white shadow"
           data-tutorial-id="notifications-table"
         >
           <NotificationsTable
@@ -520,18 +522,18 @@ export default function NotificationsPage() {
             type="button"
             onClick={() => updateFilter("offset", Math.max(0, filters.offset - filters.limit))}
             disabled={!canGoBack}
-            className="rounded border border-gray-300 px-3 py-2 text-sm text-gray-700 transition hover:border-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#E11B22] transition hover:bg-[#FAF3E9] disabled:cursor-not-allowed disabled:opacity-50"
           >
             Anterior
           </button>
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-[#E11B22]">
             Mostrando {data.items.length} / {data.total} (offset {filters.offset})
           </span>
           <button
             type="button"
             onClick={() => updateFilter("offset", filters.offset + filters.limit)}
             disabled={!canGoForward}
-            className="rounded border border-gray-300 px-3 py-2 text-sm text-gray-700 transition hover:border-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#E11B22] transition hover:bg-[#FAF3E9] disabled:cursor-not-allowed disabled:opacity-50"
           >
             Siguiente
           </button>

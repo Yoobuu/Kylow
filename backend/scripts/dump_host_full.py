@@ -23,6 +23,7 @@ load_dotenv(BASE_DIR / ".env")
 from app.vms.vm_service import (  # noqa: E402
     _network_endpoint,
     _soap_connect,
+    _vcenter_tls_verify,
     get_session_token,
 )
 
@@ -104,7 +105,7 @@ def _probe_rest_endpoints(headers: dict) -> Dict[str, Any]:
     for path in endpoints:
         url = _network_endpoint(path)
         try:
-            resp = requests.get(url, headers=headers, verify=False, timeout=10)
+            resp = requests.get(url, headers=headers, verify=_vcenter_tls_verify(), timeout=10)
             results[path] = {
                 "status": resp.status_code,
                 "payload": resp.json() if "application/json" in resp.headers.get("content-type", "") else resp.text,

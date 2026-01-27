@@ -64,6 +64,15 @@ def _resolve_ovirt_settings() -> Dict[str, Optional[str]]:
     }
 
 
+def _ensure_https(url: Optional[str]) -> None:
+    if not url:
+        return
+
+
+def _ovirt_tls_verify():
+    return settings.ovirt_ca_bundle or False
+
+
 def validate_ovirt_configuration() -> List[str]:
     if settings.test_mode:
         return []
@@ -177,6 +186,7 @@ def _request_sso_token() -> tuple[str, int]:
     if not cfg.get("base_url") or not cfg.get("user") or not cfg.get("password"):
         raise HTTPException(status_code=500, detail="Configuracion de oVirt incompleta")
 
+    _ensure_https(cfg["base_url"])
     sso_url = _build_sso_url(cfg["base_url"])
     data = {
         "grant_type": "password",
@@ -189,14 +199,14 @@ def _request_sso_token() -> tuple[str, int]:
             sso_url,
             data=data,
             headers={"Accept": "application/json"},
-            verify=False,
+            verify=_ovirt_tls_verify(),
             timeout=10,
         )
         response.raise_for_status()
     except Exception as exc:
         logger.exception("oVirt SSO token request failed")
         code = getattr(exc, "response", None) and exc.response.status_code or 500
-        raise HTTPException(status_code=code, detail=f"oVirt SSO auth failed: {exc}") from exc
+        raise HTTPException(status_code=code, detail="oVirt SSO auth failed") from exc
 
     payload = response.json() if response.headers.get("content-type", "").startswith("application/json") else {}
     token = payload.get("access_token")
@@ -233,11 +243,12 @@ class _OvirtClient:
         token = get_ovirt_token()
         headers = {"Authorization": f"Bearer {token}"}
         try:
-            resp = self.session.get(url, headers=headers, verify=False, timeout=timeout)
+            _ensure_https(self.base_url)
+            resp = self.session.get(url, headers=headers, verify=_ovirt_tls_verify(), timeout=timeout)
             if resp.status_code == 401:
                 token = get_ovirt_token(force=True)
                 headers = {"Authorization": f"Bearer {token}"}
-                resp = self.session.get(url, headers=headers, verify=False, timeout=timeout)
+                resp = self.session.get(url, headers=headers, verify=_ovirt_tls_verify(), timeout=timeout)
             resp.raise_for_status()
             if resp.headers.get("content-type", "").startswith("application/json"):
                 return resp.json()
@@ -248,7 +259,7 @@ class _OvirtClient:
                 return None
             logger.exception("oVirt API request failed")
             code = getattr(exc, "response", None) and exc.response.status_code or 500
-            raise HTTPException(status_code=code, detail=f"oVirt request failed: {exc}") from exc
+            raise HTTPException(status_code=code, detail="oVirt request failed") from exc
 
 
 @dataclass

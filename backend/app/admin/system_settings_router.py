@@ -5,6 +5,7 @@ from typing import Optional, Literal
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, conint
+from sqlalchemy.exc import ProgrammingError
 from sqlmodel import Session
 
 from app.audit.service import log_audit
@@ -23,6 +24,16 @@ from app.system_settings.service import (
 router = APIRouter(prefix="/api/admin/system", tags=["system"])
 
 
+def _raise_schema_mismatch(exc: Exception) -> None:
+    msg = str(exc)
+    if "UndefinedColumn" in msg or ("system_settings" in msg and "column" in msg):
+        raise HTTPException(
+            status_code=503,
+            detail="System settings schema is out of date. Run `python -m app.scripts.migrate`.",
+        ) from exc
+    raise exc
+
+
 class SystemSettingsPayload(BaseModel):
     warmup_enabled: bool
     notif_sched_enabled: bool
@@ -39,6 +50,8 @@ class SystemSettingsPayload(BaseModel):
     ovirt_host_vm_count_mode: Literal["runtime", "cluster"]
     cedia_refresh_interval_minutes: conint(ge=10, le=4320)  # type: ignore[valid-type]
     azure_refresh_interval_minutes: conint(ge=10, le=4320)  # type: ignore[valid-type]
+    hyperv_winrm_https_enabled: bool
+    hyperv_winrm_http_enabled: bool
 
 
 class SystemSettingsUpdate(BaseModel):
@@ -57,6 +70,8 @@ class SystemSettingsUpdate(BaseModel):
     ovirt_host_vm_count_mode: Optional[Literal["runtime", "cluster"]] = None
     cedia_refresh_interval_minutes: Optional[conint(ge=10, le=4320)] = None  # type: ignore[valid-type]
     azure_refresh_interval_minutes: Optional[conint(ge=10, le=4320)] = None  # type: ignore[valid-type]
+    hyperv_winrm_https_enabled: Optional[bool] = None
+    hyperv_winrm_http_enabled: Optional[bool] = None
 
 
 class SystemSettingsResponse(BaseModel):
@@ -101,6 +116,12 @@ def _effective_settings(row: Optional[SystemSettings]) -> SystemSettingsPayload:
         azure_refresh_interval_minutes=int(
             overrides.get("azure_refresh_interval_minutes", settings.azure_refresh_interval_minutes)
         ),
+        hyperv_winrm_https_enabled=bool(
+            overrides.get("hyperv_winrm_https_enabled", settings.hyperv_winrm_https_enabled)
+        ),
+        hyperv_winrm_http_enabled=bool(
+            overrides.get("hyperv_winrm_http_enabled", settings.hyperv_winrm_http_enabled)
+        ),
     )
 
 
@@ -116,8 +137,11 @@ def _system_settings_defaults() -> dict[str, object]:
 def get_system_settings(
     _user: User = Depends(require_permission(PermissionCode.SYSTEM_SETTINGS_VIEW)),
 ):
-    with Session(get_engine()) as session:
-        row = load_or_create_system_settings(session, defaults=_system_settings_defaults())
+    try:
+        with Session(get_engine()) as session:
+            row = load_or_create_system_settings(session, defaults=_system_settings_defaults())
+    except ProgrammingError as exc:
+        _raise_schema_mismatch(exc)
     return {"settings": _effective_settings(row), "requires_restart": False}
 
 
@@ -134,36 +158,39 @@ def update_system_settings(
     if not updates:
         raise HTTPException(status_code=400, detail="No settings provided")
 
-    with Session(get_engine()) as session:
-        row = load_or_create_system_settings(session, defaults=_system_settings_defaults())
+    try:
+        with Session(get_engine()) as session:
+            row = load_or_create_system_settings(session, defaults=_system_settings_defaults())
 
-        changes = {}
-        for field, value in updates.items():
-            previous = getattr(row, field, None)
-            if previous != value:
-                changes[field] = {"from": previous, "to": value}
-                setattr(row, field, value)
+            changes = {}
+            for field, value in updates.items():
+                previous = getattr(row, field, None)
+                if previous != value:
+                    changes[field] = {"from": previous, "to": value}
+                    setattr(row, field, value)
 
-        row.updated_at = datetime.now(timezone.utc)
-        row.updated_by_user_id = current_user.id
-        session.add(row)
+            row.updated_at = datetime.now(timezone.utc)
+            row.updated_by_user_id = current_user.id
+            session.add(row)
 
-        if changes:
-            log_audit(
-                session,
-                actor=current_user,
-                action="system.settings.update",
-                target_type="system",
-                target_id="settings",
-                meta={"changes": changes},
-                ip=ctx.ip,
-                ua=ctx.user_agent,
-                corr=ctx.correlation_id,
-            )
-        session.commit()
+            if changes:
+                log_audit(
+                    session,
+                    actor=current_user,
+                    action="system.settings.update",
+                    target_type="system",
+                    target_id="settings",
+                    meta={"changes": changes},
+                    ip=ctx.ip,
+                    ua=ctx.user_agent,
+                    corr=ctx.correlation_id,
+                )
+            session.commit()
 
-        return {
-            "saved": True,
-            "requires_restart": True,
-            "settings": _effective_settings(row),
-        }
+            return {
+                "saved": True,
+                "requires_restart": True,
+                "settings": _effective_settings(row),
+            }
+    except ProgrammingError as exc:
+        _raise_schema_mismatch(exc)

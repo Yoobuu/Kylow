@@ -11,6 +11,7 @@ from app.hosts.host_models import HostDeep, HostDetail, HostSummary
 from app.vms.vm_service import (
     ThreadSafeTTLCache,
     _network_endpoint,
+    _vcenter_tls_verify,
     _soap_connect,
     get_session_token,
 )
@@ -61,7 +62,7 @@ def _rest_host_map() -> Dict[str, dict]:
     headers = {"vmware-api-session-id": token}
     url = _network_endpoint("/rest/vcenter/host")
     try:
-        resp = requests.get(url, headers=headers, verify=False, timeout=10)
+        resp = requests.get(url, headers=headers, verify=_vcenter_tls_verify(), timeout=10)
         resp.raise_for_status()
         data = resp.json().get("value", []) if resp.headers.get("content-type", "").startswith("application/json") else []
     except Exception as exc:

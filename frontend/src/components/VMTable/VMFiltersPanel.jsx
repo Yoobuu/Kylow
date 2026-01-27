@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 const FILTER_LABELS = {
   environment: 'Ambiente',
@@ -23,133 +23,181 @@ export default function VMFiltersPanel({
   onGroupChange,
   hasFilters,
 }) {
+  const BeigeSelect = ({ id, value, options, onChange }) => {
+    const [open, setOpen] = useState(false)
+    const containerRef = useRef(null)
+
+    const selectedLabel = useMemo(() => {
+      const match = options.find((opt) => opt.value === value)
+      return match ? match.label : options[0]?.label || 'Seleccionar'
+    }, [options, value])
+
+    useEffect(() => {
+      const handleClick = (event) => {
+        if (!containerRef.current?.contains(event.target)) {
+          setOpen(false)
+        }
+      }
+      const handleKey = (event) => {
+        if (event.key === 'Escape') {
+          setOpen(false)
+        }
+      }
+      document.addEventListener('mousedown', handleClick)
+      document.addEventListener('keydown', handleKey)
+      return () => {
+        document.removeEventListener('mousedown', handleClick)
+        document.removeEventListener('keydown', handleKey)
+      }
+    }, [])
+
+    return (
+      <div ref={containerRef} className="relative">
+        <button
+          id={id}
+          type="button"
+          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-3 text-left text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FAF3E9]"
+          onClick={() => setOpen((prev) => !prev)}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+        >
+          <span>{selectedLabel}</span>
+          <span className="float-right text-gray-500">▾</span>
+        </button>
+        {open && (
+          <ul
+            className="absolute z-20 mt-2 max-h-60 w-full overflow-auto rounded-lg border border-[#E1D6C8] bg-white shadow-lg"
+            role="listbox"
+            aria-labelledby={id}
+          >
+            {options.map((opt) => (
+              <li key={opt.value}>
+                <button
+                  type="button"
+                  className={`w-full px-3 py-2 text-left text-sm transition ${
+                    value === opt.value ? 'bg-[#FAF3E9] text-gray-900' : 'hover:bg-[#FAF3E9]'
+                  }`}
+                  onClick={() => {
+                    onChange(opt.value)
+                    setOpen(false)
+                  }}
+                >
+                  {opt.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    )
+  }
+
   const activeFilters = Object.entries(filter).filter(
     ([key, value]) => key !== 'name' && value
   )
 
-  const handleSelect = (field) => (event) =>
-    onFilterChange(field, event.target.value)
+  const handleSelect = (field) => (value) => onFilterChange(field, value)
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-      <h3 className="text-lg font-semibold text-gray-700 mb-4">Filtros y Agrupamiento</h3>
+    <div className="bg-[#FAF3E9] rounded-xl shadow-md p-6 mb-8">
+      <h3 className="text-[1.6rem] font-semibold text-[#E11B22] mb-4">Filtros y Agrupamiento</h3>
 
       <div className="grid gap-4 mb-6 [grid-template-columns:repeat(auto-fit,minmax(240px,1fr))]">
         <div className="min-w-[240px]">
           <label htmlFor="filter-environment" className="block text-sm font-medium text-gray-700 mb-1">
             Filtrar por Ambiente
           </label>
-          <select
+          <BeigeSelect
             id="filter-environment"
             value={filter.environment}
             onChange={handleSelect('environment')}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5da345] focus:outline-none"
-          >
-            <option value="">Todos</option>
-            {uniqueEnvironments.map((env) => (
-              <option key={env} value={env}>
-                {env}
-              </option>
-            ))}
-          </select>
+            options={[
+              { value: '', label: 'Todos' },
+              ...uniqueEnvironments.map((env) => ({ value: env, label: env })),
+            ]}
+          />
         </div>
 
         <div className="min-w-[240px]">
           <label htmlFor="filter-power_state" className="block text-sm font-medium text-gray-700 mb-1">
             Filtrar por Estado
           </label>
-          <select
+          <BeigeSelect
             id="filter-power_state"
             value={filter.power_state}
             onChange={handleSelect('power_state')}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5da345] focus:outline-none"
-          >
-            <option value="">Todos</option>
-            {uniquePowerStates.map((state) => (
-              <option key={state} value={state}>
-                {state === 'POWERED_ON'
-                  ? 'Encendida'
-                  : state === 'POWERED_OFF'
-                    ? 'Apagada'
-                    : state}
-              </option>
-            ))}
-          </select>
+            options={[
+              { value: '', label: 'Todos' },
+              ...uniquePowerStates.map((state) => ({
+                value: state,
+                label:
+                  state === 'POWERED_ON'
+                    ? 'Encendida'
+                    : state === 'POWERED_OFF'
+                      ? 'Apagada'
+                      : state,
+              })),
+            ]}
+          />
         </div>
 
         <div className="min-w-[240px]">
           <label htmlFor="filter-guest_os" className="block text-sm font-medium text-gray-700 mb-1">
             Filtrar por SO
           </label>
-          <select
+          <BeigeSelect
             id="filter-guest_os"
             value={filter.guest_os}
             onChange={handleSelect('guest_os')}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5da345] focus:outline-none"
-          >
-            <option value="">Todos</option>
-            {uniqueGuestOS.map((os) => (
-              <option key={os} value={os}>
-                {os}
-              </option>
-            ))}
-          </select>
+            options={[
+              { value: '', label: 'Todos' },
+              ...uniqueGuestOS.map((os) => ({ value: os, label: os })),
+            ]}
+          />
         </div>
         <div className="min-w-[240px]">
           <label htmlFor="filter-host" className="block text-sm font-medium text-gray-700 mb-1">
             Filtrar por Host
           </label>
-          <select
+          <BeigeSelect
             id="filter-host"
             value={filter.host}
             onChange={handleSelect('host')}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5da345] focus:outline-none"
-          >
-            <option value="">Todos</option>
-            {uniqueHosts.map((host) => (
-              <option key={host} value={host}>
-                {host}
-              </option>
-            ))}
-          </select>
+            options={[
+              { value: '', label: 'Todos' },
+              ...uniqueHosts.map((host) => ({ value: host, label: host })),
+            ]}
+          />
         </div>
 
         <div className="min-w-[240px]">
           <label htmlFor="filter-vlan" className="block text-sm font-medium text-gray-700 mb-1">
             Filtrar por VLAN
           </label>
-          <select
+          <BeigeSelect
             id="filter-vlan"
             value={filter.vlan}
             onChange={handleSelect('vlan')}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5da345] focus:outline-none"
-          >
-            <option value="">Todas</option>
-            {uniqueVlans.map((vlan) => (
-              <option key={vlan} value={vlan}>
-                {vlan}
-              </option>
-            ))}
-          </select>
+            options={[
+              { value: '', label: 'Todas' },
+              ...uniqueVlans.map((vlan) => ({ value: vlan, label: vlan })),
+            ]}
+          />
         </div>
 
         <div className="min-w-[240px]">
           <label htmlFor="filter-cluster" className="block text-sm font-medium text-gray-700 mb-1">
             Filtrar por Cluster
           </label>
-          <select
+          <BeigeSelect
             id="filter-cluster"
             value={filter.cluster}
             onChange={handleSelect('cluster')}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5da345] focus:outline-none"
-          >
-            <option value="">Todos</option>
-            {uniqueClusters.map((cluster) => (
-              <option key={cluster} value={cluster}>
-                {cluster}
-              </option>
-            ))}
-          </select>
+            options={[
+              { value: '', label: 'Todos' },
+              ...uniqueClusters.map((cluster) => ({ value: cluster, label: cluster })),
+            ]}
+          />
         </div>
       </div>
 
@@ -166,19 +214,20 @@ export default function VMFiltersPanel({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Agrupar por</label>
-          <select
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5da345] focus:outline-none"
+          <BeigeSelect
+            id="group-by"
             value={groupByOption}
-            onChange={(event) => onGroupChange(event.target.value)}
-          >
-            <option value="none">Sin agrupar</option>
-            <option value="estado">Agrupar por Estado</option>
-            <option value="ambiente">Agrupar por Ambiente</option>
-            <option value="host">Agrupar por Host</option>
-            <option value="vlan">Agrupar por VLAN</option>
-            <option value="cluster">Agrupar por Cluster</option>
-            <option value="SO">Agrupar por SO</option>
-          </select>
+            onChange={onGroupChange}
+            options={[
+              { value: 'none', label: 'Sin agrupar' },
+              { value: 'estado', label: 'Agrupar por Estado' },
+              { value: 'ambiente', label: 'Agrupar por Ambiente' },
+              { value: 'host', label: 'Agrupar por Host' },
+              { value: 'vlan', label: 'Agrupar por VLAN' },
+              { value: 'cluster', label: 'Agrupar por Cluster' },
+              { value: 'SO', label: 'Agrupar por SO' },
+            ]}
+          />
         </div>
       </div>
 
@@ -187,12 +236,12 @@ export default function VMFiltersPanel({
           {activeFilters.map(([key, value]) => (
             <div
               key={key}
-              className="flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full"
+              className="flex items-center bg-[#FAF3E9] text-gray-800 text-sm px-3 py-1 rounded-full border border-[#E1D6C8]"
             >
               <span>{FILTER_LABELS[key] || key}: {value}</span>
               <button
                 onClick={() => onFilterChange(key, '')}
-                className="ml-2 text-blue-600 hover:text-blue-800"
+                className="ml-2 text-gray-600 hover:text-gray-900"
               >
                 x
               </button>

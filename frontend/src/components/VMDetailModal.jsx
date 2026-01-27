@@ -7,13 +7,13 @@ import { useAuth } from "../context/AuthContext";
 
 const ACTION_THEMES = {
   start: {
-    base: "bg-green-500 hover:bg-green-600 focus-visible:ring-green-300",
+    base: "bg-[#1B5E20] hover:bg-[#174e1b] focus-visible:ring-[#1B5E20]/40",
   },
   stop: {
-    base: "bg-red-500 hover:bg-red-600 focus-visible:ring-red-300",
+    base: "bg-[#E11B22] hover:bg-[#c9161c] focus-visible:ring-[#E11B22]/40",
   },
   reset: {
-    base: "bg-yellow-500 hover:bg-yellow-600 focus-visible:ring-yellow-300",
+    base: "bg-[#7A5E00] hover:bg-[#6a5200] focus-visible:ring-[#7A5E00]/40",
   },
 };
 
@@ -295,9 +295,9 @@ export default function VMDetailModal({
       return null;
     }
     const clamped = Math.max(0, Math.min(num, 100));
-    const barColor = clamped < 50 ? "bg-green-500" : clamped < 80 ? "bg-yellow-500" : "bg-red-500";
+    const barColor = clamped < 50 ? "bg-[#1B5E20]" : clamped < 80 ? "bg-[#7A5E00]" : "bg-[#E11B22]";
     return (
-      <div className="mt-3 h-1.5 rounded-full bg-gray-200">
+      <div className="mt-3 h-1.5 rounded-full bg-[#E1E1E1]">
         <div className={`h-full rounded-full ${barColor}`} style={{ width: `${clamped}%` }} />
       </div>
     );
@@ -314,15 +314,15 @@ export default function VMDetailModal({
       none: "sin datos",
     };
     const classMap = {
-      realtime: "bg-emerald-100 text-emerald-700",
-      rollup: "bg-amber-100 text-amber-700",
-      quickstats: "bg-sky-100 text-sky-700",
-      idle_zero: "bg-gray-100 text-gray-600",
-      missing_metric: "bg-rose-100 text-rose-700",
-      none: "bg-gray-100 text-gray-500",
+      realtime: "bg-[#E6F4EA] text-[#1B5E20] border border-[#B7E0C1]",
+      rollup: "bg-[#FFF3CD] text-[#7A5E00] border border-[#FFE3A3]",
+      quickstats: "bg-[#E8F1FF] text-[#1F4E8C] border border-[#C9DDF7]",
+      idle_zero: "bg-[#FAF3E9] text-[#6b6b6b] border border-[#D6C7B8]",
+      missing_metric: "bg-[#FDE2E2] text-[#8B0000] border border-[#F5B5B5]",
+      none: "bg-[#FAF3E9] text-[#6b6b6b] border border-[#D6C7B8]",
     };
     return (
-      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${classMap[normalized] || "bg-gray-100 text-gray-600"}`}>
+      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${classMap[normalized] || "bg-[#FAF3E9] text-[#6b6b6b] border border-[#D6C7B8]"}`}>
         {labelMap[normalized] || normalized}
       </span>
     );
@@ -402,7 +402,7 @@ export default function VMDetailModal({
     <AnimatePresence>
       {vmId && (
         <Motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-8"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-8"
           initial="hidden"
           animate="visible"
           exit="hidden"
@@ -413,7 +413,7 @@ export default function VMDetailModal({
             role="dialog"
             aria-modal="true"
             aria-labelledby="vm-detail-title"
-            className="relative flex h-full max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white text-gray-800 shadow-xl focus:outline-none"
+            className="relative flex h-full max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-[#E1D6C8] bg-[#FAF3E9] text-[#231F20] shadow-xl focus:outline-none"
             variants={{
               hidden: { opacity: 0, scale: 0.95 },
               visible: { opacity: 1, scale: 1 },
@@ -423,10 +423,10 @@ export default function VMDetailModal({
             exit="hidden"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="flex items-start justify-between gap-4 border-b border-gray-200 p-6">
+            <div className="flex items-start justify-between gap-4 border-b border-[#E1D6C8] p-6">
               <h3
                 id="vm-detail-title"
-                className="min-w-0 flex-1 truncate text-2xl font-semibold"
+                className="min-w-0 flex-1 truncate text-2xl font-semibold text-[#E11B22]"
                 title={displayNameTitle}
               >
                 Detalle VM {displayNameTitle}
@@ -434,7 +434,7 @@ export default function VMDetailModal({
               <button
                 onClick={onClose}
                 aria-label="Cerrar detalle de VM"
-                className="shrink-0 text-xl text-gray-500 transition hover:text-gray-900"
+                className="shrink-0 text-xl text-[#231F20] transition hover:text-[#E11B22]"
               >
                 &times;
               </button>
@@ -442,25 +442,25 @@ export default function VMDetailModal({
 
             <div className="flex-1 overflow-y-auto p-6">
               {successMsg && (
-                <div className="mb-4 rounded border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">
+                <div className="mb-4 rounded border border-[#B7E0C1] bg-[#E6F4EA] p-3 text-sm text-[#1B5E20]">
                   {successMsg}
                 </div>
               )}
 
               {pending && (
-                <div className="mb-4 rounded border border-gray-300 bg-gray-100 p-4">
-                  <p className="text-sm text-gray-800">
+                <div className="mb-4 rounded border border-[#E1D6C8] bg-[#FAF3E9] p-4">
+                  <p className="text-sm text-[#231F20]">
                     ¿Seguro que deseas <strong>{pending.text.toLowerCase()}</strong> la VM {detail?.name ?? vmId}?
                   </p>
                   <div className="mt-3 flex justify-end gap-2">
                     <button
-                      className="rounded bg-green-500 px-3 py-1 text-sm text-white hover:bg-green-600"
+                      className="rounded bg-[#1B5E20] px-3 py-1 text-sm text-white hover:bg-[#174e1b]"
                       onClick={() => handlePowerExecution(pending.apiPath)}
                     >
                       Sí
                     </button>
                     <button
-                      className="rounded bg-gray-300 px-3 py-1 text-sm text-gray-800 hover:bg-gray-400"
+                      className="rounded bg-[#E1E1E1] px-3 py-1 text-sm text-[#231F20] hover:bg-[#D6D6D6]"
                       onClick={() => setPending(null)}
                     >
                       No
@@ -474,13 +474,13 @@ export default function VMDetailModal({
                   {loading && (
                     <div className="space-y-3">
                       {SKELETON_WIDTHS.map((widthClass, index) => (
-                        <div key={index} className={`h-4 animate-pulse rounded bg-gray-200 ${widthClass}`} />
+                        <div key={index} className={`h-4 animate-pulse rounded bg-[#E1E1E1] ${widthClass}`} />
                       ))}
                     </div>
                   )}
 
                   {error && !loading && (
-                    <p className="text-center text-sm text-red-600">{error}</p>
+                    <p className="text-center text-sm text-[#E11B22]">{error}</p>
                   )}
 
                   {!loading && detail && (
@@ -511,14 +511,14 @@ export default function VMDetailModal({
                                   ? `${text} (${formatGiB(disk.capacityGiB)})`
                                   : text;
                                 return (
-                                  <span key={disk.id} className="text-gray-800">
+                                  <span key={disk.id} className="text-[#231F20]">
                                     {diskEntries.length > 1 ? `${disk.label}: ` : ""}
                                     {display}
                                   </span>
                                 );
                               })}
                               {totalDiskCapacity != null && diskEntries.length > 1 && (
-                                <span className="text-xs text-gray-500">
+                                <span className="text-xs text-[#6b6b6b]">
                                   Total: {formatGiB(totalDiskCapacity)}
                                 </span>
                               )}
@@ -533,8 +533,8 @@ export default function VMDetailModal({
                         ["VLAN(s)", detail.networks?.length ? detail.networks.join(", ") : "-"],
                       ].map(([label, value]) => (
                         <div key={label} className="col-span-1 flex">
-                          <dt className="w-1/2 font-medium text-gray-700">{label}:</dt>
-                          <dd className="flex-1 break-words text-gray-800">{value ?? "\u2014"}</dd>
+                          <dt className="w-1/2 font-medium text-[#231F20]">{label}:</dt>
+                          <dd className="flex-1 break-words text-[#231F20]">{value ?? "\u2014"}</dd>
                         </div>
                       ))}
                     </dl>
@@ -547,35 +547,35 @@ export default function VMDetailModal({
                         {actionButton("Apagar", "stop", "stop", IoPowerOutline)}
                         {actionButton("Reset", "reset", "reset", IoRefreshSharp)}
                       </div>
-                      {powerDisabled && <p className="text-xs text-red-500">{powerDisabledMessage}</p>}
+                      {powerDisabled && <p className="text-xs text-[#E11B22]">{powerDisabledMessage}</p>}
                     </>
                   )}
                 </div>
 
-                <aside className="w-full shrink-0 space-y-4 border-t border-gray-200 pt-4 lg:w-72 lg:border-l lg:border-t-0 lg:pl-4 lg:pt-0 xl:w-80">
+                <aside className="w-full shrink-0 space-y-4 border-t border-transparent pt-4 lg:w-72 lg:border-l lg:border-t-0 lg:pl-4 lg:pt-0 xl:w-80">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-semibold text-gray-700">
+                    <h4 className="text-sm font-semibold text-[#E11B22]">
                       Contexto realtime ({PERF_WINDOW_SECONDS}s)
                     </h4>
                     <button
                       type="button"
                       onClick={handlePerfRefresh}
                       disabled={perfLoading}
-                      className="text-xs font-medium text-blue-600 hover:text-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="text-xs font-medium text-[#E11B22] hover:text-[#c9161c] disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {perfLoading ? "Actualizando..." : "Actualizar"}
                     </button>
                   </div>
 
-                  {perfError && <p className="text-xs text-red-600">{perfError}</p>}
+                  {perfError && <p className="text-xs text-[#E11B22]">{perfError}</p>}
 
                   {perfLoading && !perf && (
                     <div className="space-y-3">
                       {[0, 1].map((index) => (
-                        <div key={index} className="rounded-lg border border-gray-200 p-4">
-                          <div className="mb-3 h-4 w-1/2 animate-pulse rounded bg-gray-200" />
-                          <div className="h-6 w-3/4 animate-pulse rounded bg-gray-200" />
-                          <div className="mt-3 h-1.5 w-full animate-pulse rounded-full bg-gray-200" />
+                        <div key={index} className="rounded-lg border border-transparent bg-[#FAF3E9] p-4">
+                          <div className="mb-3 h-4 w-1/2 animate-pulse rounded bg-[#E1E1E1]" />
+                          <div className="h-6 w-3/4 animate-pulse rounded bg-[#E1E1E1]" />
+                          <div className="mt-3 h-1.5 w-full animate-pulse rounded-full bg-[#E1E1E1]" />
                         </div>
                       ))}
                     </div>
@@ -584,12 +584,12 @@ export default function VMDetailModal({
                   {perf && (
                     <div className="space-y-3">
                       {perfMetricsConfig.map(({ key, label }) => (
-                        <div key={key} className="rounded-lg border border-gray-200 p-4">
-                          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-gray-500">
+                        <div key={key} className="rounded-lg border border-transparent bg-[#FAF3E9] p-4">
+                          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-[#6b6b6b]">
                             <span>{label}</span>
                             {renderSourceBadge(perf?._sources?.[key])}
                           </div>
-                          <div className="mt-2 text-2xl font-semibold text-gray-900">
+                          <div className="mt-2 text-2xl font-semibold text-[#231F20]">
                             {formatPerfPercent(perf[key])}
                           </div>
                           {renderPerfBar(perf[key])}
@@ -599,10 +599,10 @@ export default function VMDetailModal({
                   )}
 
                   {showPerfNoDataMessage && (
-                    <p className="text-xs text-gray-500">Sin datos dentro de la ventana solicitada.</p>
+                    <p className="text-xs text-[#6b6b6b]">Sin datos dentro de la ventana solicitada.</p>
                   )}
                   {perfCollectedLabel && (
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-[#6b6b6b]">
                       Última muestra: {perfCollectedLabel} · intervalo {perfIntervalSeconds} s
                     </p>
                   )}

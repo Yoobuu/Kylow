@@ -69,14 +69,14 @@ export default function VMGroupsTable({
   return (
     <>
       {entries.map(([groupName, list]) => (
-        <div key={groupName} className="mb-10 bg-white rounded-xl shadow-md overflow-hidden">
+          <div key={groupName} className="mb-10 bg-white rounded-xl shadow-md overflow-hidden">
           {groupByOption !== 'none' && (
             <div
-              className="bg-gray-800 px-6 py-4 cursor-pointer select-none flex items-center justify-between"
+              className="bg-[#FAF3E9] px-6 py-4 cursor-pointer select-none flex items-center justify-between"
               onClick={() => toggleGroup(groupName)}
             >
-              <h3 className="text-xl font-bold text-white">{groupName || 'Sin grupo'}</h3>
-              <span className="text-white text-lg">
+              <h3 className="text-xl font-bold text-[#E11B22]">{groupName || 'Sin grupo'}</h3>
+              <span className="text-[#E11B22] text-lg">
                 {collapsedGroups[groupName] ? '▶' : '▼'}
               </span>
             </div>
@@ -95,12 +95,12 @@ export default function VMGroupsTable({
               >
                 <div className="max-h-[600px]">
                   <table className="w-full table-auto border-collapse">
-                    <thead className="bg-gray-100 sticky top-0 z-10">
+                    <thead className="bg-[#FAF3E9] sticky top-0 z-10">
                       <tr>
                         {columns.map((col) => (
                           <th
                             key={col.key}
-                            className="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-200 transition"
+                            className="px-6 py-4 text-left text-xs font-medium text-[#E11B22] uppercase tracking-wider cursor-pointer hover:bg-[#F1E6D8] transition"
                             onClick={() => onHeaderClick(col.key)}
                           >
                             <div className="flex items-center">
@@ -108,7 +108,7 @@ export default function VMGroupsTable({
                               {sortBy.key === col.key ? (
                                 <span className="ml-1">{sortBy.asc ? '▲' : '▼'}</span>
                               ) : (
-                                <span className="ml-1 text-gray-400">↕</span>
+                                <span className="ml-1 text-[#E11B22]/60">↕</span>
                               )}
                             </div>
                           </th>
@@ -134,7 +134,7 @@ export default function VMGroupsTable({
                         return (
                           <tr
                             key={vm.id}
-                            className="odd:bg-white even:bg-gray-50 hover:bg-gray-50 cursor-pointer transition"
+                            className="odd:bg-white even:bg-[#FAF3E9] hover:bg-[#FAF3E9] cursor-pointer transition"
                             onClick={() => {
                               console.log('[VMGroupsTable row click] vmOriginal =', vmOriginal)
                               onRowClick(vmOriginal)

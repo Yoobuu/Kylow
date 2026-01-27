@@ -63,6 +63,11 @@ desktop.ini
 *.tmp
 
 # === NON-DEPLOYMENT (TOP-LEVEL) ===
+/k8s/
+/README.md
+/CONFIG_CONTRACT.md
+/estilo.md
+/SECURITY_CONNECTIVITY_REPORT.md
 /docs/
 /scripts/
 /tests/

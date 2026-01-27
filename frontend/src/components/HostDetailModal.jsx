@@ -5,22 +5,22 @@ import { getHostDetail as getVmwareHostDetail, getHostDeep as getVmwareHostDeep 
 import { normalizeHostDetail, normalizeHostDeep } from '../lib/normalizeHost'
 
 const Backdrop = ({ children, onClose }) => (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur" onClick={onClose}>
-    <div className="relative max-h-[90vh] w-full max-w-6xl overflow-hidden rounded-2xl border border-yellow-500/30 bg-neutral-900" onClick={(e) => e.stopPropagation()}>
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
+    <div className="relative max-h-[90vh] w-full max-w-6xl overflow-hidden rounded-2xl border border-[#E1D6C8] bg-white text-[#231F20]" onClick={(e) => e.stopPropagation()}>
       {children}
     </div>
   </div>
 )
 
-const renderBar = (value, tone = 'from-yellow-400 to-amber-500') => {
-  if (value == null || Number.isNaN(value)) return <span className="text-neutral-400">—</span>
+const renderBar = (value) => {
+  if (value == null || Number.isNaN(value)) return <span className="text-[#6b6b6b]">—</span>
   const width = Math.min(Math.max(value, 0), 100)
-  const color = value < 50 ? 'from-emerald-400 to-teal-500' : value < 85 ? tone : 'from-rose-500 to-red-600'
+  const color = value < 50 ? 'bg-[#939598]' : value < 85 ? 'bg-[#E11B22]/70' : 'bg-[#E11B22]'
   return (
     <div className="space-y-1">
-      <div className="text-xs text-neutral-200">{value}%</div>
-      <div className="h-2 w-full rounded-full bg-neutral-800">
-        <div className={`h-full rounded-full bg-gradient-to-r ${color} transition-all`} style={{ width: `${width}%` }} />
+      <div className="text-xs text-[#231F20]">{value}%</div>
+      <div className="h-2 w-full rounded-full bg-[#E1E1E1]">
+        <div className={`h-full rounded-full ${color} transition-all`} style={{ width: `${width}%` }} />
       </div>
     </div>
   )
@@ -28,9 +28,9 @@ const renderBar = (value, tone = 'from-yellow-400 to-amber-500') => {
 
 const healthBadge = (health) => {
   const map = {
-    healthy: { text: 'Saludable', tone: 'border-emerald-400 text-emerald-200 bg-emerald-500/10' },
-    warning: { text: 'Advertencia', tone: 'border-amber-400 text-amber-200 bg-amber-500/10' },
-    critical: { text: 'Crítico', tone: 'border-rose-400 text-rose-200 bg-rose-500/10' },
+    healthy: { text: 'Saludable', tone: 'border-[#B7E0C1] text-[#1B5E20] bg-[#E6F4EA]' },
+    warning: { text: 'Advertencia', tone: 'border-[#FFE3A3] text-[#7A5E00] bg-[#FFF3CD]' },
+    critical: { text: 'Crítico', tone: 'border-[#F5B5B5] text-[#8B0000] bg-[#FDE2E2]' },
   }
   const cfg = map[health] || map.healthy
   return <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${cfg.tone}`}>{cfg.text}</span>
@@ -100,13 +100,13 @@ export default function HostDetailModal({
     return (
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c, idx) => (
-          <div key={idx} className="rounded-lg border border-white/10 bg-neutral-900/70 p-3 text-sm">
-            <div className="text-xs uppercase text-neutral-400">{c.label}</div>
-            <div className="text-white font-semibold">{c.sensor.name}</div>
-            <div className="text-cyan-300 text-xs">
+          <div key={idx} className="rounded-lg border border-[#E1D6C8] bg-[#FAF3E9] p-3 text-sm">
+            <div className="text-xs uppercase text-[#6b6b6b]">{c.label}</div>
+            <div className="text-[#231F20] font-semibold">{c.sensor.name}</div>
+            <div className="text-usfq-red text-xs">
               {c.sensor.value ?? '—'} {c.sensor.unit ?? ''}
             </div>
-            <div className="text-neutral-400 text-xs">{c.sensor.status || c.sensor.health}</div>
+            <div className="text-[#6b6b6b] text-xs">{c.sensor.status || c.sensor.health}</div>
           </div>
         ))}
       </div>
@@ -117,16 +117,16 @@ export default function HostDetailModal({
 
   return (
     <Backdrop onClose={onClose}>
-      <div className="flex items-center justify-between border-b border-yellow-500/30 bg-neutral-950 px-4 py-3">
+      <div className="flex items-center justify-between border-b border-usfq-red/30 bg-usfq-black px-4 py-3">
         <div>
-          <div className="text-sm text-neutral-400">Detalle de host</div>
-          <div className="text-xl font-bold text-yellow-200">{detail?.name || hostId}</div>
-          <div className="flex flex-wrap items-center gap-2 text-xs text-neutral-300">
+          <div className="text-sm text-usfq-grayLight">Detalle de host</div>
+          <div className="text-xl font-bold text-usfq-white">{detail?.name || hostId}</div>
+          <div className="flex flex-wrap items-center gap-2 text-xs text-usfq-grayLight">
             <span>
               {detail?.cluster} · {detail?.datacenter}
             </span>
             {detail?.server_type && (
-              <span className="rounded-full border border-cyan-400/50 bg-cyan-500/10 px-2 py-0.5 text-cyan-100">
+              <span className="rounded-full border border-[#D6C7B8] bg-[#FAF3E9] px-2 py-0.5 text-[#231F20]">
                 {detail.server_type}
               </span>
             )}
@@ -136,28 +136,28 @@ export default function HostDetailModal({
         <div className="flex items-center gap-3">
           <button
             onClick={onOpenDeep}
-            className="rounded-lg border border-cyan-400/60 px-3 py-1.5 text-sm font-semibold text-cyan-200 hover:bg-cyan-400/10"
+            className="rounded-lg bg-[#E11B22] px-3 py-1.5 text-sm font-semibold text-white hover:bg-[#c9161c]"
           >
             Modo Experto (Deep)
           </button>
-          <button onClick={onClose} className="rounded-full bg-neutral-800 p-2 text-neutral-200 hover:bg-neutral-700">
+          <button onClick={onClose} className="rounded-full bg-white/10 p-2 text-usfq-white hover:bg-white/20">
             <IoClose className="text-xl" />
           </button>
         </div>
       </div>
 
-      <div className="max-h-[80vh] overflow-y-auto p-4 text-neutral-100">
-        {loading && <div className="py-10 text-center text-neutral-300">Cargando...</div>}
-        {error && <div className="rounded border border-red-500/40 bg-red-500/10 p-3 text-red-200">{error}</div>}
+      <div className="max-h-[80vh] overflow-y-auto p-4 text-[#231F20]">
+        {loading && <div className="py-10 text-center text-[#6b6b6b]">Cargando...</div>}
+        {error && <div className="rounded border border-usfq-red/40 bg-usfq-red/10 p-3 text-usfq-red">{error}</div>}
         {detail && (
           <div className="space-y-4">
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               <KpiCard icon={IoPulse} label="CPU Usage" value={renderBar(detail.quick_stats.cpu_usage_pct || null)} />
-              <KpiCard icon={FaMemory} label="RAM Usage" value={renderBar(detail.quick_stats.memory_usage_pct || null, 'from-cyan-400 to-blue-500')} />
+              <KpiCard icon={FaMemory} label="RAM Usage" value={renderBar(detail.quick_stats.memory_usage_pct || null)} />
               <KpiCard
                 icon={FaDatabase}
                 label="Datastore promedio"
-                value={dsUsageAvg != null ? renderBar(dsUsageAvg, 'from-yellow-400 to-amber-500') : <span className="text-neutral-400">—</span>}
+                value={dsUsageAvg != null ? renderBar(dsUsageAvg) : <span className="text-[#6b6b6b]">—</span>}
               />
             </div>
 
@@ -197,27 +197,27 @@ export default function HostDetailModal({
             <Section title="Red">
               <div className="space-y-3">
                 <div>
-                  <div className="text-xs uppercase text-neutral-400">pNICs</div>
+                  <div className="text-xs uppercase text-[#6b6b6b]">pNICs</div>
                   <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 text-sm">
                     {detail.networking.pnics?.map((nic) => (
-                      <div key={nic.name} className="rounded-lg border border-white/5 bg-neutral-900/80 p-3">
-                        <div className="font-semibold text-white">{nic.name}</div>
-                        <div className="text-xs text-neutral-400">{nic.mac}</div>
-                        <div className="text-xs text-cyan-300">{nic.link_speed_mbps} Mbps · {nic.driver}</div>
+                      <div key={nic.name} className="rounded-lg border border-[#E1D6C8] bg-white p-3">
+                        <div className="font-semibold text-[#231F20]">{nic.name}</div>
+                        <div className="text-xs text-[#6b6b6b]">{nic.mac}</div>
+                        <div className="text-xs text-usfq-red">{nic.link_speed_mbps} Mbps · {nic.driver}</div>
                       </div>
                     ))}
                   </div>
                 </div>
                 <div className="grid gap-2 md:grid-cols-2">
                   {Object.entries(detail.networking.vmk_grouped || {}).map(([bucket, list]) => (
-                    <div key={bucket} className="rounded-lg border border-white/5 bg-neutral-900/80 p-3 text-sm">
-                      <div className="text-xs uppercase text-neutral-400">{bucket}</div>
-                      {list.length === 0 && <div className="text-neutral-400 text-xs">Sin vmk</div>}
+                    <div key={bucket} className="rounded-lg border border-[#E1D6C8] bg-white p-3 text-sm">
+                      <div className="text-xs uppercase text-[#6b6b6b]">{bucket}</div>
+                      {list.length === 0 && <div className="text-[#6b6b6b] text-xs">Sin vmk</div>}
                       {list.map((vmk) => (
-                        <div key={vmk.device} className="mt-1 rounded border border-white/5 bg-neutral-900/80 p-2">
-                          <div className="font-semibold text-white">{vmk.device}</div>
-                          <div className="text-xs text-neutral-400">{vmk.ip} · MTU {vmk.mtu}</div>
-                          <div className="text-xs text-cyan-300">{vmk.portgroup}</div>
+                        <div key={vmk.device} className="mt-1 rounded border border-[#E1D6C8] bg-[#FAF3E9] p-2">
+                          <div className="font-semibold text-[#231F20]">{vmk.device}</div>
+                          <div className="text-xs text-[#6b6b6b]">{vmk.ip} · MTU {vmk.mtu}</div>
+                          <div className="text-xs text-usfq-red">{vmk.portgroup}</div>
                         </div>
                       ))}
                     </div>
@@ -225,15 +225,15 @@ export default function HostDetailModal({
                 </div>
                 <div className="grid gap-2 md:grid-cols-2">
                   {detail.networking.vswitches?.map((sw) => (
-                    <div key={sw.name} className="rounded-lg border border-white/5 bg-neutral-900/80 p-2 text-sm">
-                      <div className="font-semibold text-white">{sw.name}</div>
-                      <div className="text-xs text-neutral-400">MTU {sw.mtu}</div>
+                    <div key={sw.name} className="rounded-lg border border-[#E1D6C8] bg-white p-2 text-sm">
+                      <div className="font-semibold text-[#231F20]">{sw.name}</div>
+                      <div className="text-xs text-[#6b6b6b]">MTU {sw.mtu}</div>
                     </div>
                   ))}
                   {detail.networking.dvswitches?.map((sw) => (
-                    <div key={sw.name} className="rounded-lg border border-white/5 bg-neutral-900/80 p-2 text-sm">
-                      <div className="font-semibold text-white">{sw.name}</div>
-                      <div className="text-xs text-neutral-400">MTU {sw.mtu}</div>
+                    <div key={sw.name} className="rounded-lg border border-[#E1D6C8] bg-white p-2 text-sm">
+                      <div className="font-semibold text-[#231F20]">{sw.name}</div>
+                      <div className="text-xs text-[#6b6b6b]">MTU {sw.mtu}</div>
                     </div>
                   ))}
                 </div>
@@ -243,22 +243,16 @@ export default function HostDetailModal({
             <Section title="Datastores">
               <div className="grid gap-3 md:grid-cols-2">
                 {detail.datastores.map((ds) => {
-                  const barTone =
-                    ds.used_pct != null && ds.used_pct > 85
-                      ? 'from-rose-500 to-red-600'
-                      : ds.used_pct != null && ds.used_pct > 70
-                        ? 'from-amber-500 to-yellow-500'
-                        : 'from-emerald-500 to-teal-500'
                   return (
-                    <div key={ds.name} className="rounded-lg border border-white/5 bg-neutral-900/80 p-3">
-                      <div className="flex items-center justify-between text-sm text-white">
+                    <div key={ds.name} className="rounded-lg border border-[#E1D6C8] bg-white p-3">
+                      <div className="flex items-center justify-between text-sm text-[#231F20]">
                         <span className="font-semibold">{ds.name}</span>
-                        <span className="text-xs text-neutral-400">{ds.type}</span>
+                        <span className="text-xs text-[#6b6b6b]">{ds.type}</span>
                       </div>
-                      <div className="text-xs text-neutral-400">Capacidad: {ds.capacity_h}</div>
-                      <div className="text-xs text-neutral-400">Libre: {ds.free_space_h}</div>
-                      <div className="text-xs text-neutral-400">Estado: {ds.status || '—'}</div>
-                      <div className="mt-2">{renderBar(ds.used_pct ?? null, barTone)}</div>
+                      <div className="text-xs text-[#6b6b6b]">Capacidad: {ds.capacity_h}</div>
+                      <div className="text-xs text-[#6b6b6b]">Libre: {ds.free_space_h}</div>
+                      <div className="text-xs text-[#6b6b6b]">Estado: {ds.status || '—'}</div>
+                      <div className="mt-2">{renderBar(ds.used_pct ?? null)}</div>
                     </div>
                   )
                 })}
@@ -268,10 +262,10 @@ export default function HostDetailModal({
             <Section title="VMs residentes">
               <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 text-sm">
                 {detail.vms.map((vm) => (
-                  <div key={vm.moid} className="rounded-lg border border-white/5 bg-neutral-900/70 p-2">
-                    <div className="font-semibold text-white">{vm.name}</div>
-                    <div className="text-xs text-neutral-400">{vm.moid}</div>
-                    <div className="text-xs text-emerald-300">{vm.power_state}</div>
+                  <div key={vm.moid} className="rounded-lg border border-[#E1D6C8] bg-[#FAF3E9] p-2">
+                    <div className="font-semibold text-[#231F20]">{vm.name}</div>
+                    <div className="text-xs text-[#6b6b6b]">{vm.moid}</div>
+                    <div className="text-xs text-usfq-red">{vm.power_state}</div>
                   </div>
                 ))}
               </div>
@@ -286,10 +280,10 @@ export default function HostDetailModal({
 // eslint-disable-next-line no-unused-vars
 function KpiCard({ icon: IconComponent, label, value }) {
   return (
-    <div className="rounded-xl border border-white/5 bg-neutral-950/80 p-3 shadow-lg">
-      <div className="flex items-center gap-2 text-neutral-300">
-        <IconComponent className="text-xl text-yellow-300" />
-        <span className="text-sm font-semibold">{label}</span>
+    <div className="rounded-xl border border-[#E1D6C8] bg-[#FAF3E9] p-3 shadow-lg">
+      <div className="flex items-center gap-2 text-[#231F20]">
+        <IconComponent className="text-xl text-usfq-red" />
+        <span className="text-sm font-semibold text-[#231F20]">{label}</span>
       </div>
       <div className="mt-2">{value}</div>
     </div>
@@ -298,8 +292,8 @@ function KpiCard({ icon: IconComponent, label, value }) {
 
 function Section({ title, children }) {
   return (
-    <div className="space-y-2 rounded-2xl border border-white/10 bg-neutral-950/80 p-4">
-      <div className="text-sm font-semibold text-yellow-300">{title}</div>
+    <div className="space-y-2 rounded-2xl border border-[#E1D6C8] bg-[#FAF3E9] p-4">
+      <div className="text-sm font-semibold text-usfq-red">{title}</div>
       {children}
     </div>
   )
@@ -307,9 +301,9 @@ function Section({ title, children }) {
 
 function Info({ label, value }) {
   return (
-    <div className="rounded-lg border border-white/5 bg-neutral-900/70 p-3">
-      <div className="text-xs text-neutral-400">{label}</div>
-      <div className="text-sm font-semibold text-white">{value ?? '—'}</div>
+    <div className="rounded-lg border border-[#E1D6C8] bg-white p-3">
+      <div className="text-xs text-[#6b6b6b]">{label}</div>
+      <div className="text-sm font-semibold text-[#231F20]">{value ?? '—'}</div>
     </div>
   )
 }

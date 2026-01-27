@@ -82,10 +82,29 @@ class StartupDiagnostics:
 
 def _collect_env_issues() -> List[str]:
     """Return a list of missing or empty environment variables required at runtime."""
-    issues: List[str] = []
+    critical: List[str] = []
+    warnings: List[str] = []
+
     if not settings.secret_key:
-        issues.append("Environment variable 'SECRET_KEY' is not set")
-    return issues
+        critical.append("SECRET_KEY is not set")
+    elif len(settings.secret_key) < 32:
+        critical.append("SECRET_KEY must be at least 32 characters")
+
+    allowed_jwt_algos = {"HS256", "HS384", "HS512"}
+    if settings.jwt_algorithm not in allowed_jwt_algos:
+        critical.append(f"JWT_ALGORITHM must be one of {sorted(allowed_jwt_algos)}")
+
+    if settings.vcenter_ca_bundle and not os.path.exists(settings.vcenter_ca_bundle):
+        warnings.append(f"VCENTER_CA_BUNDLE not found at {settings.vcenter_ca_bundle}")
+    if settings.ovirt_ca_bundle and not os.path.exists(settings.ovirt_ca_bundle):
+        warnings.append(f"OVIRT_CA_BUNDLE not found at {settings.ovirt_ca_bundle}")
+    if settings.hyperv_ca_bundle and not os.path.exists(settings.hyperv_ca_bundle):
+        warnings.append(f"HYPERV_CA_BUNDLE not found at {settings.hyperv_ca_bundle}")
+
+    if any(origin == "*" for origin in settings.cors_allow_origins or []):
+        warnings.append("CORS_ALLOW_ORIGINS should not include '*' in production")
+
+    return critical, warnings
 
 
 def _as_bool(value: str | None, default: bool = False) -> bool:
@@ -112,11 +131,15 @@ def register_startup_events(app: FastAPI) -> None:
             return
         diagnostics = StartupDiagnostics()
 
-        diagnostics.env_issues = _collect_env_issues()
+        critical_issues, warnings = _collect_env_issues()
+        diagnostics.env_issues = critical_issues + warnings
         if diagnostics.env_issues:
             logger.error("Configuration issues detected: %s", diagnostics.env_issues)
         else:
             logger.info("Environment variables validated successfully")
+
+        if _is_production_env() and critical_issues:
+            raise RuntimeError(f"Critical configuration issues: {critical_issues}")
 
         if _is_production_env() and not os.getenv("DATABASE_URL"):
             raise RuntimeError("DATABASE_URL is required when APP_ENV is set to production")

@@ -3,13 +3,13 @@ import { IoClose, IoChevronDown, IoChevronForward, IoPulseSharp, IoHardwareChipS
 import { getHostDeep as getVmwareHostDeep } from '../api/hosts'
 import { normalizeHostDeep } from '../lib/normalizeHost'
 
-const Collapse = ({ title, children, defaultOpen = false, icon: Icon = null, accent = 'text-cyan-200' }) => {
+const Collapse = ({ title, children, defaultOpen = false, icon: Icon = null, accent = 'text-usfq-red' }) => {
   const [open, setOpen] = useState(defaultOpen)
   return (
-    <div className="rounded-xl border border-white/10 bg-neutral-900/70 shadow-lg shadow-cyan-500/10 transition hover:border-cyan-400/50 hover:shadow-cyan-400/20">
+    <div className="rounded-xl border border-[#E1D6C8] bg-[#FAF3E9] shadow-lg transition hover:border-usfq-red/40">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-cyan-200"
+        className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-[#231F20]"
       >
         <span className="flex items-center gap-2">
           {Icon && <Icon className={`text-lg ${accent}`} />}
@@ -17,12 +17,12 @@ const Collapse = ({ title, children, defaultOpen = false, icon: Icon = null, acc
         </span>
         {open ? <IoChevronDown /> : <IoChevronForward />}
       </button>
-      {open && <div className="px-4 pb-4 text-sm text-neutral-200">{children}</div>}
+      {open && <div className="px-4 pb-4 text-sm text-[#231F20]">{children}</div>}
     </div>
   )
 }
 
-const Chip = ({ tone = 'bg-emerald-500/20 text-emerald-200 border-emerald-400/40', children }) => (
+const Chip = ({ tone = 'bg-[#FAF3E9] text-[#231F20] border-[#D6C7B8]', children }) => (
   <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${tone}`}>
     {children}
   </span>
@@ -30,18 +30,18 @@ const Chip = ({ tone = 'bg-emerald-500/20 text-emerald-200 border-emerald-400/40
 
 const statusTone = (status) => {
   const val = String(status || '').toLowerCase()
-  if (val.includes('green') || val.includes('ok') || val.includes('online')) return 'bg-emerald-500/20 text-emerald-200 border-emerald-400/50'
-  if (val.includes('yellow') || val.includes('warn')) return 'bg-amber-500/20 text-amber-200 border-amber-400/50'
-  if (val.includes('red') || val.includes('fail') || val.includes('down')) return 'bg-rose-500/20 text-rose-200 border-rose-400/50'
-  return 'bg-neutral-500/20 text-neutral-200 border-neutral-400/40'
+  if (val.includes('green') || val.includes('ok') || val.includes('online')) return 'bg-[#E6F4EA] text-[#1B5E20] border-[#B7E0C1]'
+  if (val.includes('yellow') || val.includes('warn')) return 'bg-[#FFF3CD] text-[#7A5E00] border-[#FFE3A3]'
+  if (val.includes('red') || val.includes('fail') || val.includes('down')) return 'bg-[#FDE2E2] text-[#8B0000] border-[#F5B5B5]'
+  return 'bg-[#FAF3E9] text-[#231F20] border-[#D6C7B8]'
 }
 
 const MiniTable = ({ columns, rows, empty }) => {
-  if (!rows?.length) return <div className="text-neutral-400 text-xs">{empty || 'Sin datos'}</div>
+  if (!rows?.length) return <div className="text-[#6b6b6b] text-xs">{empty || 'Sin datos'}</div>
   return (
-    <div className="overflow-x-auto rounded-lg border border-white/5 bg-neutral-950/80">
+    <div className="overflow-x-auto rounded-lg border border-[#E1D6C8] bg-white">
       <table className="min-w-full text-xs">
-        <thead className="bg-neutral-900 text-neutral-300">
+        <thead className="bg-usfq-black text-usfq-white">
           <tr>
             {columns.map((c) => (
               <th key={c.key} className="px-2 py-1 text-left">
@@ -50,11 +50,11 @@ const MiniTable = ({ columns, rows, empty }) => {
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/5">
+        <tbody className="divide-y divide-[#E1D6C8]">
           {rows.map((row, idx) => (
-            <tr key={idx} className="hover:bg-neutral-900/60 transition">
+            <tr key={idx} className="hover:bg-[#FAF3E9] transition">
               {columns.map((c) => (
-                <td key={c.key} className="px-2 py-1 text-neutral-100">
+                <td key={c.key} className="px-2 py-1 text-[#231F20]">
                   {c.render ? c.render(row[c.key], row) : row[c.key] ?? '—'}
                 </td>
               ))}
@@ -68,13 +68,13 @@ const MiniTable = ({ columns, rows, empty }) => {
 
 const KeyVals = ({ data }) => {
   const entries = Object.entries(data || {}).filter(([, v]) => v != null && v !== '')
-  if (!entries.length) return <div className="text-neutral-400 text-xs">Sin datos</div>
+  if (!entries.length) return <div className="text-[#6b6b6b] text-xs">Sin datos</div>
   return (
     <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 text-xs">
       {entries.map(([k, v]) => (
-        <div key={k} className="rounded border border-white/5 bg-neutral-900/60 p-2">
-          <div className="text-neutral-400">{k}</div>
-          <div className="font-semibold text-white break-all">{typeof v === 'object' ? JSON.stringify(v) : v}</div>
+        <div key={k} className="rounded border border-[#E1D6C8] bg-white p-2">
+          <div className="text-[#6b6b6b]">{k}</div>
+          <div className="font-semibold text-[#231F20] break-all">{typeof v === 'object' ? JSON.stringify(v) : v}</div>
         </div>
       ))}
     </div>
@@ -87,9 +87,9 @@ const formatGiB = (bytes) => {
 }
 
 const NumaView = ({ numa }) => {
-  if (!numa) return <div className="text-neutral-400 text-xs">Sin datos</div>
+  if (!numa) return <div className="text-[#6b6b6b] text-xs">Sin datos</div>
   const nodes = Array.isArray(numa.numaNode) ? numa.numaNode : []
-  if (!nodes.length) return <div className="text-neutral-400 text-xs">Sin nodos</div>
+  if (!nodes.length) return <div className="text-[#6b6b6b] text-xs">Sin nodos</div>
   const parseNode = (node) => {
     if (typeof node === 'string') {
       const cpuMatch = node.match(/\[(.*?)\]/)
@@ -105,18 +105,18 @@ const NumaView = ({ numa }) => {
   }
   return (
     <div className="space-y-2">
-      <div className="flex flex-wrap gap-2 text-xs text-neutral-300">
-        {numa.numNodes != null && <Chip tone="bg-cyan-500/20 text-cyan-200 border-cyan-400/40">Nodos: {numa.numNodes}</Chip>}
-        {numa.type && <Chip tone="bg-emerald-500/20 text-emerald-200 border-emerald-400/40">{numa.type}</Chip>}
+      <div className="flex flex-wrap gap-2 text-xs">
+        {numa.numNodes != null && <Chip tone="bg-[#E1E1E1] text-[#231F20] border-[#D0D0D0]">Nodos: {numa.numNodes}</Chip>}
+        {numa.type && <Chip tone="bg-[#FAF3E9] text-[#231F20] border-[#D6C7B8]">{numa.type}</Chip>}
       </div>
       <div className="grid gap-2 sm:grid-cols-2">
         {nodes.map((n, idx) => {
           const parsed = parseNode(n)
           return (
-            <div key={idx} className="rounded border border-white/5 bg-neutral-900/70 p-2 text-[11px] text-neutral-200 space-y-1">
-              <div className="font-semibold text-white">Nodo NUMA {idx}</div>
-              <div className="text-neutral-300">CPUs: {parsed.cpus.length ? parsed.cpus.join(', ') : '—'}</div>
-              <div className="text-neutral-400">Mem: {parsed.memory ? formatGiB(parsed.memory * 1024 * 1024) : '—'}</div>
+            <div key={idx} className="rounded border border-[#E1D6C8] bg-white p-2 text-[11px] text-[#231F20] space-y-1">
+              <div className="font-semibold text-usfq-red">Nodo NUMA {idx}</div>
+              <div>CPUs: {parsed.cpus.length ? parsed.cpus.join(', ') : '—'}</div>
+              <div className="text-[#6b6b6b]">Mem: {parsed.memory ? formatGiB(parsed.memory * 1024 * 1024) : '—'}</div>
             </div>
           )
         })}
@@ -156,23 +156,25 @@ export default function DeepExpertModal({ hostId, onClose, getHostDeep = getVmwa
     const runtime = data?.runtime || {}
     const sec = data?.security || {}
     const chips = []
-    if (runtime.connection_state) chips.push({ label: runtime.connection_state, tone: 'bg-emerald-500/20 text-emerald-200 border-emerald-400/40' })
-    if (runtime.power_state) chips.push({ label: runtime.power_state, tone: 'bg-amber-500/20 text-amber-200 border-amber-400/40' })
-    if (runtime.in_maintenance) chips.push({ label: 'Maintenance ON', tone: 'bg-red-500/20 text-red-200 border-red-400/40' })
-    if (sec.secure_boot) chips.push({ label: 'SecureBoot', tone: 'bg-cyan-500/20 text-cyan-200 border-cyan-400/40' })
-    if (sec.tpm) chips.push({ label: 'TPM', tone: 'bg-cyan-500/20 text-cyan-200 border-cyan-400/40' })
+    if (runtime.connection_state) chips.push({ label: runtime.connection_state, tone: 'bg-[#E6F4EA] text-[#1B5E20] border-[#B7E0C1]' })
+    if (runtime.power_state) chips.push({ label: runtime.power_state, tone: 'bg-[#FFF3CD] text-[#7A5E00] border-[#FFE3A3]' })
+    if (runtime.in_maintenance) chips.push({ label: 'Maintenance ON', tone: 'bg-[#FDE2E2] text-[#8B0000] border-[#F5B5B5]' })
+    if (sec.secure_boot) chips.push({ label: 'SecureBoot', tone: 'bg-[#E8F1FF] text-[#1F4E8C] border-[#C9DDF7]' })
+    if (sec.tpm) chips.push({ label: 'TPM', tone: 'bg-[#E8F1FF] text-[#1F4E8C] border-[#C9DDF7]' })
     return chips
   }, [data])
 
   if (!hostId) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-black via-neutral-950 to-neutral-900/90 backdrop-blur">
-      <div className="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-2xl border border-cyan-500/40 bg-neutral-950 p-4 shadow-2xl shadow-cyan-500/20">
-        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur">
+      <div className="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-2xl border border-[#E1D6C8] bg-white p-4 shadow-2xl">
+        <div className="flex items-center justify-between border-b border-[#E1D6C8] pb-3">
           <div>
-            <div className="text-xs uppercase text-cyan-300">Modo experto</div>
-            <div className="text-xl font-bold text-white">{data?.name || hostId}</div>
+            <div className="inline-flex w-fit rounded-full bg-usfq-red px-2 py-0.5 text-xs uppercase text-usfq-white">
+              Modo experto
+            </div>
+            <div className="text-xl font-bold text-[#231F20]">{data?.name || hostId}</div>
             <div className="mt-1 flex flex-wrap gap-2">
               {statsChips.map((c, idx) => (
                 <Chip key={idx} tone={c.tone}>
@@ -181,13 +183,13 @@ export default function DeepExpertModal({ hostId, onClose, getHostDeep = getVmwa
               ))}
             </div>
           </div>
-          <button onClick={onClose} className="rounded-full bg-neutral-800 p-2 text-neutral-200 hover:bg-neutral-700">
+          <button onClick={onClose} className="rounded-full bg-[#FAF3E9] p-2 text-[#231F20] hover:bg-[#F1E6D8]">
             <IoClose className="text-xl" />
           </button>
         </div>
 
-        {loading && <div className="py-8 text-center text-neutral-300">Cargando deep info...</div>}
-        {error && <div className="mt-3 rounded border border-red-500/40 bg-red-500/10 p-3 text-red-200">{error}</div>}
+        {loading && <div className="py-8 text-center text-[#6b6b6b]">Cargando deep info...</div>}
+        {error && <div className="mt-3 rounded border border-[#F5B5B5] bg-[#FDE2E2] p-3 text-[#8B0000]">{error}</div>}
         {!loading && data && (
           <div className="mt-4 space-y-3">
             <Collapse title="Sensores IPMI" icon={IoPulseSharp} defaultOpen>
@@ -196,7 +198,7 @@ export default function DeepExpertModal({ hostId, onClose, getHostDeep = getVmwa
                 if (!list.length) return null
                 return (
                 <div key={section} className="mb-3">
-                  <div className="text-xs uppercase text-neutral-400">{section}</div>
+                  <div className="text-xs uppercase text-[#6b6b6b]">{section}</div>
                   <MiniTable
                     columns={[
                       { key: 'name', label: 'Nombre' },
@@ -217,7 +219,7 @@ export default function DeepExpertModal({ hostId, onClose, getHostDeep = getVmwa
             <Collapse title="Hardware / PCI / NUMA" icon={IoHardwareChipSharp} defaultOpen>
               <div className="grid gap-3 md:grid-cols-2">
                 <div className="space-y-2">
-                  <div className="text-xs uppercase text-neutral-400">PCI devices</div>
+                  <div className="text-xs uppercase text-[#6b6b6b]">PCI devices</div>
                   <MiniTable
                     columns={[
                       { key: 'vendor_name', label: 'Vendor' },
@@ -230,7 +232,7 @@ export default function DeepExpertModal({ hostId, onClose, getHostDeep = getVmwa
                   />
                 </div>
                 <div className="space-y-2">
-                  <div className="text-xs uppercase text-neutral-400">NUMA</div>
+                  <div className="text-xs uppercase text-[#6b6b6b]">NUMA</div>
                   <NumaView numa={data.hardware?.numa} />
                 </div>
               </div>
@@ -283,27 +285,27 @@ export default function DeepExpertModal({ hostId, onClose, getHostDeep = getVmwa
 
             <Collapse title="Seguridad / BIOS / OEM / TPM" icon={IoShieldCheckmarkSharp}>
               <div className="grid gap-3 md:grid-cols-2">
-                <div className="space-y-2 rounded border border-white/10 bg-neutral-900/70 p-3">
-                  <div className="text-xs uppercase text-neutral-400">Seguridad</div>
+                <div className="space-y-2 rounded border border-[#E1D6C8] bg-[#FAF3E9] p-3">
+                  <div className="text-xs uppercase text-[#6b6b6b]">Seguridad</div>
                   <div className="flex flex-wrap gap-2">
-                    <Chip tone="bg-amber-500/20 text-amber-200 border-amber-400/40">
+                    <Chip tone="bg-[#FFF3CD] text-[#7A5E00] border-[#FFE3A3]">
                       Lockdown: {data.security?.lockdown_mode ?? 'N/A'}
                     </Chip>
-                    <Chip tone="bg-cyan-500/20 text-cyan-200 border-cyan-400/40">
+                    <Chip tone="bg-[#E8F1FF] text-[#1F4E8C] border-[#C9DDF7]">
                       Secure Boot: {data.security?.secure_boot === true ? 'ON' : data.security?.secure_boot === false ? 'OFF' : 'N/A'}
                     </Chip>
-                    <Chip tone="bg-cyan-500/20 text-cyan-200 border-cyan-400/40">
+                    <Chip tone="bg-[#E8F1FF] text-[#1F4E8C] border-[#C9DDF7]">
                       TPM: {data.security?.tpm ? 'Presente' : 'No info'}
                     </Chip>
                     {data.security?.certificate && (
-                      <Chip tone="bg-emerald-500/20 text-emerald-200 border-emerald-400/40">
+                      <Chip tone="bg-[#E6F4EA] text-[#1B5E20] border-[#B7E0C1]">
                         Cert len: {Array.isArray(data.security.certificate) ? data.security.certificate.length : 'N/A'}
                       </Chip>
                     )}
                   </div>
                 </div>
-                <div className="space-y-2 rounded border border-white/10 bg-neutral-900/70 p-3">
-                  <div className="text-xs uppercase text-neutral-400">BIOS</div>
+                <div className="space-y-2 rounded border border-[#E1D6C8] bg-white p-3">
+                  <div className="text-xs uppercase text-[#6b6b6b]">BIOS</div>
                   <KeyVals
                     data={{
                       vendor: data.hardware?.bios?.vendor,
@@ -311,7 +313,7 @@ export default function DeepExpertModal({ hostId, onClose, getHostDeep = getVmwa
                       release: data.hardware?.bios?.releaseDate,
                     }}
                   />
-                  <div className="mt-2 text-xs uppercase text-neutral-400">OEM</div>
+                  <div className="mt-2 text-xs uppercase text-[#6b6b6b]">OEM</div>
                   <KeyVals
                     data={{
                       vendor: data.hardware?.oem?.vendor,
@@ -384,7 +386,7 @@ export default function DeepExpertModal({ hostId, onClose, getHostDeep = getVmwa
             </Collapse>
 
             <Collapse title="Raw JSON" defaultOpen={false}>
-              <pre className="max-h-64 overflow-y-auto rounded bg-neutral-900/70 p-3 text-xs text-neutral-200">
+              <pre className="max-h-64 overflow-y-auto rounded border border-[#E1D6C8] bg-[#FAF3E9] p-3 text-xs text-[#231F20]">
                 {JSON.stringify(data.raw || {}, null, 2)}
               </pre>
             </Collapse>

@@ -132,46 +132,46 @@ export default function TutorialOverlay() {
       {overlayBlocks.map((block, index) => (
         <div
           key={index}
-          className="absolute bg-black/70"
+          className="absolute bg-white/70"
           style={block}
           onClick={stopTour}
         />
       ))}
       {highlight && (
         <div
-          className="pointer-events-none absolute rounded-xl border-2 border-[#FFA300] shadow-[0_0_0_2px_rgba(255,163,0,0.2)]"
+          className="pointer-events-none absolute rounded-xl border-2 border-[#E11B22] shadow-[0_0_0_2px_rgba(225,27,34,0.2)]"
           style={highlight}
         />
       )}
       <div
         ref={popoverRef}
-        className="absolute max-w-xs rounded-2xl border border-zinc-800 bg-zinc-950 p-4 text-zinc-100 shadow-2xl"
+        className="absolute max-w-xs rounded-2xl border border-[#E1D6C8] bg-white p-4 text-[#231F20] shadow-2xl"
         style={popoverStyle()}
       >
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Tutorial</p>
-            <h3 className="text-base font-semibold text-zinc-100">{step.title}</h3>
+            <p className="text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">Tutorial</p>
+            <h3 className="text-base font-semibold text-[#231F20]">{step.title}</h3>
           </div>
           <button
             type="button"
             onClick={stopTour}
-            className="rounded-full border border-zinc-700 px-2 py-1 text-xs text-zinc-300 transition hover:border-zinc-500"
+            className="rounded-full border border-[#D6C7B8] px-2 py-1 text-xs text-[#231F20] transition hover:border-[#E11B22]"
           >
             X
           </button>
         </div>
-        <p className="mt-2 text-sm text-zinc-300">
+        <p className="mt-2 text-sm text-[#231F20]">
           {targetMissing ? "No se encontró el elemento. Desplázate o prueba de nuevo." : step.body}
         </p>
-        <div className="mt-4 flex items-center justify-between text-xs text-zinc-500">
+        <div className="mt-4 flex items-center justify-between text-xs text-[#6b6b6b]">
           <span>{stepCountLabel}</span>
           <div className="flex items-center gap-2">
             {showPrev && (
               <button
                 type="button"
                 onClick={prevStep}
-                className="rounded-full border border-zinc-700 px-3 py-1 text-zinc-200 transition hover:border-zinc-500"
+                className="rounded-full border border-[#D6C7B8] px-3 py-1 text-[#231F20] transition hover:border-[#E11B22]"
               >
                 Anterior
               </button>
@@ -180,7 +180,7 @@ export default function TutorialOverlay() {
               <button
                 type="button"
                 onClick={nextStep}
-                className="rounded-full bg-[#FFA300] px-3 py-1 font-semibold text-black transition hover:bg-[#ffb133]"
+                className="rounded-full bg-[#E11B22] px-3 py-1 font-semibold text-white transition hover:bg-[#c9161c]"
               >
                 Siguiente
               </button>
@@ -188,7 +188,7 @@ export default function TutorialOverlay() {
               <button
                 type="button"
                 onClick={stopTour}
-                className="rounded-full bg-[#FFA300] px-3 py-1 font-semibold text-black transition hover:bg-[#ffb133]"
+                className="rounded-full bg-[#E11B22] px-3 py-1 font-semibold text-white transition hover:bg-[#c9161c]"
               >
                 Finalizar
               </button>

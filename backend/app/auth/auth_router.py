@@ -1,12 +1,15 @@
 import logging
+from threading import Lock
 
+from cachetools import TTLCache
 from fastapi import APIRouter, Depends, HTTPException, status
 from passlib.hash import bcrypt
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlmodel import Session, select
 
 from app.audit.service import log_audit
 from app.auth.jwt_handler import create_access_token
+from app.auth.password_policy import check_password_policy
 from app.auth.user_model import User
 from app.db import get_session
 from app.dependencies import (
@@ -15,16 +18,39 @@ from app.dependencies import (
     get_request_audit_context,
 )
 from app.permissions.service import user_effective_permissions
+from app.settings import settings
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+_LOGIN_FAILURES = TTLCache(maxsize=10000, ttl=settings.auth_login_rate_limit_window_sec)
+_LOGIN_FAILURES_LOCK = Lock()
+
+
+def _login_rate_key(username: str, ip: str | None) -> str:
+    return f"{(ip or 'unknown')}::{username.lower()}"
+
+
+def _is_rate_limited(key: str) -> bool:
+    with _LOGIN_FAILURES_LOCK:
+        return _LOGIN_FAILURES.get(key, 0) >= settings.auth_login_rate_limit_max
+
+
+def _record_login_failure(key: str) -> None:
+    with _LOGIN_FAILURES_LOCK:
+        _LOGIN_FAILURES[key] = int(_LOGIN_FAILURES.get(key, 0)) + 1
+
+
+def _clear_login_failures(key: str) -> None:
+    with _LOGIN_FAILURES_LOCK:
+        _LOGIN_FAILURES.pop(key, None)
 
 
 class LoginRequest(BaseModel):
     """Payload con credenciales de acceso."""
 
-    username: str
-    password: str
+    username: str = Field(min_length=1, max_length=128)
+    password: str = Field(min_length=1, max_length=256)
 
 
 class TokenUser(BaseModel):
@@ -47,8 +73,8 @@ class TokenResponse(BaseModel):
 class ChangePasswordRequest(BaseModel):
     """Payload para cambio de contraseA�a por el propio usuario."""
 
-    old_password: str
-    new_password: str
+    old_password: str = Field(min_length=1, max_length=256)
+    new_password: str = Field(min_length=1, max_length=256)
 
 
 def _build_token_response(user: User, session: Session) -> TokenResponse:
@@ -68,25 +94,75 @@ def _build_token_response(user: User, session: Session) -> TokenResponse:
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(request: LoginRequest, session: Session = Depends(get_session)):
+def login(
+    request: LoginRequest,
+    session: Session = Depends(get_session),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
+):
     """
     1. Busca al usuario por username.
     2. Verifica contraseA�a usando bcrypt.
     3. Emite un JWT con id, role y username en el payload.
     """
-    statement = select(User).where(User.username == request.username)
+    username = request.username.strip()
+    statement = select(User).where(User.username == username)
     user = session.exec(statement).first()
 
-    logger.info("Login attempt for user '%s'", request.username)
+    rate_key = _login_rate_key(username, audit_ctx.ip)
+    if _is_rate_limited(rate_key):
+        log_audit(
+            session,
+            actor={"username": username},
+            action="auth.login.rate_limited",
+            target_type="user",
+            target_id=username,
+            meta={"reason": "rate_limited"},
+            ip=audit_ctx.ip,
+            ua=audit_ctx.user_agent,
+            corr=audit_ctx.correlation_id,
+        )
+        session.commit()
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Demasiados intentos, intenta mas tarde",
+        )
+
+    logger.info("Login attempt for user '%s'", username)
 
     if not user or not bcrypt.verify(request.password, user.hashed_password):
-        logger.warning("Login failed for user '%s'", request.username)
+        _record_login_failure(rate_key)
+        logger.warning("Login failed for user '%s'", username)
+        log_audit(
+            session,
+            actor={"username": username},
+            action="auth.login.failed",
+            target_type="user",
+            target_id=str(user.id) if user else username,
+            meta={"reason": "invalid_credentials"},
+            ip=audit_ctx.ip,
+            ua=audit_ctx.user_agent,
+            corr=audit_ctx.correlation_id,
+        )
+        session.commit()
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Credenciales invA�lidas",
         )
 
-    logger.info("Login succeeded for user '%s'", request.username)
+    _clear_login_failures(rate_key)
+    logger.info("Login succeeded for user '%s'", username)
+    log_audit(
+        session,
+        actor=user,
+        action="auth.login.success",
+        target_type="user",
+        target_id=str(user.id),
+        meta={"username": user.username},
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
 
     return _build_token_response(user, session)
 
@@ -111,10 +187,15 @@ def change_password(
     session: Session = Depends(get_session),
     audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
-    if not request.new_password:
+    policy_errors = check_password_policy(
+        request.new_password,
+        min_length=settings.password_min_length,
+        require_classes=settings.password_require_classes,
+    )
+    if policy_errors:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="falta new_password",
+            detail={"error": "password_policy", "messages": policy_errors},
         )
 
     user = session.get(User, current_user.id)

@@ -10,8 +10,14 @@ import InventoryMetaBar from './common/InventoryMetaBar'
 import { useAuth } from '../context/AuthContext'
 
 const AUTO_REFRESH_MS = 5 * 60 * 1000
-const gradientBg = 'bg-gradient-to-br from-neutral-900 via-black to-neutral-950'
-const cardColors = ['from-yellow-500/30', 'from-cyan-500/30', 'from-blue-500/30', 'from-amber-500/30', 'from-emerald-500/30']
+const gradientBg = 'bg-white'
+const cardColors = [
+  'from-usfq-red/20',
+  'from-usfq-red/10',
+  'from-usfq-gray/20',
+  'from-usfq-gray/15',
+  'from-usfq-white/10',
+]
 
 const hostSummaryBuilder = (items) => {
   const total = items.length
@@ -36,7 +42,10 @@ const hostSummaryBuilder = (items) => {
   return { total, clusters, connected, disconnected, avgCpu, avgRam, avgDs, avgCpuFree, avgRamFree, healthCount }
 }
 
-const Badge = ({ children, tone = 'border-yellow-400 text-yellow-300 bg-yellow-400/10' }) => (
+const HOST_GRID_COLS =
+  'grid grid-cols-[minmax(180px,2fr)_minmax(140px,1.3fr)_minmax(120px,1fr)_minmax(120px,1fr)_minmax(120px,1fr)_minmax(120px,1fr)_minmax(120px,1fr)_minmax(120px,1fr)_minmax(180px,1.3fr)_minmax(80px,0.7fr)] gap-x-3 items-center'
+
+const Badge = ({ children, tone = 'border-[#D6C7B8] text-[#231F20] bg-[#FAF3E9]' }) => (
   <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold ${tone}`}>
     {children}
   </span>
@@ -44,17 +53,86 @@ const Badge = ({ children, tone = 'border-yellow-400 text-yellow-300 bg-yellow-4
 
 const healthBadge = (health) => {
   const map = {
-    healthy: { text: 'Saludable', tone: 'border-emerald-400 text-emerald-200 bg-emerald-500/10' },
-    warning: { text: 'Advertencia', tone: 'border-amber-400 text-amber-200 bg-amber-500/10' },
-    critical: { text: 'Crítico', tone: 'border-rose-400 text-rose-200 bg-rose-500/10' },
+    healthy: { text: 'Saludable', tone: 'border-[#B7E0C1] text-[#1B5E20] bg-[#E6F4EA]' },
+    warning: { text: 'Advertencia', tone: 'border-[#FFE3A3] text-[#7A5E00] bg-[#FFF3CD]' },
+    critical: { text: 'Crítico', tone: 'border-[#F5B5B5] text-[#8B0000] bg-[#FDE2E2]' },
   }
   const cfg = map[health] || map.healthy
   return <Badge tone={cfg.tone}>{cfg.text}</Badge>
 }
 
 const typeBadge = (type) => (
-  <Badge tone="border-cyan-400 text-cyan-200 bg-cyan-500/10">{type || 'Servidor'}</Badge>
+  <Badge tone="border-[#D6C7B8] text-[#231F20] bg-[#FAF3E9]">{type || 'Servidor'}</Badge>
 )
+
+const BeigeSelect = ({ id, value, options, onChange }) => {
+  const [open, setOpen] = useState(false)
+  const containerRef = useRef(null)
+
+  const selectedLabel = useMemo(() => {
+    const match = options.find((opt) => opt.value === value)
+    return match ? match.label : options[0]?.label || 'Seleccionar'
+  }, [options, value])
+
+  useEffect(() => {
+    const handleClick = (event) => {
+      if (!containerRef.current?.contains(event.target)) {
+        setOpen(false)
+      }
+    }
+    const handleKey = (event) => {
+      if (event.key === 'Escape') {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    document.addEventListener('keydown', handleKey)
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+      document.removeEventListener('keydown', handleKey)
+    }
+  }, [])
+
+  return (
+    <div ref={containerRef} className="relative">
+      <button
+        id={id}
+        type="button"
+        className="w-full rounded-lg border border-[#D6C7B8] bg-white px-3 py-2 text-left text-sm text-[#231F20] shadow-sm focus:outline-none focus:ring-2 focus:ring-usfq-red/40"
+        onClick={() => setOpen((prev) => !prev)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        <span>{selectedLabel}</span>
+        <span className="float-right text-[#939598]">▾</span>
+      </button>
+      {open && (
+        <ul
+          className="absolute z-20 mt-2 max-h-60 w-full overflow-auto rounded-lg border border-[#E1D6C8] bg-white shadow-lg"
+          role="listbox"
+          aria-labelledby={id}
+        >
+          {options.map((opt) => (
+            <li key={opt.value ?? opt.label}>
+              <button
+                type="button"
+                className={`w-full px-3 py-2 text-left text-sm transition ${
+                  value === opt.value ? 'bg-[#FAF3E9] text-[#231F20]' : 'hover:bg-[#FAF3E9]'
+                }`}
+                onClick={() => {
+                  onChange(opt.value)
+                  setOpen(false)
+                }}
+              >
+                {opt.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
 
 export default function HostTable({
   providerKey = 'hosts',
@@ -170,6 +248,11 @@ export default function HostTable({
       }))
     },
     [setFilter]
+  )
+
+  const handleSelect = useCallback(
+    (field) => (value) => handleFilterChange(field, value),
+    [handleFilterChange]
   )
 
   const handleRowClick = useCallback(
@@ -293,34 +376,34 @@ export default function HostTable({
     [isOvirt]
   )
 
-  const renderBar = (value, tone = 'from-yellow-400 to-amber-500') => {
-    if (value == null || Number.isNaN(value)) return <span className="text-neutral-400">—</span>
+  const renderBar = (value) => {
+    if (value == null || Number.isNaN(value)) return <span className="text-[#231F20]">—</span>
     const width = Math.min(Math.max(value, 0), 100)
-    const color = value < 50 ? 'from-emerald-400 to-teal-500' : value < 80 ? tone : 'from-rose-500 to-red-600'
+    const color = value < 50 ? 'bg-[#939598]' : value < 80 ? 'bg-[#E11B22]/70' : 'bg-[#E11B22]'
     return (
       <div className="space-y-1">
-        <div className="text-xs text-neutral-200">{value}%</div>
-        <div className="h-2 w-full rounded-full bg-neutral-800">
-          <div className={`h-full rounded-full bg-gradient-to-r ${color} transition-all`} style={{ width: `${width}%` }} />
+        <div className="text-xs text-[#231F20]">{value}%</div>
+        <div className="h-2 w-full rounded-full bg-[#E1E1E1]">
+          <div className={`h-full rounded-full ${color} transition-all`} style={{ width: `${width}%` }} />
         </div>
       </div>
     )
   }
 
   const containerClass = isOvirt
-    ? `${gradientBg} min-h-screen text-white -mx-4 -my-6 sm:-mx-6`
-    : `${gradientBg} min-h-screen text-white`
+    ? `${gradientBg} min-h-screen w-full text-[#231F20] -mx-4 -my-6 sm:-mx-6`
+    : `${gradientBg} min-h-screen w-full text-[#231F20]`
 
   return (
     <div className={containerClass} data-tutorial-id="host-table-root">
       <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-yellow-300 drop-shadow">{pageTitle}</h2>
-            <p className="text-sm text-neutral-300">{pageSubtitle}</p>
+            <h2 className="text-[3rem] font-bold text-[#E11B22]">{pageTitle}</h2>
+            <p className="text-sm text-[#3b3b3b]">{pageSubtitle}</p>
           </div>
-          <div className="flex flex-col items-end gap-2 text-xs text-neutral-300">
-            {refreshBusy && <span className="text-cyan-300 animate-pulse">Actualizando…</span>}
+          <div className="flex flex-col items-end gap-2 text-xs text-[#3b3b3b]">
+            {refreshBusy && <span className="text-[#E11B22] animate-pulse">Actualizando…</span>}
             <InventoryMetaBar
               generatedAt={snapshotGeneratedAt}
               source={snapshotSource}
@@ -328,17 +411,17 @@ export default function HostTable({
               stale={snapshotStale}
               staleReason={snapshotStaleReason}
               className="items-end text-right"
-              textClassName="text-xs text-neutral-300"
-              badgeClassName="border-amber-400/60 text-amber-200 bg-amber-500/10"
+              textClassName="text-xs text-[#3b3b3b]"
+              badgeClassName="border-usfq-red/60 text-usfq-red bg-usfq-red/10"
             />
             {refreshNotice ? (
               <span
                 className={`text-xs ${
                   refreshNotice.kind === 'error'
-                    ? 'text-rose-300'
+                    ? 'text-usfq-red'
                     : refreshNotice.kind === 'warning'
-                      ? 'text-amber-200'
-                      : 'text-cyan-200'
+                      ? 'text-[#7A5E00]'
+                      : 'text-[#3b3b3b]'
                 }`}
               >
                 {refreshNotice.text}
@@ -348,7 +431,7 @@ export default function HostTable({
               onClick={handleRefresh}
               disabled={refreshBusy}
               aria-busy={refreshBusy}
-              className="rounded-lg border border-yellow-400/60 px-3 py-1.5 text-sm font-semibold text-yellow-200 hover:bg-yellow-400/10 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-lg bg-[#E11B22] px-3 py-1.5 text-sm font-semibold text-white hover:bg-[#c9161c] disabled:cursor-not-allowed disabled:opacity-60"
             >
               Refrescar
             </button>
@@ -364,134 +447,116 @@ export default function HostTable({
             return (
               <div
                 key={card.label}
-                className={`rounded-2xl border border-white/10 bg-gradient-to-br ${cardColors[idx % cardColors.length]} p-4 shadow-lg`}
+                className={`rounded-2xl border border-[#E1D6C8] bg-[#FAF3E9] p-4 shadow-lg`}
               >
                 <div className="flex items-center justify-between">
-                  <Icon className="text-2xl text-yellow-300" />
-                  <span className="text-sm uppercase text-neutral-200">{card.label}</span>
+                  <Icon className="text-2xl text-[#E11B22]" />
+                  <span className="text-sm uppercase text-[#E11B22]">{card.label}</span>
                 </div>
-                <div className="mt-2 text-3xl font-semibold text-white">{card.value}</div>
+                <div className="mt-2 text-3xl font-semibold text-[#231F20]">{card.value}</div>
               </div>
             )
           })}
         </div>
 
-        <div
-          className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
-          data-tutorial-id="host-filters"
-        >
-          <input
-            type="text"
-            placeholder="Buscar por nombre o cluster..."
-            value={globalSearch}
-            onChange={(e) => setGlobalSearch(e.target.value)}
-            className="col-span-2 rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/40"
-          />
-          <select
+        <div className="rounded-2xl border border-[#E1D6C8] bg-[#FAF3E9] p-4" data-tutorial-id="host-filters">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+            <input
+              type="text"
+              placeholder="Buscar por nombre o cluster..."
+              value={globalSearch}
+              onChange={(e) => setGlobalSearch(e.target.value)}
+              className="col-span-2 rounded-lg border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] placeholder:text-[#939598] focus:border-usfq-red focus:ring-2 focus:ring-usfq-red/40"
+            />
+          <BeigeSelect
+            id="filter-cluster"
             value={filter.cluster}
-            onChange={(e) => handleFilterChange('cluster', e.target.value)}
-            className="rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/40"
-          >
-            <option value="">Cluster (todos)</option>
-            {uniqueClusters.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <select
+            onChange={handleSelect('cluster')}
+            options={[
+              { value: '', label: 'Cluster (todos)' },
+              ...uniqueClusters.map((c) => ({ value: c, label: c })),
+            ]}
+          />
+          <BeigeSelect
+            id="filter-connection"
             value={filter.connection_state}
-            onChange={(e) => handleFilterChange('connection_state', e.target.value)}
-            className="rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/40"
-          >
-            <option value="">Conexión</option>
-            {uniqueConnectionStates.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <select
+            onChange={handleSelect('connection_state')}
+            options={[
+              { value: '', label: 'Conexión' },
+              ...uniqueConnectionStates.map((c) => ({ value: c, label: c })),
+            ]}
+          />
+          <BeigeSelect
+            id="filter-version"
             value={filter.version}
-            onChange={(e) => handleFilterChange('version', e.target.value)}
-            className="rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/40"
-          >
-            <option value="">Versión ESXi</option>
-            {uniqueVersions.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <select
+            onChange={handleSelect('version')}
+            options={[
+              { value: '', label: 'Versión ESXi' },
+              ...uniqueVersions.map((c) => ({ value: c, label: c })),
+            ]}
+          />
+          <BeigeSelect
+            id="filter-vendor"
             value={filter.vendor}
-            onChange={(e) => handleFilterChange('vendor', e.target.value)}
-            className="rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/40"
-          >
-            <option value="">Vendor</option>
-            {uniqueVendors.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <select
+            onChange={handleSelect('vendor')}
+            options={[
+              { value: '', label: 'Vendor' },
+              ...uniqueVendors.map((c) => ({ value: c, label: c })),
+            ]}
+          />
+          <BeigeSelect
+            id="filter-health"
             value={filter.health || ''}
-            onChange={(e) => handleFilterChange('health', e.target.value)}
-            className="rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/40"
-          >
-            <option value="">Health</option>
-            {uniqueHealth.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <select
+            onChange={handleSelect('health')}
+            options={[
+              { value: '', label: 'Health' },
+              ...uniqueHealth.map((c) => ({ value: c, label: c })),
+            ]}
+          />
+          <BeigeSelect
+            id="filter-type"
             value={filter.server_type || ''}
-            onChange={(e) => handleFilterChange('server_type', e.target.value)}
-            className="rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/40"
-          >
-            <option value="">Tipo</option>
-            {uniqueTypes.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <select
+            onChange={handleSelect('server_type')}
+            options={[
+              { value: '', label: 'Tipo' },
+              ...uniqueTypes.map((c) => ({ value: c, label: c })),
+            ]}
+          />
+          <BeigeSelect
+            id="filter-group"
             value={groupByOption}
-            onChange={(e) => setGroupByOption(e.target.value)}
-            className="rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/40"
-          >
-            <option value="none">Sin agrupación</option>
-            <option value="cluster">Cluster</option>
-            <option value="estado">Estado</option>
-            <option value="version">Versión</option>
-            <option value="vendor">Vendor</option>
-            <option value="health">Health</option>
-            <option value="tipo">Tipo</option>
-          </select>
+            onChange={setGroupByOption}
+            options={[
+              { value: 'none', label: 'Sin agrupación' },
+              { value: 'cluster', label: 'Cluster' },
+              { value: 'estado', label: 'Estado' },
+              { value: 'version', label: 'Versión' },
+              { value: 'vendor', label: 'Vendor' },
+              { value: 'health', label: 'Health' },
+              { value: 'tipo', label: 'Tipo' },
+            ]}
+          />
+          </div>
         </div>
 
         {hasFilters && (
-          <div className="flex items-center gap-2 text-xs text-neutral-300">
-            <Badge tone="border-cyan-400 text-cyan-200 bg-cyan-400/10">Filtros activos</Badge>
-            <button onClick={clearFilters} className="text-yellow-300 underline">
+          <div className="flex items-center gap-2 text-xs text-usfq-white/80">
+            <Badge tone="border-[#D6C7B8] text-[#231F20] bg-[#FAF3E9]">Filtros activos</Badge>
+            <button onClick={clearFilters} className="text-usfq-red underline">
               Limpiar
             </button>
           </div>
         )}
 
         {error && (
-          <div className="rounded-lg border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200">
+          <div className="rounded-lg border border-usfq-red/40 bg-usfq-red/10 p-4 text-sm text-usfq-red">
             {error}
           </div>
         )}
 
         {isOvirt && (
           <div
-            className="text-xs text-neutral-400"
+            className="text-xs text-usfq-gray"
             title="Las VMs apagadas no tienen host.id, por eso no se incluyen aquí."
           >
             En oVirt, este conteo muestra solo VMs en ejecución (las apagadas no se asignan a un host).
@@ -499,12 +564,12 @@ export default function HostTable({
         )}
 
         <div
-          className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-950/80 shadow-2xl"
+          className="overflow-hidden rounded-2xl border border-[#E1D6C8] bg-white shadow-2xl"
           data-tutorial-id="host-table-list"
         >
-          <table className="min-w-full divide-y divide-white/10">
-            <thead className="bg-neutral-900/60 text-xs uppercase text-neutral-300">
-              <tr>
+          <table className="min-w-full divide-y divide-[#E1D6C8]">
+            <thead className="bg-[#FAF3E9] text-xs uppercase text-[#E11B22]">
+              <tr className={HOST_GRID_COLS}>
                 {tableHeader.map((col) => (
                   <th
                     key={col.key}
@@ -516,17 +581,17 @@ export default function HostTable({
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 text-sm">
+            <tbody className="divide-y divide-[#E1D6C8] text-sm text-[#231F20]">
               {hasGroups &&
                 entries.map(([group, rows]) => (
-                  <tr key={group} className="bg-neutral-900/60">
+                  <tr key={group} className="bg-[#FAF3E9] text-[#E11B22]">
                     <td colSpan={tableHeader.length} className="px-4 py-2">
                       <button
                         onClick={() => toggleGroup(group)}
-                        className="flex w-full items-center justify-between text-left text-yellow-200"
+                        className="flex w-full items-center justify-between text-left text-[#E11B22]"
                       >
                         <span className="font-semibold">{group || 'Sin grupo'}</span>
-                        <span className="text-xs text-neutral-400">
+                        <span className="text-xs text-[#E11B22]/70">
                           {collapsedGroups[group] ? 'Mostrar' : 'Ocultar'} ({rows.length})
                         </span>
                       </button>
@@ -534,29 +599,25 @@ export default function HostTable({
                         rows.map((host) => (
                           <div
                             key={host.id}
-                            className="mt-2 rounded-lg border border-white/5 bg-neutral-950/70 p-3 transition hover:border-yellow-300/40 hover:shadow-lg"
+                            className={`mt-2 rounded-lg border border-[#E1D6C8] bg-[#FAF3E9] p-3 transition hover:border-usfq-red/40 hover:shadow-lg text-[#231F20] ${HOST_GRID_COLS}`}
                             onClick={() => handleRowClick(host)}
                           >
-                            <div className="flex flex-wrap items-center gap-3">
-                              <div className="flex-1">
-                                <div className="text-sm font-semibold text-white">{host.name}</div>
-                                <div className="text-xs text-neutral-400">{host.cluster}</div>
-                              </div>
-                              {healthBadge(host.health)}
-                              {typeBadge(host.server_type)}
-                              <Badge tone="border-emerald-400 text-emerald-200 bg-emerald-400/10">
-                                {host.connection_state || 'N/A'}
-                              </Badge>
-                              <div className="w-32">{renderBar(host.cpu_usage_pct)}</div>
-                              <div className="w-32">{renderBar(host.memory_usage_pct, 'from-cyan-400 to-blue-500')}</div>
-                              <div className="text-xs text-neutral-300">
-                                ESXi {host.version} <span className="text-neutral-500">build</span> {host.build}
-                              </div>
-                              <div className="text-xs text-neutral-300">
-                                {host.vendor} {host.model}
-                              </div>
-                              <div className="text-sm font-semibold text-yellow-200">{host.total_vms} VMs</div>
+                            <div className="text-sm font-semibold text-[#231F20]">{host.name}</div>
+                            <div className="text-xs text-[#3b3b3b]">{host.cluster}</div>
+                            <Badge tone="border-[#D6C7B8] text-[#231F20] bg-[#FAF3E9]">
+                              {host.connection_state || 'N/A'}
+                            </Badge>
+                            {healthBadge(host.health)}
+                            {typeBadge(host.server_type)}
+                            <div className="w-full">{renderBar(host.cpu_usage_pct)}</div>
+                            <div className="w-full">{renderBar(host.memory_usage_pct)}</div>
+                            <div className="text-xs text-[#3b3b3b]">
+                              ESXi {host.version} <span className="text-[#6b6b6b]">build</span> {host.build}
                             </div>
+                            <div className="text-xs text-[#3b3b3b]">
+                              {host.vendor} {host.model}
+                            </div>
+                            <div className="text-sm font-semibold text-usfq-red">{host.total_vms} VMs</div>
                           </div>
                         ))}
                     </td>
@@ -567,37 +628,37 @@ export default function HostTable({
                 fallbackRows.map((host) => (
                   <tr
                     key={host.id}
-                    className="hover:bg-neutral-900/60 cursor-pointer"
+                    className={`odd:bg-white even:bg-[#FAF3E9] hover:bg-[#FAF3E9] cursor-pointer ${HOST_GRID_COLS}`}
                     onClick={() => handleRowClick(host)}
                   >
-                    <td className="px-4 py-3 font-semibold text-white">{host.name}</td>
-                    <td className="px-4 py-3 text-neutral-200">{host.cluster}</td>
+                    <td className="px-4 py-3 font-semibold text-[#231F20]">{host.name}</td>
+                    <td className="px-4 py-3 text-[#3b3b3b]">{host.cluster}</td>
                     <td className="px-4 py-3">
-                      <Badge tone="border-emerald-400 text-emerald-200 bg-emerald-400/10">
+                      <Badge tone="border-[#D6C7B8] text-[#231F20] bg-[#FAF3E9]">
                         {host.connection_state || 'N/A'}
                       </Badge>
                     </td>
                     <td className="px-4 py-3">{healthBadge(host.health)}</td>
                     <td className="px-4 py-3">{typeBadge(host.server_type)}</td>
                     <td className="px-4 py-3">{renderBar(host.cpu_usage_pct)}</td>
-                    <td className="px-4 py-3">{renderBar(host.memory_usage_pct, 'from-cyan-400 to-blue-500')}</td>
-                    <td className="px-4 py-3 text-neutral-200">{host.version}</td>
-                    <td className="px-4 py-3 text-neutral-200">
+                    <td className="px-4 py-3">{renderBar(host.memory_usage_pct)}</td>
+                    <td className="px-4 py-3 text-[#3b3b3b]">{host.version}</td>
+                    <td className="px-4 py-3 text-[#3b3b3b]">
                       {host.vendor} {host.model}
                     </td>
-                    <td className="px-4 py-3 text-yellow-200 font-semibold">{host.total_vms}</td>
+                    <td className="px-4 py-3 text-usfq-red font-semibold">{host.total_vms}</td>
                   </tr>
                 ))}
               {!loading && !error && processed.length === 0 && (
                 <tr>
-                  <td colSpan={tableHeader.length} className="px-4 py-6 text-center text-neutral-400">
+                  <td colSpan={tableHeader.length} className="px-4 py-6 text-center text-[#3b3b3b]">
                     Sin datos de hosts.
                   </td>
                 </tr>
               )}
               {loading && (
                 <tr>
-                  <td colSpan={tableHeader.length} className="px-4 py-6 text-center text-neutral-300">
+                  <td colSpan={tableHeader.length} className="px-4 py-6 text-center text-[#3b3b3b]">
                     Cargando...
                   </td>
                 </tr>

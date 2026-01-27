@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FaSearch } from "react-icons/fa";
 import { createUser, deleteUser, listUsers, resetUserPassword } from "../api/users";
 import { getUserPermissions, listPermissionCatalog, updateUserPermissions } from "../api/permissions";
 import { useAuth } from "../context/AuthContext";
@@ -21,8 +22,8 @@ function Toast({ toast, onClose }) {
   if (!toast) return null;
   const tone =
     toast.type === "error"
-      ? "border-red-500/40 bg-red-950/70 text-red-200"
-      : "border-emerald-500/40 bg-emerald-950/70 text-emerald-200";
+      ? "border-[#F5B5B5] bg-[#FDE2E2] text-[#8B0000]"
+      : "border-[#B7E0C1] bg-[#E6F4EA] text-[#1B5E20]";
   return (
     <div className={`fixed right-4 top-4 z-50 max-w-sm rounded-lg border px-4 py-3 shadow ${tone}`}>
       <div className="flex items-start justify-between gap-4">
@@ -44,16 +45,16 @@ function Modal({ title, children, onClose, size = "md" }) {
   const widthClass =
     size === "xl" ? "max-w-5xl" : size === "lg" ? "max-w-3xl" : "max-w-md";
   return (
-    <div className="fixed inset-0 z-40 flex items-start justify-center bg-black/70 px-4 py-10">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4 py-10">
       <div
-        className={`w-full ${widthClass} rounded-2xl border border-zinc-800 bg-zinc-950 p-6 text-zinc-100 shadow-2xl`}
+        className={`w-full ${widthClass} rounded-2xl border border-[#E1D6C8] bg-[#FAF3E9] p-6 text-[#231F20] shadow-2xl`}
       >
         <div className="flex items-start justify-between gap-4">
-          <h2 className="text-lg font-semibold text-zinc-100">{title}</h2>
+          <h2 className="text-lg font-semibold text-[#E11B22]">{title}</h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-zinc-400 transition hover:text-zinc-100"
+            className="text-[#6b6b6b] transition hover:text-[#E11B22]"
             aria-label="Cerrar"
           >
             x
@@ -407,10 +408,10 @@ export default function UserAdminPage() {
 
   if (!canManageUsers) {
     return (
-      <main className="min-h-screen w-full bg-black px-6 py-10 text-zinc-100">
+      <main className="min-h-screen w-full bg-white px-6 py-10 text-[#231F20]">
         <Toast toast={toast} onClose={() => setToast(null)} />
-        <h1 className="text-2xl font-semibold text-zinc-100">Administración de usuarios</h1>
-        <p className="mt-4 text-sm text-zinc-400">
+        <h1 className="text-2xl font-semibold text-[#E11B22]">Administración de usuarios</h1>
+        <p className="mt-4 text-sm text-[#3b3b3b]">
           Acceso denegado. Necesitas el permiso <strong>users.manage</strong> para ver esta sección.
         </p>
       </main>
@@ -418,13 +419,13 @@ export default function UserAdminPage() {
   }
 
   return (
-    <main className="min-h-screen w-full bg-black px-4 py-8 text-zinc-100 md:px-8">
+    <main className="min-h-screen w-full bg-white px-4 py-8 text-[#231F20] md:px-8">
       <Toast toast={toast} onClose={() => setToast(null)} />
 
       <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between" data-tutorial-id="users-header">
         <div>
-          <h1 className="text-3xl font-semibold text-zinc-100">Administración de usuarios</h1>
-          <p className="text-sm text-zinc-400">Gestiona cuentas, contraseñas y permisos atómicos.</p>
+          <h1 className="text-3xl font-semibold text-[#E11B22]">Administración de usuarios</h1>
+          <p className="text-sm text-[#3b3b3b]">Gestiona cuentas, contraseñas y permisos atómicos.</p>
         </div>
         <button
           type="button"
@@ -433,7 +434,7 @@ export default function UserAdminPage() {
             setModal({ type: "create", user: null });
             setFormError("");
           }}
-          className="inline-flex items-center justify-center rounded-full bg-[#FFA300] px-4 py-2 text-sm font-semibold text-black shadow-sm transition hover:bg-[#ffb133]"
+          className="inline-flex items-center justify-center rounded-full bg-[#E11B22] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#c9161c]"
           data-tutorial-id="users-create"
         >
           Crear usuario
@@ -441,49 +442,51 @@ export default function UserAdminPage() {
       </div>
 
       <div className="mb-6 grid gap-4 md:grid-cols-3" data-tutorial-id="users-kpis">
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4">
-          <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Total usuarios</p>
-          <p className="mt-2 text-2xl font-semibold text-zinc-100">{users.length}</p>
+        <div className="rounded-2xl border border-[#E1D6C8] bg-[#FAF3E9] p-4">
+          <p className="text-xs uppercase tracking-[0.2em] text-[#E11B22]">Total usuarios</p>
+          <p className="mt-2 text-2xl font-semibold text-[#231F20]">{users.length}</p>
         </div>
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4">
-          <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Con acceso total</p>
-          <p className="mt-2 text-2xl font-semibold text-zinc-100">
+        <div className="rounded-2xl border border-[#E1D6C8] bg-[#FAF3E9] p-4">
+          <p className="text-xs uppercase tracking-[0.2em] text-[#E11B22]">Con acceso total</p>
+          <p className="mt-2 text-2xl font-semibold text-[#231F20]">
             {permissionCatalog.length ? fullAccessUsers : "—"}
           </p>
         </div>
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4">
-          <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Usuarios filtrados</p>
-          <p className="mt-2 text-2xl font-semibold text-zinc-100">{filteredUsers.length}</p>
+        <div className="rounded-2xl border border-[#E1D6C8] bg-[#FAF3E9] p-4">
+          <p className="text-xs uppercase tracking-[0.2em] text-[#E11B22]">Usuarios filtrados</p>
+          <p className="mt-2 text-2xl font-semibold text-[#231F20]">{filteredUsers.length}</p>
         </div>
       </div>
 
-      <div className="mb-5 rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4" data-tutorial-id="users-search">
+      <div className="mb-5 rounded-2xl border border-[#E1D6C8] bg-[#FAF3E9] p-4" data-tutorial-id="users-search">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="relative w-full md:max-w-md">
-            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600">🔍</span>
+            <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+              <FaSearch className="text-[#E11B22]" />
+            </span>
             <input
               type="search"
               value={searchDraft}
               onChange={(event) => setSearchDraft(event.target.value)}
               placeholder="Buscar por usuario"
-              className="w-full rounded-lg border border-zinc-800 bg-black py-2 pl-9 pr-3 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-[#FFA300] focus:outline-none"
+              className="w-full rounded-lg border border-[#D6C7B8] bg-white py-2 pl-9 pr-3 text-sm text-[#231F20] placeholder:text-[#939598] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
             />
           </div>
-          <div className="text-sm text-zinc-400">
-            Mostrando <span className="font-semibold text-zinc-100">{paginatedUsers.length}</span> de{" "}
-            <span className="font-semibold text-zinc-100">{filteredUsers.length}</span>
+          <div className="text-sm text-[#E11B22]">
+            Mostrando <span className="font-semibold text-[#231F20]">{paginatedUsers.length}</span> de{" "}
+            <span className="font-semibold text-[#231F20]">{filteredUsers.length}</span>
           </div>
         </div>
       </div>
 
       {loading && (
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4 text-sm text-zinc-400 shadow">
+        <div className="rounded-2xl border border-[#E1D6C8] bg-white p-4 text-sm text-[#6b6b6b] shadow">
           Cargando usuarios...
         </div>
       )}
 
       {error && !loading && (
-        <div className="rounded-2xl border border-red-500/40 bg-red-950/50 p-4 text-sm text-red-200 shadow">
+        <div className="rounded-2xl border border-[#F5B5B5] bg-[#FDE2E2] p-4 text-sm text-[#8B0000] shadow">
           {error}
         </div>
       )}
@@ -491,53 +494,53 @@ export default function UserAdminPage() {
       {!loading && !error && (
         <>
           <div
-            className="overflow-x-auto rounded-2xl border border-zinc-800 bg-zinc-950/40 shadow"
+            className="overflow-x-auto rounded-2xl border border-[#E1D6C8] bg-white shadow"
             data-tutorial-id="users-table"
           >
             <table className="min-w-full text-sm">
-              <thead className="sticky top-0 bg-zinc-950">
+              <thead className="sticky top-0 bg-[#FAF3E9]">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs uppercase tracking-[0.2em] text-zinc-500">ID</th>
-                  <th className="px-4 py-3 text-left text-xs uppercase tracking-[0.2em] text-zinc-500">Usuario</th>
-                  <th className="px-4 py-3 text-left text-xs uppercase tracking-[0.2em] text-zinc-500">Acceso</th>
-                  <th className="px-4 py-3 text-right text-xs uppercase tracking-[0.2em] text-zinc-500">Acciones</th>
+                  <th className="px-4 py-3 text-left text-xs uppercase tracking-[0.2em] text-[#E11B22]">ID</th>
+                  <th className="px-4 py-3 text-left text-xs uppercase tracking-[0.2em] text-[#E11B22]">Usuario</th>
+                  <th className="px-4 py-3 text-left text-xs uppercase tracking-[0.2em] text-[#E11B22]">Acceso</th>
+                  <th className="px-4 py-3 text-right text-xs uppercase tracking-[0.2em] text-[#E11B22]">Acciones</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-900">
+              <tbody className="divide-y divide-[#E1D6C8]">
                 {paginatedUsers.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-4 py-10 text-center text-zinc-500">
+                    <td colSpan={4} className="px-4 py-10 text-center text-[#6b6b6b]">
                       No hay usuarios para mostrar.
                     </td>
                   </tr>
                 ) : (
                   paginatedUsers.map((user) => (
-                    <tr key={user.id ?? user.username} className="transition hover:bg-zinc-900/60">
-                      <td className="px-4 py-3 text-zinc-300">{user.id}</td>
+                    <tr key={user.id ?? user.username} className="transition hover:bg-[#FAF3E9]">
+                      <td className="px-4 py-3 text-[#3b3b3b]">{user.id}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-700 bg-zinc-900 text-sm font-semibold text-zinc-200">
+                          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-[#D6C7B8] bg-[#FAF3E9] text-sm font-semibold text-[#231F20]">
                             {getInitials(user.username)}
                           </div>
                           <div>
-                            <div className="text-sm font-semibold text-zinc-100">{user.username}</div>
-                            <div className="text-xs text-zinc-500">ID {user.id}</div>
+                            <div className="text-sm font-semibold text-[#231F20]">{user.username}</div>
+                            <div className="text-xs text-[#6b6b6b]">ID {user.id}</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-4 py-3">
                         {permissionCatalog.length ? (
                           fullAccessMap[user.id] ? (
-                            <span className="inline-flex items-center rounded-full border border-[#FFA300]/40 bg-[#FFA300]/10 px-3 py-1 text-xs font-semibold text-[#FFA300]">
+                            <span className="inline-flex items-center rounded-full border border-[#F5B5B5] bg-[#FDE2E2] px-3 py-1 text-xs font-semibold text-[#8B0000]">
                               Acceso total
                             </span>
                           ) : (
-                            <span className="inline-flex items-center rounded-full border border-zinc-700 bg-zinc-900 px-3 py-1 text-xs text-zinc-300">
+                            <span className="inline-flex items-center rounded-full border border-[#D6C7B8] bg-[#FAF3E9] px-3 py-1 text-xs text-[#231F20]">
                               Estándar
                             </span>
                           )
                         ) : (
-                          <span className="text-xs text-zinc-500">—</span>
+                          <span className="text-xs text-[#6b6b6b]">—</span>
                         )}
                       </td>
                       <td className="px-4 py-3">
@@ -548,7 +551,7 @@ export default function UserAdminPage() {
                               openPermissionsModal(user);
                               setFormError("");
                             }}
-                            className="rounded-full border border-zinc-700 px-3 py-1 text-zinc-200 transition hover:border-[#FFA300] hover:text-[#FFA300]"
+                            className="rounded-full border border-[#D6C7B8] px-3 py-1 text-[#E11B22] transition hover:border-[#E11B22]"
                           >
                             Permisos
                           </button>
@@ -559,7 +562,7 @@ export default function UserAdminPage() {
                             setModal({ type: "password", user });
                             setFormError("");
                           }}
-                            className="rounded-full border border-zinc-700 px-3 py-1 text-zinc-200 transition hover:border-zinc-500 hover:text-zinc-100"
+                            className="rounded-full border border-[#D6C7B8] px-3 py-1 text-[#231F20] transition hover:border-[#E11B22]"
                           >
                             Reset pass
                           </button>
@@ -569,7 +572,7 @@ export default function UserAdminPage() {
                               setFormError("");
                               setModal({ type: "delete", user });
                             }}
-                            className="rounded-full border border-red-500/40 px-3 py-1 text-red-300 transition hover:border-red-400 hover:text-red-200"
+                            className="rounded-full border border-[#F5B5B5] px-3 py-1 text-[#8B0000] transition hover:border-[#E11B22] hover:text-[#E11B22]"
                           >
                             Eliminar
                           </button>
@@ -582,7 +585,7 @@ export default function UserAdminPage() {
             </table>
           </div>
 
-          <div className="mt-4 flex flex-col items-center justify-between gap-3 text-sm text-zinc-400 md:flex-row">
+          <div className="mt-4 flex flex-col items-center justify-between gap-3 text-sm text-[#6b6b6b] md:flex-row">
             <span>
               Mostrando {paginatedUsers.length} de {filteredUsers.length} usuarios
             </span>
@@ -591,7 +594,7 @@ export default function UserAdminPage() {
                 type="button"
                 onClick={() => setPage((prev) => Math.max(1, prev - 1))}
                 disabled={page === 1}
-                className="rounded-full border border-zinc-700 px-3 py-1 transition hover:border-zinc-500 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-full border border-[#D6C7B8] bg-white px-3 py-1 text-[#E11B22] transition hover:bg-[#FAF3E9] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Anterior
               </button>
@@ -602,7 +605,7 @@ export default function UserAdminPage() {
                 type="button"
                 onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
                 disabled={page >= totalPages}
-                className="rounded-full border border-zinc-700 px-3 py-1 transition hover:border-zinc-500 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-full border border-[#D6C7B8] bg-white px-3 py-1 text-[#E11B22] transition hover:bg-[#FAF3E9] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Siguiente
               </button>
@@ -615,27 +618,27 @@ export default function UserAdminPage() {
         <Modal title="Crear usuario" onClose={closeModal}>
           <form className="space-y-4" onSubmit={handleCreateSubmit}>
             {formError && (
-              <div className="rounded-lg border border-amber-500/40 bg-amber-950/50 px-3 py-2 text-sm text-amber-200">
+              <div className="rounded-lg border border-[#F5B5B5] bg-[#FDE2E2] px-3 py-2 text-sm text-[#8B0000]">
                 {formError}
               </div>
             )}
             <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-200">Usuario</label>
+              <label className="mb-1 block text-sm font-medium text-[#231F20]">Usuario</label>
               <input
                 type="text"
                 value={createForm.username}
                 onChange={(event) => setCreateForm((prev) => ({ ...prev, username: event.target.value }))}
-                className="w-full rounded-lg border border-zinc-800 bg-black px-3 py-2 text-sm text-zinc-100 focus:border-[#FFA300] focus:outline-none"
+                className="w-full rounded-lg border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
                 required
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-200">Contraseña</label>
+              <label className="mb-1 block text-sm font-medium text-[#231F20]">Contraseña</label>
               <input
                 type="password"
                 value={createForm.password}
                 onChange={(event) => setCreateForm((prev) => ({ ...prev, password: event.target.value }))}
-                className="w-full rounded-lg border border-zinc-800 bg-black px-3 py-2 text-sm text-zinc-100 focus:border-[#FFA300] focus:outline-none"
+                className="w-full rounded-lg border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
                 required
               />
             </div>
@@ -643,14 +646,14 @@ export default function UserAdminPage() {
               <button
                 type="button"
                 onClick={closeModal}
-                className="rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-200 transition hover:border-zinc-500"
+                className="rounded-full border border-[#D6C7B8] bg-white px-4 py-2 text-sm text-[#E11B22] transition hover:bg-[#FAF3E9]"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="rounded-full bg-[#FFA300] px-4 py-2 text-sm font-semibold text-black shadow transition hover:bg-[#ffb133] disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-full bg-[#E11B22] px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-[#c9161c] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {submitting ? "Guardando..." : "Guardar"}
               </button>
@@ -663,17 +666,17 @@ export default function UserAdminPage() {
         <Modal title={`Restablecer contraseña de ${modal.user.username}`} onClose={closeModal}>
           <form className="space-y-4" onSubmit={handlePasswordSubmit}>
             {formError && (
-              <div className="rounded-lg border border-amber-500/40 bg-amber-950/50 px-3 py-2 text-sm text-amber-200">
+              <div className="rounded-lg border border-[#F5B5B5] bg-[#FDE2E2] px-3 py-2 text-sm text-[#8B0000]">
                 {formError}
               </div>
             )}
             <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-200">Nueva contraseña</label>
+              <label className="mb-1 block text-sm font-medium text-[#231F20]">Nueva contraseña</label>
               <input
                 type="password"
                 value={passwordForm.password}
                 onChange={(event) => setPasswordForm({ password: event.target.value })}
-                className="w-full rounded-lg border border-zinc-800 bg-black px-3 py-2 text-sm text-zinc-100 focus:border-[#FFA300] focus:outline-none"
+                className="w-full rounded-lg border border-[#D6C7B8] bg-white px-3 py-2 text-sm text-[#231F20] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
                 required
               />
             </div>
@@ -681,14 +684,14 @@ export default function UserAdminPage() {
               <button
                 type="button"
                 onClick={closeModal}
-                className="rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-200 transition hover:border-zinc-500"
+                className="rounded-full border border-[#D6C7B8] bg-white px-4 py-2 text-sm text-[#E11B22] transition hover:bg-[#FAF3E9]"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="rounded-full bg-[#FFA300] px-4 py-2 text-sm font-semibold text-black shadow transition hover:bg-[#ffb133] disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-full bg-[#E11B22] px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-[#c9161c] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {submitting ? "Guardando..." : "Actualizar"}
               </button>
@@ -700,35 +703,35 @@ export default function UserAdminPage() {
       {modal.type === "permissions" && modal.user && (
         <Modal title={`Permisos de ${modal.user.username}`} onClose={closeModal} size="xl">
           {permissionsError && (
-            <div className="mb-3 rounded-lg border border-amber-500/40 bg-amber-950/50 px-3 py-2 text-sm text-amber-200">
+            <div className="mb-3 rounded-lg border border-[#F5B5B5] bg-[#FDE2E2] px-3 py-2 text-sm text-[#8B0000]">
               {permissionsError}
             </div>
           )}
           {permissionsState.loading ? (
-            <div className="rounded border border-zinc-800 bg-zinc-900/40 p-4 text-sm text-zinc-300">Cargando permisos...</div>
+            <div className="rounded border border-[#E1D6C8] bg-white p-4 text-sm text-[#6b6b6b]">Cargando permisos...</div>
           ) : !permissionCatalog.length ? (
-            <div className="rounded border border-zinc-800 bg-zinc-900/40 p-4 text-sm text-zinc-300">
+            <div className="rounded border border-[#E1D6C8] bg-white p-4 text-sm text-[#6b6b6b]">
               No hay catálogo de permisos disponible.
             </div>
           ) : (
             <form className="space-y-4" onSubmit={handlePermissionsSubmit}>
-              <div className="rounded-md border border-zinc-800 bg-zinc-900/40 px-3 py-2 text-sm text-zinc-300">
-                <p className="text-xs text-zinc-500">
+              <div className="rounded-md border border-[#E1D6C8] bg-white px-3 py-2 text-sm text-[#3b3b3b]">
+                <p className="text-xs text-[#6b6b6b]">
                   Selecciona <em>Permitir</em> o <em>Denegar</em>. <em>Sin override</em> elimina la entrada y el permiso queda denegado.
                 </p>
               </div>
 
-              <div className="space-y-4 rounded border border-zinc-800 bg-zinc-950/40 p-3">
+              <div className="space-y-4 rounded border border-[#E1D6C8] bg-[#FAF3E9] p-3">
                 {Object.keys(permissionsByCategory).sort().map((category) => {
                   const items = permissionsByCategory[category] || [];
                   const effectiveSet = new Set(permissionsState.summary?.effective || []);
                   return (
                     <div key={category} className="space-y-2">
-                      <div className="flex items-center justify-between border-b border-zinc-800 pb-1">
-                        <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-400">{category}</h3>
-                        <span className="text-[11px] text-zinc-500">{items.length} permisos</span>
+                      <div className="flex items-center justify-between border-b border-[#E1D6C8] pb-1">
+                        <h3 className="text-xs font-semibold uppercase tracking-wide text-[#E11B22]">{category}</h3>
+                        <span className="text-[11px] text-[#6b6b6b]">{items.length} permisos</span>
                       </div>
-                      <div className="space-y-3 rounded border border-zinc-800 bg-zinc-950/60 p-2">
+                      <div className="space-y-3 rounded border border-[#E1D6C8] bg-white p-2">
                         {items.map((perm) => {
                           const override = permissionsState.overridesDraft?.[perm.code] ?? "inherit";
                           const effective = effectiveSet.has(perm.code);
@@ -743,26 +746,26 @@ export default function UserAdminPage() {
                           return (
                             <div
                               key={perm.code}
-                              className="grid grid-cols-1 gap-3 rounded-md bg-black/60 p-3 shadow-sm ring-1 ring-zinc-800 md:grid-cols-12 md:items-center"
+                              className="grid grid-cols-1 gap-3 rounded-md bg-[#FAF3E9] p-3 shadow-sm ring-1 ring-[#E1D6C8] md:grid-cols-12 md:items-center"
                             >
                               <div className="md:col-span-3">
-                                <div className="break-words text-sm font-semibold text-zinc-100">{perm.name}</div>
-                                <div className="break-all text-xs text-zinc-500">{perm.code}</div>
+                                <div className="break-words text-sm font-semibold text-[#231F20]">{perm.name}</div>
+                                <div className="break-all text-xs text-[#6b6b6b]">{perm.code}</div>
                               </div>
-                              <div className="md:col-span-5 break-words text-sm text-zinc-300">{perm.description || "—"}</div>
-                              <div className="md:col-span-2 text-xs font-medium text-zinc-400">{statusLabel}</div>
+                              <div className="md:col-span-5 break-words text-sm text-[#3b3b3b]">{perm.description || "—"}</div>
+                              <div className="md:col-span-2 text-xs font-medium text-[#6b6b6b]">{statusLabel}</div>
                               <div className="md:col-span-2">
                                 <select
                                   value={override}
                                   onChange={(event) => updateOverrideChoice(perm.code, event.target.value)}
-                                  className="w-full rounded border border-zinc-700 bg-black px-2 py-1 text-sm text-zinc-100 focus:border-[#FFA300] focus:outline-none"
+                                  className="w-full rounded border border-[#D6C7B8] bg-white px-2 py-1 text-sm text-[#231F20] focus:border-[#E11B22] focus:outline-none focus:ring-1 focus:ring-[#E11B22]/40"
                                 >
                                   <option value="inherit">Sin override (queda denegado)</option>
                                   <option value="grant">Permitir</option>
                                   <option value="deny">Denegar</option>
                                 </select>
                               </div>
-                              <div className="md:col-span-6 text-xs font-semibold text-zinc-400">
+                              <div className="md:col-span-6 text-xs font-semibold text-[#6b6b6b]">
                                 Acceso actual: {effective ? "Permitido" : "Denegado"}
                               </div>
                             </div>
@@ -778,14 +781,14 @@ export default function UserAdminPage() {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-200 transition hover:border-zinc-500"
+                  className="rounded-full border border-[#D6C7B8] bg-white px-4 py-2 text-sm text-[#E11B22] transition hover:bg-[#FAF3E9]"
                 >
                   Cerrar
                 </button>
                 <button
                   type="submit"
                   disabled={permissionsSaving}
-                  className="rounded-full bg-[#FFA300] px-4 py-2 text-sm font-semibold text-black shadow transition hover:bg-[#ffb133] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-full bg-[#E11B22] px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-[#c9161c] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {permissionsSaving ? "Guardando..." : "Guardar cambios"}
                 </button>
@@ -797,15 +800,15 @@ export default function UserAdminPage() {
 
       {modal.type === "delete" && modal.user && (
         <Modal title="Eliminar usuario" onClose={closeModal}>
-          <div className="space-y-4 text-sm text-zinc-300">
+          <div className="space-y-4 text-sm text-[#3b3b3b]">
             <p>
-              Estas seguro de eliminar la cuenta <strong className="text-zinc-100">{modal.user.username}</strong>? Esta accion no se puede deshacer.
+              Estas seguro de eliminar la cuenta <strong className="text-[#231F20]">{modal.user.username}</strong>? Esta accion no se puede deshacer.
             </p>
             <div className="flex justify-end gap-2">
               <button
                 type="button"
                 onClick={closeModal}
-                className="rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-200 transition hover:border-zinc-500"
+                className="rounded-full border border-[#D6C7B8] bg-white px-4 py-2 text-sm text-[#E11B22] transition hover:bg-[#FAF3E9]"
               >
                 Cancelar
               </button>
@@ -813,7 +816,7 @@ export default function UserAdminPage() {
                 type="button"
                 onClick={handleDelete}
                 disabled={submitting}
-                className="rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-full bg-[#E11B22] px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-[#c9161c] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {submitting ? "Eliminando..." : "Eliminar"}
               </button>

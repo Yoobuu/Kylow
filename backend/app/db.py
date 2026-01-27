@@ -58,6 +58,7 @@ def init_db(*, bind: Optional[Engine] = None) -> None:
     engine = bind or get_engine()
     # Ensure all SQLModel tables are registered before create_all().
     from app.audit import models as audit_models  # noqa: F401
+    from app.auth import external_identities_model  # noqa: F401
     from app.auth import user_model  # noqa: F401
     from app.notifications import models as notification_models  # noqa: F401
     from app.permissions import models as permission_models  # noqa: F401

@@ -65,7 +65,10 @@ def _collect_hyperv_for_host(host: str, refresh: bool, ps_content: str, observed
         username=settings.hyperv_user,
         password=settings.hyperv_pass,
         transport=settings.hyperv_transport,
+        winrm_https_enabled=settings.hyperv_winrm_https_enabled,
+        winrm_http_enabled=settings.hyperv_winrm_http_enabled,
         use_winrm=True,
+        ca_trust_path=settings.hyperv_ca_bundle,
         connect_timeout=settings.hyperv_connect_timeout,
     )
     try:

@@ -27,11 +27,13 @@ export default function Navbar() {
   if (hasPermission("system.settings.view")) links.push({ to: "/system", label: "Sistema" });
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-neutral-950/80 backdrop-blur text-white">
+    <nav className="sticky top-0 z-50 w-full border-b border-white/10 border-usfq-white/10 bg-[#231F20] bg-usfq-black backdrop-blur text-white text-usfq-white">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
         <div className="flex items-center gap-3">
-          <div className="rounded-xl bg-white/10 px-3 py-1 text-sm font-semibold text-white">Inventario DC</div>
-          <div className="hidden h-6 w-px bg-white/10 sm:block" />
+          <div className="rounded-xl bg-white/10 bg-usfq-white/10 px-3 py-1 text-sm font-semibold text-white text-usfq-white">
+            Inventario DC
+          </div>
+          <div className="hidden h-6 w-px bg-white/10 bg-usfq-white/10 sm:block" />
           <div className="flex flex-wrap items-center gap-2">
             {links.map((link) => (
               <NavLink
@@ -43,8 +45,8 @@ export default function Navbar() {
                   return [
                     "rounded-lg px-3 py-1.5 text-xs font-medium transition sm:text-sm",
                     isCurrent
-                      ? "bg-white text-neutral-900 shadow"
-                      : "bg-white/5 text-neutral-200 hover:bg-white/10",
+                      ? "bg-[#E11B22] bg-usfq-red text-white text-usfq-white shadow"
+                      : "bg-white/5 bg-usfq-white/5 text-white/80 text-usfq-white/80 hover:bg-white/10 hover:bg-usfq-white/10 hover:text-[#E11B22] hover:text-usfq-red",
                   ].join(" ");
                 }}
               >
@@ -55,10 +57,10 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-3 text-sm">
-          {user && <div className="text-xs font-medium text-white sm:text-sm">{user.username}</div>}
+          {user && <div className="text-xs font-medium text-white text-usfq-white sm:text-sm">{user.username}</div>}
           <button
             onClick={handleLogout}
-            className="rounded-lg bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20 sm:text-sm"
+            className="rounded-lg bg-[#E11B22] bg-usfq-red px-3 py-1.5 text-xs font-semibold text-white text-usfq-white transition hover:bg-[#E11B22]/90 hover:bg-usfq-red/90 sm:text-sm"
           >
             Cerrar sesión
           </button>

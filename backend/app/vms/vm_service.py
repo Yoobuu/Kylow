@@ -10,7 +10,6 @@ from threading import Lock
 from typing import Dict, Iterable, List, Optional
 
 import requests
-import urllib3
 from cachetools import TTLCache
 from fastapi import HTTPException
 from pyVim.connect import Disconnect, SmartConnect  # SOAP client
@@ -24,7 +23,6 @@ logger = logging.getLogger(__name__)
 # ───────────────────────────────────────────────────────────────────────
 # Configuración global y mapeos
 # ───────────────────────────────────────────────────────────────────────
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Mapa de versiones VMX → descripción humana
 COMPAT_MAP = {
@@ -109,6 +107,27 @@ def _resolve_vcenter_settings() -> Dict[str, Optional[str]]:
     }
 
 
+def _ensure_https(url: str | None, *, name: str) -> None:
+    # Legacy mode: do not enforce HTTPS for external integrations.
+    if not url:
+        return
+
+
+def _vcenter_tls_verify():
+    return settings.vcenter_ca_bundle or False
+
+
+def _vcenter_ssl_context() -> ssl.SSLContext:
+    if settings.vcenter_ca_bundle:
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = True
+        ctx.load_verify_locations(settings.vcenter_ca_bundle)
+        return ctx
+    ctx = ssl._create_unverified_context()
+    ctx.check_hostname = False
+    return ctx
+
+
 def validate_vcenter_configuration() -> List[str]:
     """Return a list of issues if essential vCenter credentials are missing."""
     if settings.test_mode:
@@ -144,7 +163,8 @@ def _soap_connect():
     if not vcenter_cfg["soap_host"] or not vcenter_cfg["user"] or not vcenter_cfg["password"]:
         raise RuntimeError("Incomplete vCenter SOAP configuration")
 
-    ctx = ssl._create_unverified_context()
+    _ensure_https(vcenter_cfg["host"], name="VCENTER_HOST")
+    ctx = _vcenter_ssl_context()
     si = SmartConnect(
         host=vcenter_cfg["soap_host"],
         user=vcenter_cfg["user"],
@@ -279,12 +299,13 @@ def get_session_token() -> str:
     settings = _resolve_vcenter_settings()
     if not settings["host"] or not settings["user"] or not settings["password"]:
         raise HTTPException(status_code=500, detail="Configuración de vCenter incompleta")
+    _ensure_https(settings["host"], name="VCENTER_HOST")
 
     try:
         response = requests.post(
             f"{settings['host']}/rest/com/vmware/cis/session",
             auth=(settings["user"], settings["password"]),
-            verify=False,
+            verify=_vcenter_tls_verify(),
             timeout=5,
         )
         response.raise_for_status()
@@ -292,7 +313,7 @@ def get_session_token() -> str:
     except Exception as exc:
         logger.exception("Failed to obtain vCenter session token")
         code = getattr(exc, "response", None) and exc.response.status_code or 500
-        raise HTTPException(status_code=code, detail=f"Auth failed: {exc}")
+        raise HTTPException(status_code=code, detail="Auth failed")
 
 
 def get_hosts_raw() -> dict:
@@ -306,7 +327,7 @@ def get_hosts_raw() -> dict:
     response = requests.get(
         _network_endpoint("/rest/vcenter/host"),
         headers=headers,
-        verify=False,
+        verify=_vcenter_tls_verify(),
         timeout=10,
     )
     response.raise_for_status()
@@ -332,6 +353,7 @@ def infer_environment(name: str) -> str:
 
 def _network_endpoint(path: str) -> str:
     settings = _resolve_vcenter_settings()
+    _ensure_https(settings["host"], name="VCENTER_HOST")
     return f"{settings['host']}{path}"
 
 
@@ -348,7 +370,7 @@ def load_network_map(headers: dict) -> Dict[str, str]:
         response = requests.get(
             _network_endpoint("/rest/vcenter/network"),
             headers=headers,
-            verify=False,
+            verify=_vcenter_tls_verify(),
             timeout=10,
         )
         response.raise_for_status()
@@ -372,7 +394,7 @@ def get_network_name(network_id: str, headers: dict) -> str:
         response = requests.get(
             _network_endpoint(f"/rest/vcenter/network/{network_id}"),
             headers=headers,
-            verify=False,
+            verify=_vcenter_tls_verify(),
             timeout=5,
         )
         response.raise_for_status()
@@ -395,7 +417,7 @@ def fetch_guest_identity(vm_id: str, headers: dict) -> dict:
         response = requests.get(
             _network_endpoint(f"/rest/vcenter/vm/{vm_id}/guest/identity"),
             headers=headers,
-            verify=False,
+            verify=_vcenter_tls_verify(),
             timeout=5,
         )
         value = response.json().get("value", {}) if response.status_code == 200 else {}
@@ -448,7 +470,7 @@ def _resolve_networks(
         ether_resp = requests.get(
             _network_endpoint(f"/rest/vcenter/vm/{vm_id}/hardware/ethernet"),
             headers=headers,
-            verify=False,
+            verify=_vcenter_tls_verify(),
             timeout=5,
         )
         if ether_resp.status_code == 200:
@@ -532,7 +554,7 @@ def get_vms(*, refresh: bool = False) -> List[VMBase]:
     response = requests.get(
         _network_endpoint("/rest/vcenter/vm"),
         headers=headers,
-        verify=False,
+        verify=_vcenter_tls_verify(),
         timeout=10,
     )
     response.raise_for_status()
@@ -546,7 +568,7 @@ def get_vms(*, refresh: bool = False) -> List[VMBase]:
         summary_resp = requests.get(
             _network_endpoint(f"/rest/vcenter/vm/{vm_id}"),
             headers=headers,
-            verify=False,
+            verify=_vcenter_tls_verify(),
             timeout=5,
         )
         summary_data = summary_resp.json().get("value", {}) if summary_resp.status_code == 200 else {}
@@ -555,7 +577,7 @@ def get_vms(*, refresh: bool = False) -> List[VMBase]:
         hardware_resp = requests.get(
             _network_endpoint(f"/rest/vcenter/vm/{vm_id}/hardware"),
             headers=headers,
-            verify=False,
+            verify=_vcenter_tls_verify(),
             timeout=5,
         )
         hardware_data = hardware_resp.json().get("value", {}) if hardware_resp.status_code == 200 else {}
@@ -569,7 +591,7 @@ def get_vms(*, refresh: bool = False) -> List[VMBase]:
             boot_resp = requests.get(
                 _network_endpoint(f"/rest/vcenter/vm/{vm_id}/hardware/boot"),
                 headers=headers,
-                verify=False,
+                verify=_vcenter_tls_verify(),
                 timeout=5,
             )
             if boot_resp.status_code == 200:
@@ -652,7 +674,7 @@ def power_action(vm_id: str, action: str) -> dict:
     response = requests.post(
         _network_endpoint(f"/rest/vcenter/vm/{vm_id}/power/{action}"),
         headers=headers,
-        verify=False,
+        verify=_vcenter_tls_verify(),
         timeout=5,
     )
     if response.status_code == 200:
@@ -673,7 +695,7 @@ def get_vm_detail(vm_id: str) -> VMDetail:
     summary_resp = requests.get(
         _network_endpoint(f"/rest/vcenter/vm/{vm_id}"),
         headers=headers,
-        verify=False,
+        verify=_vcenter_tls_verify(),
         timeout=10,
     )
     if summary_resp.status_code != 200:
@@ -683,7 +705,7 @@ def get_vm_detail(vm_id: str) -> VMDetail:
     hardware_resp = requests.get(
         _network_endpoint(f"/rest/vcenter/vm/{vm_id}/hardware"),
         headers=headers,
-        verify=False,
+        verify=_vcenter_tls_verify(),
         timeout=5,
     )
     hardware = hardware_resp.json().get("value", {}) if hardware_resp.status_code == 200 else {}
@@ -696,7 +718,7 @@ def get_vm_detail(vm_id: str) -> VMDetail:
         boot_resp = requests.get(
             _network_endpoint(f"/rest/vcenter/vm/{vm_id}/hardware/boot"),
             headers=headers,
-            verify=False,
+            verify=_vcenter_tls_verify(),
             timeout=5,
         )
         if boot_resp.status_code == 200:

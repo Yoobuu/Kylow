@@ -6,9 +6,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, field_validator
 from sqlmodel import Session
 
+from app.audit.service import log_audit
 from app.auth.user_model import User
 from app.db import get_session
-from app.dependencies import require_permission
+from app.dependencies import AuditRequestContext, get_request_audit_context, require_permission
 from app.permissions.models import Permission, PermissionCode
 from app.permissions.service import (
     count_users_with_all_permissions,
@@ -96,11 +97,14 @@ def update_user_permissions(
     user_id: int,
     payload: UpdateUserPermissionsRequest,
     session: Session = Depends(get_session),
+    current_user: User = Depends(require_permission(PermissionCode.USERS_MANAGE)),
+    audit_ctx: AuditRequestContext = Depends(get_request_audit_context),
 ):
     user = session.get(User, user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="usuario no encontrado")
 
+    before_summary = get_user_permissions_summary(user, session)
     valid_codes = {code.value for code in PermissionCode}
     catalog_codes = list_permission_codes(session)
     overrides_map: Dict[str, bool] = {}
@@ -127,4 +131,33 @@ def update_user_permissions(
 
     set_user_permission_overrides(user.id, overrides_map, session)
     session.refresh(user)
-    return get_user_permissions_summary(user, session)
+    after_summary = get_user_permissions_summary(user, session)
+
+    before_overrides = {item["code"]: item["granted"] for item in before_summary.get("overrides", [])}
+    after_overrides = {item["code"]: item["granted"] for item in after_summary.get("overrides", [])}
+    changes: Dict[str, Dict[str, object]] = {}
+    for code in sorted(set(before_overrides) | set(after_overrides)):
+        before_val = before_overrides.get(code, None)
+        after_val = after_overrides.get(code, None)
+        if before_val != after_val:
+            changes[code] = {"from": before_val, "to": after_val}
+
+    log_audit(
+        session,
+        actor=current_user,
+        action="users.permissions.update",
+        target_type="user",
+        target_id=str(user.id),
+        meta={
+            "username": user.username,
+            "changes": changes,
+            "effective_before": before_summary.get("effective", []),
+            "effective_after": after_summary.get("effective", []),
+        },
+        ip=audit_ctx.ip,
+        ua=audit_ctx.user_agent,
+        corr=audit_ctx.correlation_id,
+    )
+    session.commit()
+
+    return after_summary

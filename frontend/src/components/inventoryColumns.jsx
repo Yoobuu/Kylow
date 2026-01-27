@@ -48,33 +48,33 @@ const normalizeBootLabel = (value) => {
 const renderGeneration = (vm) => {
   const raw = vm.compat_generation ?? vm.boot_type
   if (raw == null || raw === '') {
-    return <span className="text-sm text-gray-700">{'\u2014'}</span>
+    return <span className="text-sm text-[#231F20]">{'\u2014'}</span>
   }
 
   const numeric = Number(raw)
   if (Number.isFinite(numeric)) {
-    return <span className="text-sm text-gray-700">{`Gen ${numeric}`}</span>
+    return <span className="text-sm text-[#231F20]">{`Gen ${numeric}`}</span>
   }
 
   const textValue = String(raw).trim()
   if (!textValue) {
-    return <span className="text-sm text-gray-700">{'\u2014'}</span>
+    return <span className="text-sm text-[#231F20]">{'\u2014'}</span>
   }
 
   const normalized = normalizeBootLabel(textValue)
   const upper = normalized.toUpperCase()
   if (upper === 'UEFI') {
-    return <span className="text-sm text-gray-700">Gen 2</span>
+    return <span className="text-sm text-[#231F20]">Gen 2</span>
   }
   if (upper === 'BIOS') {
-    return <span className="text-sm text-gray-700">Gen 1</span>
+    return <span className="text-sm text-[#231F20]">Gen 1</span>
   }
-  return <span className="text-sm text-gray-700">{normalized}</span>
+    return <span className="text-sm text-[#231F20]">{normalized}</span>
 }
 
 const renderDisksWithBars = (disks) => {
   if (!Array.isArray(disks) || disks.length === 0) {
-    return <span className="text-sm text-gray-700">{'\u2014'}</span>
+    return <span className="text-sm text-[#231F20]">{'\u2014'}</span>
   }
 
   return (
@@ -95,18 +95,18 @@ const renderDisksWithBars = (disks) => {
         const width = hasPct ? Math.min(Math.max(pctNumber, 0), 100) : 0
         const barColor =
           hasPct && pctNumber < 50
-            ? 'bg-green-500'
+            ? 'bg-[#1B5E20]'
             : hasPct && pctNumber < 80
-              ? 'bg-yellow-500'
+              ? 'bg-[#7A5E00]'
               : hasPct
-                ? 'bg-red-500'
-                : 'bg-green-500'
+                ? 'bg-[#E11B22]'
+                : 'bg-[#1B5E20]'
 
         return (
           <div key={index} className="flex flex-col gap-1">
-            <span className="text-sm text-gray-700">{text || '\u2014'}</span>
+            <span className="text-sm text-[#231F20]">{text || '\u2014'}</span>
             {hasPct && (
-              <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-1.5 bg-[#E1E1E1] rounded-full overflow-hidden">
                 <div
                   className={`h-full ${barColor} rounded-full transition-all duration-300`}
                   style={{ width: `${width}%` }}
@@ -132,7 +132,7 @@ const shortenAzureId = (value) => {
 const renderTruncatedText = (value, maxWidth = 'max-w-[200px]') => {
   const text = value == null || value === '' ? '\u2014' : String(value)
   return (
-    <span className={`block ${maxWidth} truncate text-sm text-gray-700`} title={text}>
+    <span className={`block ${maxWidth} truncate text-sm text-[#231F20]`} title={text}>
       {text}
     </span>
   )
@@ -140,7 +140,7 @@ const renderTruncatedText = (value, maxWidth = 'max-w-[200px]') => {
 
 const renderCompactList = (list, maxItems = 2, maxWidth = 'max-w-[240px]') => {
   const items = Array.isArray(list) ? list.filter((v) => v != null && String(v).trim()) : []
-  if (!items.length) return <span className="text-sm text-gray-700">{'\u2014'}</span>
+  if (!items.length) return <span className="text-sm text-[#231F20]">{'\u2014'}</span>
   const normalized = items.map((v) => {
     if (typeof v === 'object') {
       if (typeof v.text === 'string' && v.text.trim()) return v.text
@@ -152,7 +152,7 @@ const renderCompactList = (list, maxItems = 2, maxWidth = 'max-w-[240px]') => {
   const rest = normalized.length - display.length
   const text = rest > 0 ? `${display.join(', ')} (+${rest})` : display.join(', ')
   return (
-    <span className={`block ${maxWidth} truncate text-sm text-gray-700`} title={normalized.join(', ')}>
+    <span className={`block ${maxWidth} truncate text-sm text-[#231F20]`} title={normalized.join(', ')}>
       {text}
     </span>
   )
@@ -173,8 +173,8 @@ const renderEnvironmentBadge = (environmentRaw) => {
   if (normalized.startsWith('prod')) {
     return (
       <div className="flex items-center gap-1">
-        <FaIndustry className="text-indigo-600 text-lg" />
-        <span className="px-2 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-800 rounded-full">
+        <FaIndustry className="text-[#8B0000] text-lg" />
+        <span className="px-2 py-0.5 text-xs font-medium bg-[#FAF3E9] text-[#231F20] rounded-full border border-[#D6C7B8]">
           {text}
         </span>
       </div>
@@ -183,8 +183,8 @@ const renderEnvironmentBadge = (environmentRaw) => {
   if (normalized.startsWith('sand')) {
     return (
       <div className="flex items-center gap-1">
-        <GiSandCastle className="text-orange-600 text-lg" />
-        <span className="px-2 py-0.5 text-xs font-medium bg-orange-100 text-orange-800 rounded-full">
+        <GiSandCastle className="text-[#B45309] text-lg" />
+        <span className="px-2 py-0.5 text-xs font-medium bg-[#FAF3E9] text-[#231F20] rounded-full border border-[#D6C7B8]">
           {text}
         </span>
       </div>
@@ -193,8 +193,8 @@ const renderEnvironmentBadge = (environmentRaw) => {
   if (normalized.startsWith('test')) {
     return (
       <div className="flex items-center gap-1">
-        <FaFlask className="text-yellow-600 text-lg" />
-        <span className="px-2 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
+        <FaFlask className="text-[#7A5E00] text-lg" />
+        <span className="px-2 py-0.5 text-xs font-medium bg-[#FAF3E9] text-[#231F20] rounded-full border border-[#D6C7B8]">
           {text}
         </span>
       </div>
@@ -203,8 +203,8 @@ const renderEnvironmentBadge = (environmentRaw) => {
   if (normalized.startsWith('des')) {
     return (
       <div className="flex items-center gap-1">
-        <FaCodeBranch className="text-green-600 text-lg" />
-        <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+        <FaCodeBranch className="text-[#1B5E20] text-lg" />
+        <span className="px-2 py-0.5 text-xs font-medium bg-[#FAF3E9] text-[#231F20] rounded-full border border-[#D6C7B8]">
           {text}
         </span>
       </div>
@@ -212,8 +212,8 @@ const renderEnvironmentBadge = (environmentRaw) => {
   }
   return (
     <div className="flex items-center gap-1">
-      <FaQuestionCircle className="text-purple-600 text-lg" />
-      <span className="px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-800 rounded-full">
+      <FaQuestionCircle className="text-[#3b3b3b] text-lg" />
+      <span className="px-2 py-0.5 text-xs font-medium bg-[#FAF3E9] text-[#231F20] rounded-full border border-[#D6C7B8]">
         {text}
       </span>
     </div>
@@ -224,23 +224,23 @@ const renderGuestOsBadge = (guestOs) => {
   if (guestOs?.toLowerCase().includes('win')) {
     return (
       <div className="flex items-center gap-1">
-        <FaWindows className="text-blue-600 text-lg" />
-        <span className="text-gray-700">{guestOs}</span>
+        <FaWindows className="text-[#E11B22] text-lg" />
+        <span className="text-[#231F20]">{guestOs}</span>
       </div>
     )
   }
   if (guestOs?.toLowerCase().includes('linux')) {
     return (
       <div className="flex items-center gap-1">
-        <FaLinux className="text-gray-800 text-lg" />
-        <span className="text-gray-700">{guestOs}</span>
+        <FaLinux className="text-[#231F20] text-lg" />
+        <span className="text-[#231F20]">{guestOs}</span>
       </div>
     )
   }
   return (
     <div className="flex items-center gap-1">
-      <FaQuestionCircle className="text-gray-600 text-lg" />
-      <span className="text-gray-700">{guestOs || '\u2014'}</span>
+      <FaQuestionCircle className="text-[#E11B22] text-lg" />
+      <span className="text-[#231F20]">{guestOs || '\u2014'}</span>
     </div>
   )
 }
@@ -250,14 +250,14 @@ const BASE_COLUMNS = [
     key: 'id',
     label: 'ID',
     render: (vm) => (
-      <span className="whitespace-nowrap text-sm font-medium text-gray-900">{vm.id}</span>
+      <span className="whitespace-nowrap text-sm font-medium text-[#231F20]">{vm.id}</span>
     ),
   },
   {
     key: 'name',
     label: 'Nombre',
     render: (vm) => (
-      <span className="whitespace-nowrap text-sm text-gray-800 font-medium">{vm.name}</span>
+      <span className="whitespace-nowrap text-sm text-[#231F20] font-medium">{vm.name}</span>
     ),
   },
   {
@@ -266,15 +266,15 @@ const BASE_COLUMNS = [
     render: (vm) => (
       vm.power_state === 'POWERED_ON' ? (
         <div className="flex items-center gap-1">
-          <IoPowerSharp className="text-green-600 text-lg" />
-          <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+          <IoPowerSharp className="text-[#1B5E20] text-lg" />
+          <span className="px-2 py-0.5 text-xs font-medium bg-[#E6F4EA] text-[#1B5E20] rounded-full border border-[#B7E0C1]">
             Encendida
           </span>
         </div>
       ) : (
         <div className="flex items-center gap-1">
-          <IoPowerOutline className="text-red-600 text-lg" />
-          <span className="px-2 py-0.5 text-xs font-medium bg-red-100 text-red-800 rounded-full">
+          <IoPowerOutline className="text-[#E11B22] text-lg" />
+          <span className="px-2 py-0.5 text-xs font-medium bg-[#FDE2E2] text-[#8B0000] rounded-full border border-[#F5B5B5]">
             {vm.power_state === 'POWERED_OFF' ? 'Apagada' : vm.power_state || '\u2014'}
           </span>
         </div>
@@ -284,7 +284,7 @@ const BASE_COLUMNS = [
   {
     key: 'cpu_count',
     label: 'CPU',
-    render: (vm) => <span className="text-sm text-gray-700">{vm.cpu_count ?? '\u2014'}</span>,
+    render: (vm) => <span className="text-sm text-[#231F20]">{vm.cpu_count ?? '\u2014'}</span>,
   },
   {
     key: 'cpu_usage_pct',
@@ -294,12 +294,12 @@ const BASE_COLUMNS = [
   {
     key: 'memory_size_MiB',
     label: 'RAM (GiB)',
-    render: (vm) => <span className="text-sm text-gray-700">{formatGiB(vm.memory_size_MiB)}</span>,
+    render: (vm) => <span className="text-sm text-[#231F20]">{formatGiB(vm.memory_size_MiB)}</span>,
   },
   {
     key: 'ram_demand_mib',
     label: 'RAM demanda (GiB)',
-    render: (vm) => <span className="text-sm text-gray-700">{formatGiB(vm.ram_demand_mib)}</span>,
+    render: (vm) => <span className="text-sm text-[#231F20]">{formatGiB(vm.ram_demand_mib)}</span>,
   },
   {
     key: 'ram_usage_pct',
@@ -319,32 +319,32 @@ const BASE_COLUMNS = [
   {
     key: 'host',
     label: 'Host',
-    render: (vm) => <span className="text-sm text-gray-700">{vm.host || '\u2014'}</span>,
+    render: (vm) => <span className="text-sm text-[#231F20]">{vm.host || '\u2014'}</span>,
   },
   {
     key: 'cluster',
     label: 'Cluster',
-    render: (vm) => <span className="text-sm text-gray-700">{vm.cluster || '\u2014'}</span>,
+    render: (vm) => <span className="text-sm text-[#231F20]">{vm.cluster || '\u2014'}</span>,
   },
   {
     key: 'vlans',
     label: 'VLAN(s)',
-    render: (vm) => <span className="text-sm text-gray-700">{joinList(vm.vlans)}</span>,
+    render: (vm) => <span className="text-sm text-[#231F20]">{joinList(vm.vlans)}</span>,
   },
   {
     key: 'networks',
     label: 'Redes',
-    render: (vm) => <span className="text-sm text-gray-700">{joinList(vm.networks)}</span>,
+    render: (vm) => <span className="text-sm text-[#231F20]">{joinList(vm.networks)}</span>,
   },
   {
     key: 'compatibility_code',
     label: 'Compatibilidad Código',
-    render: (vm) => <span className="text-sm text-gray-700">{vm.compatibility_code || '\u2014'}</span>,
+    render: (vm) => <span className="text-sm text-[#231F20]">{vm.compatibility_code || '\u2014'}</span>,
   },
   {
     key: 'compatibility_human',
     label: 'Compatibilidad',
-    render: (vm) => <span className="text-sm text-gray-700">{vm.compatibility_human || '\u2014'}</span>,
+    render: (vm) => <span className="text-sm text-[#231F20]">{vm.compatibility_human || '\u2014'}</span>,
   },
   {
     key: 'compat_generation',
@@ -354,7 +354,7 @@ const BASE_COLUMNS = [
   {
     key: 'ip_addresses',
     label: 'IPs',
-    render: (vm) => <span className="text-sm text-gray-700">{joinList(vm.ip_addresses)}</span>,
+    render: (vm) => <span className="text-sm text-[#231F20]">{joinList(vm.ip_addresses)}</span>,
   },
   {
     key: 'disks',
@@ -364,7 +364,7 @@ const BASE_COLUMNS = [
   {
     key: 'nics',
     label: 'NICs',
-    render: (vm) => <span className="text-sm text-gray-700">{joinList(vm.nics)}</span>,
+    render: (vm) => <span className="text-sm text-[#231F20]">{joinList(vm.nics)}</span>,
   },
 ]
 
@@ -415,7 +415,7 @@ export const columnsAzure = [
     key: 'time_created',
     label: 'Creada',
     render: (vm) => (
-      <span className="text-sm text-gray-700">{formatDateTime(vm.time_created || vm.timeCreated)}</span>
+      <span className="text-sm text-[#231F20]">{formatDateTime(vm.time_created || vm.timeCreated)}</span>
     ),
   },
   {
@@ -439,21 +439,20 @@ export const columnsAzure = [
 export const INVENTORY_COLUMNS = columnsVMware
 const renderPercentWithBar = (value) => {
   if (value == null || value === '') {
-    return <span className="text-sm text-gray-700">{'\u2014'}</span>
+    return <span className="text-sm text-[#231F20]">{'\u2014'}</span>
   }
   const parsed = Number(value)
   if (!Number.isFinite(parsed)) {
-    return <span className="text-sm text-gray-700">{value}</span>
+    return <span className="text-sm text-[#231F20]">{value}</span>
   }
   const clamped = Math.max(0, parsed)
   const width = Math.min(clamped, 100)
-  const barColor =
-    clamped < 50 ? 'bg-green-500' : clamped < 80 ? 'bg-yellow-500' : 'bg-red-500'
+  const barColor = clamped < 50 ? 'bg-[#1B5E20]' : clamped < 80 ? 'bg-[#7A5E00]' : 'bg-[#E11B22]'
 
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-sm text-gray-700">{formatPercent(parsed)}</span>
-      <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+      <span className="text-sm text-[#231F20]">{formatPercent(parsed)}</span>
+      <div className="h-1.5 bg-[#E1E1E1] rounded-full overflow-hidden">
         <div
           className={`h-full ${barColor} rounded-full transition-all duration-300`}
           style={{ width: `${width}%` }}

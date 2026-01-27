@@ -301,13 +301,8 @@ def list_azure_vms(*, include_power_state: bool = False) -> List[AzureVMRecord]:
             detail={"detail": "Azure configuration incomplete", "missing": settings.azure_missing_envs},
         )
 
-    resource_groups = settings.azure_resource_groups
-    raw_vms: List[dict] = []
-    if resource_groups:
-        for rg in resource_groups:
-            raw_vms.extend(_list_vms_by_resource_group(client, rg))
-    else:
-        raw_vms = _list_vms_by_subscription(client)
+    # Always list at subscription scope to include all resource groups.
+    raw_vms = _list_vms_by_subscription(client)
 
     records = [_build_vm_record(vm) for vm in raw_vms if isinstance(vm, dict)]
 

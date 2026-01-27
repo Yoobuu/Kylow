@@ -5,7 +5,7 @@ from typing import List, Optional
 from dataclasses import dataclass
 
 import winrm  # pywinrm en requirements
-from requests.exceptions import RequestException
+from requests.exceptions import RequestException, SSLError
 from winrm.exceptions import WinRMOperationTimeoutError, WinRMTransportError
 
 try:
@@ -22,6 +22,8 @@ class RemoteCreds:
     username: Optional[str] = None
     password: Optional[str] = None
     transport: str = "ntlm"   # ntlm|kerberos|credssp
+    winrm_https_enabled: bool = False
+    winrm_http_enabled: bool = True
     use_winrm: bool = True    # si False, ejecuta localmente el PS (debug)
     port: int = 5985
     scheme: str = "http"
@@ -29,6 +31,8 @@ class RemoteCreds:
     connect_timeout: int = 10
     retries: int = 2
     backoff_sec: float = 1.5
+    ca_trust_path: Optional[str] = None
+    server_cert_validation: str = "validate"
     # Ruta del JSON/CSV que escribe tu script en el host remoto (fallback)
     json_path: str = r"C:\Temp\hyperv_cluster_inventory_clean.json"
     csv_path: str = r"C:\Temp\hyperv_cluster_inventory_clean.csv"
@@ -64,6 +68,30 @@ def _compute_probe_timeouts(connect_timeout_sec: int) -> tuple[int, int]:
     return op_timeout, read_timeout
 
 
+def _build_winrm_session(
+    creds: RemoteCreds,
+    *,
+    endpoint: str,
+    op_timeout: int,
+    read_timeout: int,
+    validate_tls: bool,
+) -> winrm.Session:
+    kwargs = {
+        "target": endpoint,
+        "auth": (creds.username or "", creds.password or ""),
+        "transport": creds.transport,
+        "read_timeout_sec": read_timeout,
+        "operation_timeout_sec": op_timeout,
+    }
+    if validate_tls:
+        kwargs["server_cert_validation"] = "validate"
+        if creds.ca_trust_path:
+            kwargs["ca_trust_path"] = creds.ca_trust_path
+    else:
+        kwargs["server_cert_validation"] = "ignore"
+    return winrm.Session(**kwargs)
+
+
 def _is_unreachable_exception(exc: Exception) -> bool:
     if isinstance(exc, HostUnreachableError):
         return True
@@ -87,26 +115,99 @@ def _is_unreachable_exception(exc: Exception) -> bool:
     return False
 
 
-def _ensure_winrm_reachable(creds: RemoteCreds) -> None:
+def _is_tls_exception(exc: Exception) -> bool:
+    if isinstance(exc, SSLError):
+        return True
+    msg = str(exc).lower()
+    return any(token in msg for token in ("ssl", "tls", "certificate", "cert", "handshake"))
+
+
+def _should_fallback(exc: Exception) -> bool:
+    return _is_unreachable_exception(exc) or _is_tls_exception(exc)
+
+
+def _winrm_endpoints(creds: RemoteCreds) -> list[tuple[str, int, bool]]:
+    endpoints: list[tuple[str, int, bool]] = []
+    if creds.winrm_https_enabled:
+        endpoints.append(("https", 5986, bool(creds.ca_trust_path)))
+    if creds.winrm_http_enabled:
+        endpoints.append(("http", 5985, False))
+    if not endpoints:
+        raise RuntimeError("No WinRM port enabled")
+    return endpoints
+
+
+def _probe_winrm_endpoint(
+    creds: RemoteCreds,
+    *,
+    scheme: str,
+    port: int,
+    validate_tls: bool,
+) -> None:
     if creds.connect_timeout <= 0:
         return
-    endpoint = f"{creds.scheme}://{creds.host}:{creds.port}/wsman"
+    endpoint = f"{scheme}://{creds.host}:{port}/wsman"
     op_timeout, read_timeout = _compute_probe_timeouts(creds.connect_timeout)
-    try:
-        session = winrm.Session(
-            target=endpoint,
-            auth=(creds.username or "", creds.password or ""),
-            transport=creds.transport,
-            read_timeout_sec=read_timeout,
-            operation_timeout_sec=op_timeout,
-        )
-        response = session.run_cmd("echo", ["ok"])
-        if response.status_code != 0:
-            raise RuntimeError(f"WinRM probe failed: {response.status_code}")
-    except Exception as exc:
-        if _is_unreachable_exception(exc):
-            raise HostUnreachableError("unreachable") from exc
-        raise
+    session = _build_winrm_session(
+        creds,
+        endpoint=endpoint,
+        op_timeout=op_timeout,
+        read_timeout=read_timeout,
+        validate_tls=validate_tls,
+    )
+    response = session.run_cmd("echo", ["ok"])
+    if response.status_code != 0:
+        raise RuntimeError(f"WinRM probe failed: {response.status_code}")
+
+
+def _select_winrm_endpoint(creds: RemoteCreds) -> tuple[str, int, bool]:
+    last_exc: Exception | None = None
+    if not creds.winrm_http_enabled and not creds.winrm_https_enabled:
+        raise RuntimeError("No WinRM port enabled")
+
+    https_validate = bool(creds.ca_trust_path)
+
+    if creds.winrm_http_enabled:
+        if creds.winrm_https_enabled:
+            try:
+                _probe_winrm_endpoint(
+                    creds,
+                    scheme="https",
+                    port=5986,
+                    validate_tls=https_validate,
+                )
+                return "https", 5986, https_validate
+            except Exception as exc:
+                last_exc = exc
+        try:
+            _probe_winrm_endpoint(
+                creds,
+                scheme="http",
+                port=5985,
+                validate_tls=False,
+            )
+            logger.warning("Insecure WinRM HTTP enabled/used for host=%s.", creds.host)
+            return "http", 5985, False
+        except Exception as exc:
+            last_exc = exc
+
+    if creds.winrm_https_enabled:
+        try:
+            _probe_winrm_endpoint(
+                creds,
+                scheme="https",
+                port=5986,
+                validate_tls=https_validate,
+            )
+            return "https", 5986, https_validate
+        except Exception as exc:
+            last_exc = exc
+
+    if last_exc:
+        if _is_unreachable_exception(last_exc):
+            raise HostUnreachableError("unreachable") from last_exc
+        raise last_exc
+    raise RuntimeError("No WinRM port enabled")
 
 
 def _run_local_powershell(
@@ -261,16 +362,16 @@ def _run_winrm_inline(
     """
     import base64, uuid
 
-    endpoint = f"{creds.scheme}://{creds.host}:{creds.port}/wsman"
-    _ensure_winrm_reachable(creds)
+    scheme, port, validate_tls = _select_winrm_endpoint(creds)
+    endpoint = f"{scheme}://{creds.host}:{port}/wsman"
     op_timeout, read_timeout = _compute_winrm_timeouts(creds.read_timeout)
 
-    session = winrm.Session(
-        target=endpoint,
-        auth=(creds.username or "", creds.password or ""),
-        transport=creds.transport,
-        read_timeout_sec=read_timeout,
-        operation_timeout_sec=op_timeout,
+    session = _build_winrm_session(
+        creds,
+        endpoint=endpoint,
+        op_timeout=op_timeout,
+        read_timeout=read_timeout,
+        validate_tls=validate_tls,
     )
 
     guid = str(uuid.uuid4())
@@ -416,14 +517,15 @@ def run_inventory(
 
             # 3) si no hay lista, abrir sesiA3n y probar archivo JSON/CSV remotos
             if data is None and creds.use_winrm:
-                endpoint = f"{creds.scheme}://{creds.host}:{creds.port}/wsman"
+                scheme, port, validate_tls = _select_winrm_endpoint(creds)
+                endpoint = f"{scheme}://{creds.host}:{port}/wsman"
                 op_timeout, read_timeout = _compute_winrm_timeouts(creds.read_timeout)
-                session = winrm.Session(
-                    target=endpoint,
-                    auth=(creds.username or "", creds.password or ""),
-                    transport=creds.transport,
-                    read_timeout_sec=read_timeout,
-                    operation_timeout_sec=op_timeout,
+                session = _build_winrm_session(
+                    creds,
+                    endpoint=endpoint,
+                    op_timeout=op_timeout,
+                    read_timeout=read_timeout,
+                    validate_tls=validate_tls,
                 )
 
                 # 3.a JSON remoto
@@ -517,18 +619,18 @@ try {{
         return (False, "WinRM disabled in test mode")
 
     try:
-        endpoint = f"{creds.scheme}://{creds.host}:{creds.port}/wsman"
-        _ensure_winrm_reachable(creds)
+        scheme, port, validate_tls = _select_winrm_endpoint(creds)
+        endpoint = f"{scheme}://{creds.host}:{port}/wsman"
         op_timeout, read_timeout = _compute_winrm_timeouts(
             creds.read_timeout,
             cap_operation_timeout_sec=120,
         )
-        session = winrm.Session(
-            target=endpoint,
-            auth=(creds.username or "", creds.password or ""),
-            transport=creds.transport,
-            read_timeout_sec=read_timeout,
-            operation_timeout_sec=op_timeout,
+        session = _build_winrm_session(
+            creds,
+            endpoint=endpoint,
+            op_timeout=op_timeout,
+            read_timeout=read_timeout,
+            validate_tls=validate_tls,
         )
         response = session.run_ps(script)
     except HostUnreachableError:

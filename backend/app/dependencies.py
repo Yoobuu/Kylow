@@ -20,6 +20,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 def get_current_user(
     token: str = Depends(oauth2_scheme),
     session: Session = Depends(get_session),
+    request: Request = None,
 ) -> User:
     """
     Valida el token JWT recibido y devuelve la entidad User correspondiente.
@@ -59,6 +60,14 @@ def get_current_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Usuario no encontrado",
         )
+
+    if user.must_change_password and request is not None:
+        allowed_paths = {"/api/auth/change-password", "/api/auth/me"}
+        if request.url.path not in allowed_paths:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Cambio de contraseña requerido",
+            )
 
     return user
 
