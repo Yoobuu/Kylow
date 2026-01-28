@@ -25,6 +25,23 @@
   }
 }
 
+@layer components {
+  /* Fix para layout de tabla de hosts en producción */
+  .host-table-grid {
+    @apply grid gap-x-3 items-center;
+    grid-template-columns: 
+      minmax(180px,2fr) 
+      minmax(140px,1.3fr) 
+      minmax(120px,1fr) 
+      minmax(120px,1fr) 
+      minmax(120px,1fr) 
+      minmax(120px,1fr) 
+      minmax(120px,1fr) 
+      minmax(120px,1fr) 
+      minmax(180px,1.3fr) 
+      minmax(80px,0.7fr);
+  }
+}
 
 /* Centrado absoluto */
 .center-screen {

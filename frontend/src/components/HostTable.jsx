@@ -42,8 +42,7 @@ const hostSummaryBuilder = (items) => {
   return { total, clusters, connected, disconnected, avgCpu, avgRam, avgDs, avgCpuFree, avgRamFree, healthCount }
 }
 
-const HOST_GRID_COLS =
-  'grid grid-cols-[minmax(180px,2fr)_minmax(140px,1.3fr)_minmax(120px,1fr)_minmax(120px,1fr)_minmax(120px,1fr)_minmax(120px,1fr)_minmax(120px,1fr)_minmax(120px,1fr)_minmax(180px,1.3fr)_minmax(80px,0.7fr)] gap-x-3 items-center'
+const HOST_GRID_COLS = 'host-table-grid'
 
 const Badge = ({ children, tone = 'border-[#D6C7B8] text-[#231F20] bg-[#FAF3E9]' }) => (
   <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold ${tone}`}>
