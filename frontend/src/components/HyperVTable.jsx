@@ -254,11 +254,11 @@ export default function HyperVTable({
   }
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-white min-h-screen">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">{title}</h2>
-          <div className="h-1 w-32 bg-[#5da345] rounded-full"></div>
+          <h2 className="text-3xl font-bold text-[#231F20] mb-2">{title}</h2>
+          <div className="h-1 w-32 bg-[#E11B22] rounded-full"></div>
         </div>
         <div className="flex flex-col items-end gap-2">
           <div className="flex items-center gap-2">
@@ -285,18 +285,18 @@ export default function HyperVTable({
             <button
               onClick={handleExport}
               disabled={!processed.length}
-              className="bg-[#5da345] text-white font-medium py-2 px-4 rounded-lg shadow hover:bg-[#4c8c38] transition disabled:opacity-60 disabled:cursor-not-allowed"
+              className="bg-[#E11B22] text-white font-medium py-2 px-4 rounded-lg shadow hover:bg-[#c9161c] transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {exportLabel}
             </button>
           </div>
           {refreshing && (
-            <div className="text-xs text-blue-600 animate-pulse text-right">
+            <div className="text-xs text-[#E11B22] animate-pulse text-right">
               Actualizando&hellip;
             </div>
           )}
           {refreshNotice && (
-            <div className="text-[11px] text-amber-700 text-right">
+            <div className="text-[11px] text-[#7A5E00] text-right">
               {refreshNotice}
             </div>
           )}
@@ -323,7 +323,7 @@ export default function HyperVTable({
           placeholder={searchPlaceholder}
           value={globalSearch}
           onChange={handleSearchChange}
-          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5da345] focus:outline-none"
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E11B22]/40 focus:outline-none"
         />
       </div>
 

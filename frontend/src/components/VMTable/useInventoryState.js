@@ -269,10 +269,11 @@ export function useInventoryState(options = {}) {
             }
 
             const enriched = (
-              providerKey === 'hyperv'
+              providerKey === 'hyperv' || providerKey === 'hyperv-hosts'
                 ? {
                     ...record,
                     environment: inferEnvironmentForHyperV(record),
+                    cluster: record.cluster || classifyFromString(record.name) || 'Sin Cluster'
                   }
                 : record
             )

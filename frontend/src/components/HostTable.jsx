@@ -558,7 +558,7 @@ export default function HostTable({
             className="text-xs text-usfq-gray"
             title="Las VMs apagadas no tienen host.id, por eso no se incluyen aquí."
           >
-            En oVirt, este conteo muestra solo VMs en ejecución (las apagadas no se asignan a un host).
+            En KVM, este conteo muestra solo VMs en ejecución (las apagadas no se asignan a un host).
           </div>
         )}
 

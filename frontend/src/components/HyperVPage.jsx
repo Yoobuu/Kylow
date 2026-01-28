@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import { IoAlertCircleSharp } from 'react-icons/io5'
 import api from '../api/axios'
 import { normalizeHyperV } from '../lib/normalize'
 import { exportInventoryXlsx } from '../lib/exportXlsx'
@@ -17,12 +18,12 @@ const HOST_STATE_LABELS = {
   pending: 'pendiente',
 }
 const HOST_STATE_STYLES = {
-  ok: 'border-emerald-200 bg-emerald-100 text-emerald-900',
-  error: 'border-red-200 bg-red-100 text-red-900',
-  timeout_host: 'border-red-200 bg-red-100 text-red-900',
-  stale_snapshot: 'border-amber-200 bg-amber-100 text-amber-900',
-  skipped_cooldown: 'border-amber-200 bg-amber-100 text-amber-900',
-  pending: 'border-amber-200 bg-amber-100 text-amber-900',
+  ok: 'border-[#B7E0C1] bg-[#E6F4EA] text-[#1B5E20]',
+  error: 'border-[#F5B5B5] bg-[#FDE2E2] text-[#8B0000]',
+  timeout_host: 'border-[#F5B5B5] bg-[#FDE2E2] text-[#8B0000]',
+  stale_snapshot: 'border-[#FFE3A3] bg-[#FFF3CD] text-[#7A5E00]',
+  skipped_cooldown: 'border-[#FFE3A3] bg-[#FFF3CD] text-[#7A5E00]',
+  pending: 'border-[#D6C7B8] bg-[#FAF3E9] text-[#6b6b6b]',
 }
 const NOTICE_STYLES = {
   warning: 'border-amber-300 bg-amber-50 text-amber-900',
@@ -478,31 +479,48 @@ export default function HyperVPage() {
       hasHostIssues && isCooldownNotice ? 'Cooldown activo' : subtitle
 
     return (
-      <div className={`mb-3 rounded-md border px-3 py-2 text-sm ${baseStyle}`}>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="font-semibold">{resolvedTitle}</span>
-          {resolvedSubtitle && <span className="text-xs opacity-90">{resolvedSubtitle}</span>}
+      <div className="mb-6 flex items-start gap-4 rounded-2xl border border-[#E1D6C8] bg-white p-4 shadow-sm transition-all hover:shadow-md">
+        <div className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+          kind === 'error' ? 'bg-[#FDE2E2] text-[#E11B22]' : 
+          kind === 'warning' ? 'bg-[#FFF3CD] text-[#7A5E00]' : 
+          'bg-[#FAF3E9] text-[#E11B22]'
+        }`}>
+          <IoAlertCircleSharp className="text-2xl" />
         </div>
-        {extra && <div className="mt-1 text-xs">{extra}</div>}
-        {textDetails.length > 0 && (
-          <div className="mt-1 space-y-0.5 text-xs">
-            {textDetails.map((text) => (
-              <div key={text}>{text}</div>
-            ))}
-          </div>
-        )}
-        {hostChips.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1 text-xs">
-            {hostChips.map((item) => (
-              <span
-                key={item.key}
-                className={`rounded border px-2 py-0.5 ${item.className}`}
-              >
-                {item.label}
+        
+        <div className="flex-1 space-y-1">
+          <div className="flex items-center gap-2">
+            <h4 className="font-bold text-[#231F20]">{resolvedTitle}</h4>
+            {resolvedSubtitle && (
+              <span className="rounded-full bg-[#FAF3E9] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#6b6b6b] border border-[#E1D6C8]">
+                {resolvedSubtitle}
               </span>
-            ))}
+            )}
           </div>
-        )}
+
+          {extra && <div className="text-xs text-[#6b6b6b] italic">{extra}</div>}
+          
+          {textDetails.length > 0 && (
+            <div className="space-y-0.5 text-xs text-[#3b3b3b]">
+              {textDetails.map((text) => (
+                <div key={text}>{text}</div>
+              ))}
+            </div>
+          )}
+
+          {hostChips.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {hostChips.map((item) => (
+                <span
+                  key={item.key}
+                  className={`rounded-lg border px-2 py-0.5 text-[11px] font-semibold transition-colors ${item.className}`}
+                >
+                  {item.label}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     )
   }, [banner, status, tableError, snapshotMeta])

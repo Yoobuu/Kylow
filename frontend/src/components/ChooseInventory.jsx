@@ -1,15 +1,16 @@
 import { useNavigate } from "react-router-dom";
-import { FaCloud, FaCubes, FaMicrosoft, FaServer, FaWindows } from "react-icons/fa";
+import { motion } from "framer-motion";
+import { FaCloud, FaCubes, FaMicrosoft, FaServer, FaWindows, FaArrowRight } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 
 const ENVIRONMENTS = [
   {
     key: "esxi",
     title: "ESXi / vCenter",
-    desc: "Inventario VMware clásico.",
-    tone: "from-[#FAF3E9] via-white to-[#FAF3E9]",
+    desc: "Infraestructura virtual centralizada.",
     icon: FaServer,
-    accent: "#E11B22",
+    accent: "text-[#E11B22]", // USFQ Red
+    bgHover: "group-hover:bg-[#E11B22]/5",
     actions: [
       { label: "Ver VMs", to: "/vmware?view=vms", permission: "vms.view" },
       { label: "Ver Hosts", to: "/vmware?view=hosts", permission: "vms.view" },
@@ -17,11 +18,11 @@ const ENVIRONMENTS = [
   },
   {
     key: "hyperv",
-    title: "Microsoft Hyper-V",
-    desc: "Inventario y estado de Hyper-V.",
-    tone: "from-[#FAF3E9] via-white to-[#FAF3E9]",
+    title: "Hyper-V",
+    desc: "Virtualización Microsoft en sitio.",
     icon: FaWindows,
-    accent: "#1F4E8C",
+    accent: "text-[#1F4E8C]", // Blue
+    bgHover: "group-hover:bg-[#1F4E8C]/5",
     actions: [
       { label: "Ver VMs", to: "/hyperv?view=vms", permission: "hyperv.view" },
       { label: "Ver Hosts", to: "/hyperv?view=hosts", permission: "hyperv.view" },
@@ -29,11 +30,11 @@ const ENVIRONMENTS = [
   },
   {
     key: "kvm",
-    title: "KVM / Libvirt",
-    desc: "Inventario KVM (piloto).",
-    tone: "from-[#FAF3E9] via-white to-[#FAF3E9]",
+    title: "KVM",
+    desc: "Infraestructura de virtualización KVM.",
     icon: FaCubes,
-    accent: "#1B5E20",
+    accent: "text-[#1B5E20]", // Green
+    bgHover: "group-hover:bg-[#1B5E20]/5",
     actions: [
       { label: "Ver VMs", to: "/kvm?view=vms", permission: "vms.view" },
       { label: "Ver Hosts", to: "/kvm?view=hosts", permission: "vms.view" },
@@ -42,22 +43,37 @@ const ENVIRONMENTS = [
   {
     key: "cedia",
     title: "CEDIA Cloud",
-    desc: "Inventario de VMs en CEDIA (vCloud).",
-    tone: "from-[#FAF3E9] via-white to-[#FAF3E9]",
+    desc: "Recursos externos vCloud Director.",
     icon: FaCloud,
-    accent: "#7A5E00",
-    actions: [{ label: "Ver VMs", to: "/cedia", permission: "cedia.view" }],
+    accent: "text-[#7A5E00]", // Gold/Dark Yellow
+    bgHover: "group-hover:bg-[#7A5E00]/5",
+    actions: [{ label: "Explorar", to: "/cedia", permission: "cedia.view" }],
   },
   {
     key: "azure",
-    title: "Microsoft Azure",
-    desc: "Inventario de VMs en Azure (ARM).",
-    tone: "from-[#FAF3E9] via-white to-[#FAF3E9]",
+    title: "Azure",
+    desc: "Nube pública Microsoft.",
     icon: FaMicrosoft,
-    accent: "#0B3D91",
-    actions: [{ label: "Ver VMs", to: "/azure", permission: "azure.view" }],
+    accent: "text-[#0078D4]", // Azure Blue
+    bgHover: "group-hover:bg-[#0078D4]/5",
+    actions: [{ label: "Explorar", to: "/azure", permission: "azure.view" }],
   },
 ];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+};
 
 export default function ChooseInventory() {
   const navigate = useNavigate();
@@ -68,110 +84,97 @@ export default function ChooseInventory() {
     return { ...env, actions: allowed };
   }).filter((env) => env.actions.length > 0);
 
-  const handleCardClick = (env) => {
-    const primary = env.actions[0];
-    if (primary) {
-      navigate(primary.to);
-    }
-  };
-
-  const handleCardKeyDown = (env) => (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      handleCardClick(env);
-    }
+  const handleAction = (event, to) => {
+    event.stopPropagation();
+    navigate(to);
   };
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-white text-[#231F20]">
-      {/* Fondo de cuadrícula sutil */}
-      <div className="pointer-events-none fixed inset-0 opacity-[0.06]" aria-hidden>
-        <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
-              <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#231F20" strokeWidth="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div>
+    <div className="min-h-screen w-full bg-[#FAF3E9] text-[#231F20] font-usfqBody">
+      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-6 py-12 lg:px-8">
+        {/* Header Section */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-12 text-center"
+          data-tutorial-id="choose-title"
+        >
+          <div className="mx-auto mb-6 h-1 w-24 rounded-full bg-[#E11B22]" />
+          <h1 className="font-usfqTitle text-4xl font-bold tracking-tight text-[#E11B22] sm:text-5xl lg:text-6xl">
+            Inventario Centralizado
+          </h1>
+          <p className="mt-4 text-lg text-[#3b3b3b] sm:text-xl">
+            Selecciona una plataforma para gestionar tus recursos virtuales.
+          </p>
+        </motion.div>
 
-      <div className="relative flex min-h-screen items-start justify-center px-4 pt-10 pb-6">
-        <div className="mx-auto flex h-full w-full max-w-7xl flex-col justify-center">
-          <div className="mb-10 text-center space-y-2" data-tutorial-id="choose-title">
-            <h1 className="text-[clamp(1.6rem,2.6vw,2.8rem)] font-usfqTitle font-semibold text-[#E11B22]">
-              Selecciona el inventario
-            </h1>
-            <p className="text-[clamp(0.75rem,1vw,0.95rem)] font-usfqBody text-[#3b3b3b]">
-              Elige la plataforma para continuar con el inventario de VMs y hosts.
+        {/* Cards Grid */}
+        {visibleEnvs.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="rounded-2xl border border-[#E1D6C8] bg-white p-8 text-center shadow-lg"
+          >
+            <p className="text-lg text-[#3b3b3b]">
+              No tienes permisos para visualizar ningún inventario.
+              <br />
+              <span className="text-sm opacity-80">Contacta al administrador del sistema.</span>
             </p>
-          </div>
-
-          {visibleEnvs.length === 0 ? (
-            <div className="rounded-3xl border border-[#E1D6C8] bg-[#FAF3E9] p-6 text-center text-sm text-[#3b3b3b] shadow-xl">
-              No tienes permisos para ver inventarios. Solicita acceso a un administrador.
-            </div>
-          ) : (
-            <>
-              <div
-                className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5"
-                data-tutorial-id="choose-grid"
+          </motion.div>
+        ) : (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+            data-tutorial-id="choose-grid"
+          >
+            {visibleEnvs.map((env) => (
+              <motion.div
+                key={env.key}
+                variants={cardVariants}
+                className={`group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-[#E1D6C8] bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#E11B22]/30 hover:shadow-xl ${env.bgHover}`}
+                onClick={() => navigate(env.actions[0]?.to)}
+                role="button"
+                tabIndex={0}
+                data-tutorial-id={`choose-card-${env.key}`}
               >
-                {visibleEnvs.map((env) => (
-                  <div
-                    key={env.key}
-                    data-tutorial-id={`choose-card-${env.key}`}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => handleCardClick(env)}
-                    onKeyDown={handleCardKeyDown(env)}
-                    className="group relative overflow-hidden rounded-2xl border border-[#E1D6C8] bg-white p-[clamp(0.8rem,1.2vw,1.25rem)] text-left shadow-md transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E11B22]/40 hover:[transform:translateY(-4px)_rotate(0.4deg)] hover:border-[#E11B22]/40 hover:shadow-xl"
-                  >
-                    <div className={`absolute inset-0 opacity-70 blur-2xl bg-gradient-to-r ${env.tone}`} aria-hidden />
-                    <div className="relative flex h-full flex-col gap-4">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="flex h-[clamp(2.5rem,4vw,3.5rem)] w-[clamp(2.5rem,4vw,3.5rem)] items-center justify-center rounded-2xl bg-[#FAF3E9] ring-2 ring-[#E1D6C8]"
-                          style={{ color: env.accent }}
-                        >
-                          {env.icon ? <env.icon className="text-[clamp(1.4rem,2.2vw,2rem)]" /> : null}
-                        </div>
-                        <div>
-                          <h2 className="text-[clamp(0.95rem,1.4vw,1.2rem)] font-semibold text-[#E11B22]">
-                            {env.title}
-                          </h2>
-                          <p className="text-[clamp(0.7rem,1vw,0.9rem)] text-[#3b3b3b]">{env.desc}</p>
-                        </div>
-                      </div>
-                    <div
-                      className="flex flex-wrap gap-2 transition-all md:opacity-0 md:translate-y-1 md:pointer-events-none md:group-hover:opacity-100 md:group-hover:translate-y-0 md:group-hover:pointer-events-auto"
-                      data-tutorial-id={`choose-actions-${env.key}`}
-                    >
-                      {env.actions.map((action) => (
-                        <button
-                          key={action.to}
-                          type="button"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            navigate(action.to);
-                          }}
-                          className="rounded-xl border border-[#D6C7B8] bg-white px-[clamp(0.6rem,1vw,0.9rem)] py-[clamp(0.3rem,0.6vw,0.5rem)] text-[clamp(0.7rem,0.95vw,0.9rem)] font-semibold text-[#E11B22] transition hover:border-[#E11B22] hover:bg-[#FAF3E9]"
-                        >
-                          {action.label}
-                        </button>
-                      ))}
+                <div>
+                  <div className="mb-4 flex items-center justify-between">
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FAF3E9] text-2xl ${env.accent}`}>
+                      <env.icon />
                     </div>
+                    <div className="opacity-0 transition-opacity group-hover:opacity-100">
+                      <FaArrowRight className={`text-sm ${env.accent}`} />
                     </div>
                   </div>
-                ))}
-              </div>
-              <div className="mt-6 rounded-2xl border border-[#E1D6C8] bg-[#FAF3E9] px-4 py-3 text-center text-[clamp(0.7rem,0.95vw,0.9rem)] text-[#3b3b3b]">
-                Plataformas disponibles: <span className="font-semibold text-[#231F20]">{visibleEnvs.length}</span> ·
-                Acceso basado en permisos del usuario.
-              </div>
-            </>
-          )}
-        </div>
+                  <h3 className="mb-2 text-xl font-bold text-[#231F20] group-hover:text-[#E11B22] transition-colors">
+                    {env.title}
+                  </h3>
+                  <p className="text-sm text-[#6b6b6b] leading-relaxed">
+                    {env.desc}
+                  </p>
+                </div>
+
+                <div 
+                  className="mt-6 flex flex-wrap gap-2"
+                  data-tutorial-id={`choose-actions-${env.key}`}
+                >
+                  {env.actions.map((action) => (
+                    <button
+                      key={action.to}
+                      onClick={(e) => handleAction(e, action.to)}
+                      className="z-10 rounded-lg border border-[#D6C7B8] bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-[#231F20] transition-colors hover:border-[#E11B22] hover:bg-[#E11B22] hover:text-white"
+                    >
+                      {action.label}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
       </div>
     </div>
   );

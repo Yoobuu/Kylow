@@ -19,7 +19,7 @@ export default function HyperVInventoryPage() {
       : "text-neutral-700 hover:text-neutral-900";
 
   return (
-    <div className="relative min-h-screen w-full bg-black m-0 p-0">
+    <div className="relative min-h-screen w-full bg-white m-0 p-0">
       <div className="fixed right-6 top-20 z-40 rounded-full border border-neutral-200 bg-white/90 p-1 text-xs shadow backdrop-blur">
         <button
           type="button"

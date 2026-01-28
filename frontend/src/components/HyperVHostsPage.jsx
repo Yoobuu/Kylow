@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
-import { IoServerSharp, IoSwapHorizontalSharp } from 'react-icons/io5'
+import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react'
+import { IoServerSharp, IoSwapHorizontalSharp, IoAlertCircleSharp } from 'react-icons/io5'
 import { getHypervHosts, getHypervSnapshot, postHypervRefresh, getHypervConfig } from '../api/hypervHosts'
 import { normalizeHypervHostSummary } from '../lib/normalizeHypervHost'
 import { useInventoryState } from './VMTable/useInventoryState'
@@ -15,6 +15,15 @@ const cardColors = [
   'from-[#FAF3E9] to-[#FAF3E9]',
   'from-[#FAF3E9] to-[#FAF3E9]',
 ]
+
+const inferCluster = (name) => {
+  if (!name) return 'Otros'
+  const first = name.toLowerCase()[0]
+  if (first === 'p') return 'Producción'
+  if (first === 't') return 'Test'
+  if (first === 's') return 'Sandbox'
+  return 'Otros'
+}
 
 const hostFetcherFactory = ({ hostsState, snapshotState, bannerState, discoverHosts, setStatus, setSnapshotGeneratedAt, setSnapshotSource, setSnapshotStale, setSnapshotStaleReason, isSuperadmin, useLegacyRef, initialRefreshRef, setJobId, setPolling }) => {
   return async ({ refresh } = {}) => {
@@ -205,7 +214,7 @@ export default function HyperVHostsPage() {
   const initialRefreshRef = useRef(false)
   const useLegacyRef = useRef(false)
 
-const discoverHosts = useCallback(async () => {
+  const discoverHosts = useCallback(async () => {
     if (hostsRef.current.length) return hostsRef.current
     try {
       setStatus({ kind: 'info', text: 'Descubriendo hosts (config)...' })
@@ -276,6 +285,7 @@ const discoverHosts = useCallback(async () => {
       setPolling,
     }),
     normalizeRecord: normalizeHypervHostSummary,
+    groupersKey: 'hosts',
     summaryBuilder: hostSummaryBuilder,
     initialGroup: 'cluster',
     cacheTtlMs: 5 * 60 * 1000,
@@ -311,37 +321,48 @@ const discoverHosts = useCallback(async () => {
   const hasGroups = entries.length > 0
   const fallbackRows = !hasGroups && hosts.length > 0 ? hosts : null
   const statusNode = status ? (
-    <div className={`mb-2 rounded-lg border px-3 py-1 text-xs ${
-      status.kind === 'warning'
-        ? 'border-[#FFE3A3] bg-[#FFF3CD] text-[#7A5E00]'
-        : status.kind === 'error'
-          ? 'border-[#F5B5B5] bg-[#FDE2E2] text-[#8B0000]'
-          : status.kind === 'success'
-            ? 'border-[#B7E0C1] bg-[#E6F4EA] text-[#1B5E20]'
-            : 'border-[#D6C7B8] bg-[#FAF3E9] text-[#231F20]'
+    <div className={`mb-4 flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider shadow-sm w-fit ${
+      status.kind === 'warning' ? 'border-[#FFE3A3] bg-[#FFF3CD] text-[#7A5E00]' :
+      status.kind === 'error' ? 'border-[#F5B5B5] bg-[#FDE2E2] text-[#8B0000]' :
+      status.kind === 'success' ? 'border-[#B7E0C1] bg-[#E6F4EA] text-[#1B5E20]' :
+      'border-[#D6C7B8] bg-[#FAF3E9] text-[#231F20]'
     }`}>
+      <span className={`h-2 w-2 rounded-full ${
+        status.kind === 'warning' ? 'bg-[#7A5E00]' :
+        status.kind === 'error' ? 'bg-[#E11B22]' :
+        status.kind === 'success' ? 'bg-[#1B5E20]' :
+        'bg-[#E11B22]'
+      } ${status.kind === 'info' || status.text.includes('Cargando') ? 'animate-pulse' : ''}`} />
       {status.text}
     </div>
   ) : null
   const bannerNode = useMemo(() => {
-    const bannerToUse = banner || bannerRef.current
-    if (!bannerToUse) return null
+    const b = banner || bannerRef.current
+    if (!b) return null
+    const isError = b.kind === 'error'
+    const isWarning = b.kind === 'warning'
+
     return (
-      <div className={`mb-4 rounded-lg border px-3 py-2 text-sm ${
-        bannerToUse.kind === 'warning'
-          ? 'border-[#FFE3A3] bg-[#FFF3CD] text-[#7A5E00]'
-          : bannerToUse.kind === 'error'
-            ? 'border-[#F5B5B5] bg-[#FDE2E2] text-[#8B0000]'
-            : 'border-[#D6C7B8] bg-[#FAF3E9] text-[#231F20]'
-      }`}>
-        <div className="font-semibold">{bannerToUse.title}</div>
-        {bannerToUse.details && bannerToUse.details.length > 0 && (
-          <ul className="list-disc pl-5">
-            {bannerToUse.details.map((d) => (
-              <li key={d}>{d}</li>
-            ))}
-          </ul>
-        )}
+      <div className="mb-6 flex items-start gap-4 rounded-2xl border border-[#E1D6C8] bg-white p-4 shadow-sm transition-all hover:shadow-md">
+        <div className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+          isError ? 'bg-[#FDE2E2] text-[#E11B22]' : 
+          isWarning ? 'bg-[#FFF3CD] text-[#7A5E00]' : 
+          'bg-[#FAF3E9] text-[#E11B22]'
+        }`}>
+          <IoAlertCircleSharp className="text-2xl" />
+        </div>
+        
+        <div className="flex-1 space-y-1">
+          <h4 className="font-bold text-[#231F20]">{b.title}</h4>
+          
+          {b.details && b.details.length > 0 && (
+            <div className="space-y-0.5 text-xs text-[#3b3b3b]">
+              {b.details.map((d) => (
+                <div key={d}>{d}</div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     )
   }, [banner])
@@ -478,6 +499,15 @@ const discoverHosts = useCallback(async () => {
   const renderPct = (val) => {
     if (val == null || Number.isNaN(val)) return '—'
     return `${val}%`
+  }
+
+  const inferCluster = (name) => {
+    if (!name) return 'Otros'
+    const first = name.toLowerCase()[0]
+    if (first === 'p') return 'Producción'
+    if (first === 't') return 'Test'
+    if (first === 's') return 'Sandbox'
+    return 'Otros'
   }
 
   const Modal = ({ host, onClose }) => {
@@ -680,51 +710,52 @@ const discoverHosts = useCallback(async () => {
             <tbody className="divide-y divide-[#E1D6C8] text-sm text-[#231F20]">
               {hasGroups &&
                 entries.map(([group, rows]) => (
-                  <tr key={group} className="bg-[#FAF3E9] text-[#E11B22]">
-                    <td colSpan={tableHeader.length} className="px-4 py-2">
-                      <button
-                        onClick={() => toggleGroup(group)}
-                        className="flex w-full items-center justify-between text-left text-[#E11B22]"
-                      >
-                        <span className="font-semibold">{group || 'Sin grupo'}</span>
-                        <span className="text-xs text-[#E11B22]/70">
-                          {rows.length} hosts · {rows.reduce((acc, r) => acc + (r.total_vms || 0), 0)} VMs
-                        </span>
-                      </button>
-                      {!rows.length && <div className="text-[#E11B22]/70 text-sm mt-2">Sin datos</div>}
-                      {rows.length > 0 &&
-                        rows.map((host) => (
-                          <div
-                            key={host.id}
-                            className="mt-2 rounded-lg border border-[#E1D6C8] bg-[#FAF3E9] p-3 transition hover:border-usfq-red/40 hover:shadow-lg text-[#231F20]"
-                            onClick={() => setSelected(host)}
-                          >
-                            <div className="flex flex-wrap items-center gap-3">
-                              <div className="flex-1">
-                                <div className="text-sm font-semibold text-[#231F20]">{host.name}</div>
-                                <div className="text-xs text-[#3b3b3b]">{host.cluster || '—'}</div>
-                              </div>
-                              <span className="rounded-md border border-[#D6C7B8] bg-white px-2 py-0.5 text-xs text-[#231F20]">
-                                {host.version || '—'}
-                              </span>
-                              <span className="text-xs text-[#3b3b3b]">CPU: {host.logical_processors ?? '—'}</span>
-                              <span className="text-xs text-[#3b3b3b]">RAM: {host.memory_capacity_gb ?? '—'} GB</span>
-                              <span className="text-xs text-[#3b3b3b]">Switches: {host.switch_count}</span>
-                              {renderBool(host.vmm_migration_enabled)}
-                              <div className="text-sm font-semibold text-usfq-red">{host.total_vms} VMs</div>
-                            </div>
-                          </div>
-                        ))}
-                    </td>
-                  </tr>
+                  <React.Fragment key={group}>
+                    <tr className="bg-[#FAF3E9] text-[#E11B22]">
+                      <td colSpan={tableHeader.length} className="px-4 py-2">
+                        <button
+                          onClick={() => toggleGroup(group)}
+                          className="flex w-full items-center justify-between text-left text-[#E11B22]"
+                        >
+                          <span className="font-semibold">{group || 'Sin grupo'}</span>
+                          <span className="text-xs text-[#E11B22]/70">
+                            {rows.length} hosts · {rows.reduce((acc, r) => acc + (r.total_vms || 0), 0)} VMs
+                          </span>
+                        </button>
+                      </td>
+                    </tr>
+                    {rows.length > 0 &&
+                      rows.map((host) => (
+                        <tr 
+                          key={host.id} 
+                          className="odd:bg-white even:bg-[#FAF3E9] hover:bg-[#FAF3E9] cursor-pointer"
+                          onClick={() => setSelected(host)}
+                        >
+                          <td className="px-4 py-3 font-semibold text-[#231F20]">{host.name}</td>
+                          <td className="px-4 py-3 text-[#3b3b3b]">{host.cluster || inferCluster(host.name)}</td>
+                          <td className="px-4 py-3 text-[#3b3b3b]">{host.version}</td>
+                          <td className="px-4 py-3 text-[#3b3b3b]">{host.logical_processors ?? '—'}</td>
+                          <td className="px-4 py-3 text-[#3b3b3b]">{host.memory_capacity_gb ?? '—'}</td>
+                          <td className="px-4 py-3 text-[#3b3b3b]">{renderPct(host.cpu_usage_pct)}</td>
+                          <td className="px-4 py-3 text-[#3b3b3b]">{renderPct(host.memory_usage_pct)}</td>
+                          <td className="px-4 py-3 text-[#3b3b3b]">{host.switch_count}</td>
+                          <td className="px-4 py-3">{renderBool(host.vmm_migration_enabled)}</td>
+                          <td className="px-4 py-3 text-usfq-red font-semibold">{host.total_vms}</td>
+                        </tr>
+                      ))}
+                  </React.Fragment>
                 ))}
 
               {!hasGroups &&
                 fallbackRows &&
                 fallbackRows.map((host) => (
-                  <tr key={host.id} className="odd:bg-white even:bg-[#FAF3E9] hover:bg-[#FAF3E9] cursor-pointer" onClick={() => setSelected(host)}>
+                  <tr 
+                    key={host.id} 
+                    className="odd:bg-white even:bg-[#FAF3E9] hover:bg-[#FAF3E9] cursor-pointer" 
+                    onClick={() => setSelected(host)}
+                  >
                     <td className="px-4 py-3 font-semibold text-[#231F20]">{host.name}</td>
-                    <td className="px-4 py-3 text-[#3b3b3b]">{host.cluster}</td>
+                    <td className="px-4 py-3 text-[#3b3b3b]">{host.cluster || inferCluster(host.name)}</td>
                     <td className="px-4 py-3 text-[#3b3b3b]">{host.version}</td>
                     <td className="px-4 py-3 text-[#3b3b3b]">{host.logical_processors ?? '—'}</td>
                     <td className="px-4 py-3 text-[#3b3b3b]">{host.memory_capacity_gb ?? '—'}</td>

@@ -304,9 +304,9 @@ export default function SystemPage() {
                 </label>
                 <label className="flex items-start justify-between gap-4 text-sm">
                   <div className="max-w-md">
-                    <span className="font-medium text-[#231F20]">oVirt / KVM habilitado</span>
+                    <span className="font-medium text-[#231F20]">KVM habilitado</span>
                     <p className="mt-1 text-xs text-[#6b6b6b]">
-                      Permite jobs y refresh de oVirt (requiere credenciales configuradas).
+                      Permite jobs y refresh de KVM (requiere credenciales configuradas).
                     </p>
                   </div>
                   <input
@@ -372,13 +372,13 @@ export default function SystemPage() {
                   ],
                   [
                     "ovirt_refresh_interval_minutes",
-                    "oVirt VMs refresh",
-                    "Intervalo entre refresh automaticos de oVirt VMs (min 10).",
+                    "KVM VMs refresh",
+                    "Intervalo entre refresh automaticos de KVM VMs (min 10).",
                   ],
                   [
                     "ovirt_hosts_refresh_interval_minutes",
-                    "oVirt Hosts refresh",
-                    "Intervalo entre refresh automaticos de oVirt Hosts (min 10).",
+                    "KVM Hosts refresh",
+                    "Intervalo entre refresh automaticos de KVM Hosts (min 10).",
                   ],
                   [
                     "cedia_refresh_interval_minutes",
@@ -415,7 +415,7 @@ export default function SystemPage() {
                 {"ovirt_host_vm_count_mode" in settings && (
                   <label className="flex items-start justify-between gap-4 text-sm">
                     <div className="max-w-md">
-                      <span className="font-medium text-[#231F20]">oVirt conteo de VMs por host</span>
+                      <span className="font-medium text-[#231F20]">KVM conteo de VMs por host</span>
                       <p className="mt-1 text-xs text-[#6b6b6b]">
                         runtime = solo VMs con host asignado; cluster = contar por cluster.
                       </p>

@@ -18,6 +18,18 @@ const getInitials = (value) => {
   return `${first}${second}`.toUpperCase();
 };
 
+const safeError = (err, defaultMsg) => {
+  const detail = err?.response?.data?.detail;
+  if (typeof detail === "string") return detail;
+  if (typeof detail === "object" && detail !== null) {
+    if (detail.messages && Array.isArray(detail.messages)) {
+      return detail.messages.join(" ");
+    }
+    return JSON.stringify(detail);
+  }
+  return err?.message || defaultMsg;
+};
+
 function Toast({ toast, onClose }) {
   if (!toast) return null;
   const tone =
@@ -116,8 +128,7 @@ export default function UserAdminPage() {
         setUsers(payload);
       })
       .catch((err) => {
-        const detail = err?.response?.data?.detail || err?.message || "No se pudo cargar la lista de usuarios.";
-        setError(detail);
+        setError(safeError(err, "No se pudo cargar la lista de usuarios."));
       })
       .finally(() => setLoading(false));
   }, [canManageUsers]);
@@ -202,8 +213,7 @@ export default function UserAdminPage() {
         setPermissionCatalog(Array.isArray(data) ? data : []);
       }
     } catch (err) {
-      const detail = err?.response?.data?.detail || err?.message || "No se pudo cargar el catálogo de permisos.";
-      setPermissionsError(detail);
+      setPermissionsError(safeError(err, "No se pudo cargar el catálogo de permisos."));
       throw err;
     }
     try {
@@ -254,10 +264,10 @@ export default function UserAdminPage() {
       closeModal();
       fetchUsers();
     } catch (err) {
-      const detail = err?.response?.data?.detail || err?.message || "No se pudo crear el usuario.";
-      showToast(detail, "error");
+      const msg = safeError(err, "No se pudo crear el usuario.");
+      showToast(msg, "error");
       setSubmitting(false);
-      setFormError(detail);
+      setFormError(msg);
     }
   };
 
@@ -278,8 +288,7 @@ export default function UserAdminPage() {
       }
       setPermissionsState({ loading: false, overridesDraft: draft, summary: data });
     } catch (err) {
-      const detail = err?.response?.data?.detail || err?.message || "No se pudieron cargar los permisos del usuario.";
-      setPermissionsError(detail);
+      setPermissionsError(safeError(err, "No se pudieron cargar los permisos del usuario."));
       setPermissionsState((prev) => ({ ...prev, loading: false }));
     }
   };
@@ -343,8 +352,7 @@ export default function UserAdminPage() {
       const fullCount = await computeFullAccessUsers();
       setFullAccessUsers(fullCount);
     } catch (err) {
-      const detail = err?.response?.data?.detail || err?.message || "No se pudieron actualizar los permisos.";
-      setPermissionsError(detail);
+      setPermissionsError(safeError(err, "No se pudieron actualizar los permisos."));
     } finally {
       setPermissionsSaving(false);
     }
@@ -365,10 +373,10 @@ export default function UserAdminPage() {
       closeModal();
       fetchUsers();
     } catch (err) {
-      const detail = err?.response?.data?.detail || err?.message || "No se pudo actualizar la contraseña.";
-      showToast(detail, "error");
+      const msg = safeError(err, "No se pudo actualizar la contraseña.");
+      showToast(msg, "error");
       setSubmitting(false);
-      setFormError(detail);
+      setFormError(msg);
     }
   };
 
@@ -400,8 +408,8 @@ export default function UserAdminPage() {
       const fullCount = await computeFullAccessUsers();
       setFullAccessUsers(fullCount);
     } catch (err) {
-      const detail = err?.response?.data?.detail || err?.message || "No se pudo eliminar el usuario.";
-      showToast(detail, "error");
+      const msg = safeError(err, "No se pudo eliminar el usuario.");
+      showToast(msg, "error");
       setSubmitting(false);
     }
   };

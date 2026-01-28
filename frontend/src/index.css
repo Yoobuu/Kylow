@@ -1,48 +1,55 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Saira:wdth,wght@100,400&display=swap');
 @import "./styles/usfq.tokens.css";
 @import "./styles/fonts.css";
-/* src/index.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* src/index.css */
 
-@layer base {
-  html, body, #root {
-    height: 100%;
-  }
-  body {
-    margin: 0;
-    background-color: #000;
-    font-family: "USFQ Body", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  }
-  #root {
-    min-height: 100vh;
-    background-color: #000;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    font-family: "USFQ Title", "University Roman", "Baskerville", "Times New Roman", Times, serif;
-  }
+html, body, #root {
+  height: 100%;
 }
 
-@layer components {
-  /* Fix para layout de tabla de hosts en producción */
-  .host-table-grid {
-    display: grid;
-    column-gap: 0.75rem; /* gap-x-3 */
-    align-items: center;
-    grid-template-columns: 
-      minmax(180px,2fr) 
-      minmax(140px,1.3fr) 
-      minmax(120px,1fr) 
-      minmax(120px,1fr) 
-      minmax(120px,1fr) 
-      minmax(120px,1fr) 
-      minmax(120px,1fr) 
-      minmax(120px,1fr) 
-      minmax(180px,1.3fr) 
-      minmax(80px,0.7fr);
-  }
+body {
+  margin: 0;
+  background-color: #000;
+  font-family: "USFQ Body", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#root {
+  min-height: 100vh;
+  background-color: #000;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "USFQ Title", "University Roman", "Baskerville", "Times New Roman", Times, serif;
+}
+
+/* Fix para layout de tabla de hosts en producción */
+.host-table-grid {
+  display: grid;
+  column-gap: 0.75rem;
+  align-items: center;
+  grid-template-columns: 
+    minmax(180px,2fr) 
+    minmax(140px,1.3fr) 
+    minmax(120px,1fr) 
+    minmax(120px,1fr) 
+    minmax(120px,1fr) 
+    minmax(120px,1fr) 
+    minmax(120px,1fr) 
+    minmax(120px,1fr) 
+    minmax(180px,1.3fr) 
+    minmax(80px,0.7fr);
+}
+
+.font-brand {
+  font-family: "Saira", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
 }
 
 /* Centrado absoluto */

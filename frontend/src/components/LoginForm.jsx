@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMsal } from "@azure/msal-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { FaLinkedin } from "react-icons/fa";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { loginRequest } from "../auth/msalConfig";
 import logoUsfq from "../assets/images/logo-usfq.svg";
 import loginImg from "../assets/images/lowtario-login.jpg";
+import BackgroundAnimation from "./BackgroundAnimation";
 
 /**
  * LoginRedesign.jsx
@@ -27,10 +29,18 @@ export default function LoginRedesign() {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const idleTimeoutRef = useRef(null);
   const msRedirectHandledRef = useRef(false);
+  const [showBrand, setShowBrand] = useState(false);
 
   const navigate = useNavigate();
   const { instance } = useMsal();
   const { applyLoginResponse } = useAuth();
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setShowBrand((prev) => !prev);
+    }, 5000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     const onKey = (e) => setCaps(e.getModifierState && e.getModifierState("CapsLock"));
@@ -187,10 +197,10 @@ export default function LoginRedesign() {
           href="https://www.linkedin.com/in/paulo-cantos-riera-7658a9206/"
           target="_blank"
           rel="noreferrer"
-          className="relative z-10 inline-flex items-center gap-2 text-lg font-semibold text-[#E1E1E1] hover:text-white pointer-events-auto"
+          className="relative z-10 inline-flex items-center gap-2 text-lg font-semibold text-[#E1E1E1] hover:text-white transition-colors"
         >
           Realizado por Paulo Cantos
-          <FaLinkedin className="text-lg text-usfq-red" />
+          <FaLinkedin className="text-xl" />
         </a>
       ),
     },
@@ -205,22 +215,54 @@ export default function LoginRedesign() {
     {
       key: "brand",
       content: (
-        <div className="text-lg font-semibold uppercase tracking-[0.2em] text-[#E1E1E1]">
-          lowtario
+        <div className="font-brand text-2xl font-semibold uppercase tracking-[0.2em] text-[#E1E1E1]">
+          KYLOW
         </div>
       ),
     },
   ];
 
   return (
-    <div className="min-h-screen w-full bg-white">
+    <div className="min-h-screen w-full bg-white font-usfqBody text-[#231F20]">
       <div className="grid min-h-screen w-full lg:grid-cols-2">
-        <div className="flex min-h-screen items-start justify-center bg-white px-6 pt-0 pb-0 text-[#231F20]">
-          <div className="w-full max-w-md space-y-0">
-            <div className="flex justify-center -mt-6 -mb-16">
-              <img src={logoUsfq} alt="USFQ" className="h-80 w-auto" />
+        {/* COLUMNA IZQUIERDA: FORMULARIO + ANIMACIÓN DE FONDO */}
+        <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-white px-6">
+          <BackgroundAnimation />
+          
+          <div className="relative z-10 w-full max-w-md space-y-0">
+            {/* Carrusel Logo / Texto animado */}
+            <div className="flex h-80 items-center justify-center -mt-20 -mb-16">
+              <AnimatePresence mode="wait">
+                {!showBrand ? (
+                  <motion.img
+                    key="logo"
+                    src={logoUsfq}
+                    alt="USFQ"
+                    className="h-80 w-auto object-contain"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.5 }}
+                  />
+                ) : (
+                  <motion.div
+                    key="text"
+                    className="flex h-80 w-full items-center justify-center"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <span className="font-brand text-[8rem] font-normal leading-none tracking-widest text-[#E11B22]">
+                      KYLOW
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-            <div className="rounded-3xl border border-[#E1D6C8] bg-white p-8 shadow-xl -mt-8">
+
+            {/* Caja del Formulario */}
+            <div className="rounded-3xl border border-[#E1D6C8] bg-white/90 p-8 shadow-xl backdrop-blur-sm -mt-8">
               <div className="space-y-3">
                 <h1 className="text-3xl font-usfqTitle font-semibold text-[#E11B22]">Inicia sesión</h1>
                 <div className="h-1 w-16 rounded-full bg-[#E11B22]" />
@@ -230,92 +272,98 @@ export default function LoginRedesign() {
               </div>
 
               <form onSubmit={handleSubmit} className="mt-6 space-y-4 font-usfqBody">
-              <div>
-                <label className="mb-1 block text-sm text-[#E11B22]">Usuario</label>
-                <input
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  autoComplete="username"
-                  className="w-full rounded-xl border border-usfq-gray/40 bg-white px-4 py-3 text-sm text-usfq-black placeholder:text-usfq-gray/70 outline-none caret-[#E11B22] focus:outline-none focus:ring-0 focus:border-[#E11B22] focus-visible:ring-2 focus-visible:ring-[#E11B22]/40"
-                  placeholder="usuario o dominio\\usuario"
-                  required
-                />
-              </div>
-
-              <div>
-                <div className="mb-1 flex items-center justify-between">
-                  <label className="block text-sm text-[#E11B22]">Contraseña</label>
-                  {caps && <span className="text-xs text-[#7A5E00]">Caps Lock activo</span>}
-                </div>
-                <div className="flex items-center gap-2">
+                <div>
+                  <label className="mb-1 block text-sm text-[#E11B22]">Usuario</label>
                   <input
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    type={showPwd ? "text" : "password"}
-                    autoComplete="current-password"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    autoComplete="username"
                     className="w-full rounded-xl border border-usfq-gray/40 bg-white px-4 py-3 text-sm text-usfq-black placeholder:text-usfq-gray/70 outline-none caret-[#E11B22] focus:outline-none focus:ring-0 focus:border-[#E11B22] focus-visible:ring-2 focus-visible:ring-[#E11B22]/40"
-                    placeholder="••••••••"
+                    placeholder="usuario o dominio\\usuario"
                     required
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPwd((v) => !v)}
-                    className="rounded-xl border border-usfq-gray/40 bg-white px-3 py-3 text-xs text-[#E11B22] hover:bg-[#FAF3E9]"
-                  >
-                    {showPwd ? "Ocultar" : "Mostrar"}
-                  </button>
                 </div>
-              </div>
 
-              <div className="flex items-start justify-between gap-4 text-xs text-usfq-gray">
-                <label className="inline-flex cursor-pointer items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-usfq-gray/40 bg-white text-usfq-red"
-                    checked={remember}
-                    onChange={(e) => setRemember(e.target.checked)}
-                  />
-                  Recordarme en este equipo
-                </label>
-                <p className="text-right leading-snug">
-                  ¿Olvidaste tu contraseña? Contacta al encargado del sistema.
-                </p>
-              </div>
-
-              {error && (
-                <div className="rounded-xl border border-usfq-red/40 bg-usfq-red/10 p-3 text-sm text-usfq-red">
-                  {error}
+                <div>
+                  <div className="mb-1 flex items-center justify-between">
+                    <label className="block text-sm text-[#E11B22]">Contraseña</label>
+                    {caps && <span className="text-xs text-[#7A5E00]">Caps Lock activo</span>}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      type={showPwd ? "text" : "password"}
+                      autoComplete="current-password"
+                      className="w-full rounded-xl border border-usfq-gray/40 bg-white px-4 py-3 text-sm text-usfq-black placeholder:text-usfq-gray/70 outline-none caret-[#E11B22] focus:outline-none focus:ring-0 focus:border-[#E11B22] focus-visible:ring-2 focus-visible:ring-[#E11B22]/40"
+                      placeholder="••••••••"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPwd((v) => !v)}
+                      className="rounded-xl border border-usfq-gray/40 bg-white px-3 py-3 text-xs text-[#E11B22] hover:bg-[#FAF3E9]"
+                    >
+                      {showPwd ? "Ocultar" : "Mostrar"}
+                    </button>
+                  </div>
                 </div>
-              )}
 
-              <button
-                type="submit"
-                disabled={loading}
-                className={`group relative flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium shadow ${accentBtn} disabled:cursor-not-allowed disabled:opacity-60`}
-              >
-                {loading && (
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/70 border-t-transparent" />
-                )}
-                <span>Entrar</span>
-              </button>
+                <div className="flex items-start justify-between gap-4 text-xs text-usfq-gray">
+                  <label className="inline-flex cursor-pointer items-center gap-2">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-usfq-gray/40 bg-white text-usfq-red"
+                      checked={remember}
+                      onChange={(e) => setRemember(e.target.checked)}
+                    />
+                    Recordarme en este equipo
+                  </label>
+                  <div className="text-right leading-snug">
+                    <p>¿No tienes usuario o olvidaste tu contraseña?</p>
+                    <a 
+                      href="mailto:cramosm@usfq.edu.ec" 
+                      className="font-bold text-[#E11B22] hover:underline"
+                    >
+                      Contactar a Soporte
+                    </a>
+                  </div>
+                </div>
 
-              <button
-                type="button"
-                onClick={handleMicrosoftClick}
-                disabled={msalLoading}
-                className="flex w-full items-center justify-center gap-3 rounded-xl border border-usfq-gray/30 bg-white px-4 py-3 text-sm font-medium text-usfq-black transition hover:bg-[#FAF3E9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-usfq-red/40 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {msalLoading && (
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/60 border-t-transparent" />
+                {error && (
+                  <div className="rounded-xl border border-usfq-red/40 bg-usfq-red/10 p-3 text-sm text-usfq-red">
+                    {error}
+                  </div>
                 )}
-                <span className="grid h-4 w-4 grid-cols-2 gap-[2px]" aria-hidden="true">
-                  <span className="block h-2 w-2 bg-[#f25022]" />
-                  <span className="block h-2 w-2 bg-[#7fba00]" />
-                  <span className="block h-2 w-2 bg-[#00a4ef]" />
-                  <span className="block h-2 w-2 bg-[#ffb900]" />
-                </span>
-                <span>Iniciar sesión con Microsoft</span>
-              </button>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={`group relative flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium shadow ${accentBtn} disabled:cursor-not-allowed disabled:opacity-60`}
+                >
+                  {loading && (
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/70 border-t-transparent" />
+                  )}
+                  <span>Entrar</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleMicrosoftClick}
+                  disabled={msalLoading}
+                  className="flex w-full items-center justify-center gap-3 rounded-xl border border-usfq-gray/30 bg-white px-4 py-3 text-sm font-medium text-usfq-black transition hover:bg-[#FAF3E9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-usfq-red/40 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {msalLoading && (
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/60 border-t-transparent" />
+                  )}
+                  <span className="grid h-4 w-4 grid-cols-2 gap-[2px]" aria-hidden="true">
+                    <span className="block h-2 w-2 bg-[#f25022]" />
+                    <span className="block h-2 w-2 bg-[#7fba00]" />
+                    <span className="block h-2 w-2 bg-[#00a4ef]" />
+                    <span className="block h-2 w-2 bg-[#ffb900]" />
+                  </span>
+                  <span>Iniciar sesión con Microsoft</span>
+                </button>
               </form>
 
               <div className="mt-6 text-xs text-usfq-gray">
@@ -325,25 +373,26 @@ export default function LoginRedesign() {
           </div>
         </div>
 
-          <div className="relative min-h-[40vh] lg:min-h-screen">
+        {/* COLUMNA DERECHA: FOTO ESTÁTICA (Restaurada) */}
+        <div className="relative hidden min-h-screen lg:block">
           <img src={loginImg} alt="Login visual" className="absolute inset-0 h-full w-full object-cover" />
           <div className="absolute inset-0 bg-black/55 pointer-events-none" />
           <div className="relative z-20 flex h-full items-end p-10">
             <div className="w-full max-w-lg font-usfqBody pointer-events-auto">
               <div className="relative h-24 overflow-hidden">
-                {carouselItems.map((item, index) => {
-                  const active = index === carouselIndex;
-                  return (
-                    <div
-                      key={item.key}
-                      className={`absolute inset-0 flex items-center transition-all duration-700 ${
-                        active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
-                      }`}
-                    >
-                      {item.content}
-                    </div>
-                  );
-                })}
+                                {carouselItems.map((item, index) => {
+                                  const active = index === carouselIndex;
+                                  return (
+                                    <div
+                                      key={item.key}
+                                      className={`absolute inset-0 flex items-center transition-all duration-700 ${
+                                        active ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-3 pointer-events-none"
+                                      }`}
+                                    >
+                                      {item.content}
+                                    </div>
+                                  );
+                                })}
               </div>
             </div>
           </div>

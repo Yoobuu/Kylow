@@ -469,8 +469,8 @@ export default function VMDetailModal({
                 </div>
               )}
 
-              <div className="flex flex-col gap-6 lg:flex-row">
-                <div className="flex-1 min-w-0 space-y-6">
+              <div className="flex flex-col gap-8">
+                <div className="space-y-6">
                   {loading && (
                     <div className="space-y-3">
                       {SKELETON_WIDTHS.map((widthClass, index) => (
@@ -484,7 +484,7 @@ export default function VMDetailModal({
                   )}
 
                   {!loading && detail && (
-                    <dl className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm lg:grid-cols-2">
+                    <dl className="grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
                       {[
                         ["Nombre", detail.name],
                         [
@@ -532,64 +532,68 @@ export default function VMDetailModal({
                         ["Cluster", detail.cluster || "-"],
                         ["VLAN(s)", detail.networks?.length ? detail.networks.join(", ") : "-"],
                       ].map(([label, value]) => (
-                        <div key={label} className="col-span-1 flex">
-                          <dt className="w-1/2 font-medium text-[#231F20]">{label}:</dt>
-                          <dd className="flex-1 break-words text-[#231F20]">{value ?? "\u2014"}</dd>
+                        <div key={label} className="flex border-b border-[#E1D6C8]/30 pb-1">
+                          <dt className="w-1/3 font-medium text-[#6b6b6b]">{label}:</dt>
+                          <dd className="flex-1 break-words font-semibold text-[#231F20]">{value ?? "\u2014"}</dd>
                         </div>
                       ))}
                     </dl>
                   )}
 
                   {showPowerActions && (
-                    <>
+                    <div className="space-y-3">
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                         {actionButton("Encender", "start", "start", IoPowerSharp)}
                         {actionButton("Apagar", "stop", "stop", IoPowerOutline)}
                         {actionButton("Reset", "reset", "reset", IoRefreshSharp)}
                       </div>
                       {powerDisabled && <p className="text-xs text-[#E11B22]">{powerDisabledMessage}</p>}
-                    </>
+                    </div>
                   )}
                 </div>
 
-                <aside className="w-full shrink-0 space-y-4 border-t border-transparent pt-4 lg:w-72 lg:border-l lg:border-t-0 lg:pl-4 lg:pt-0 xl:w-80">
+                <aside className="w-full space-y-4 border-t border-[#E1D6C8] pt-6">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-semibold text-[#E11B22]">
+                    <h4 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[#E11B22]">
+                      <span className="relative flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#E11B22] opacity-75"></span>
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-[#E11B22]"></span>
+                      </span>
                       Contexto realtime ({PERF_WINDOW_SECONDS}s)
                     </h4>
                     <button
                       type="button"
                       onClick={handlePerfRefresh}
                       disabled={perfLoading}
-                      className="text-xs font-medium text-[#E11B22] hover:text-[#c9161c] disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded-lg border border-[#D6C7B8] px-3 py-1 text-xs font-semibold text-[#E11B22] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      {perfLoading ? "Actualizando..." : "Actualizar"}
+                      {perfLoading ? "Actualizando..." : "Actualizar ahora"}
                     </button>
                   </div>
 
                   {perfError && <p className="text-xs text-[#E11B22]">{perfError}</p>}
 
                   {perfLoading && !perf && (
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-1 gap-4">
                       {[0, 1].map((index) => (
-                        <div key={index} className="rounded-lg border border-transparent bg-[#FAF3E9] p-4">
-                          <div className="mb-3 h-4 w-1/2 animate-pulse rounded bg-[#E1E1E1]" />
-                          <div className="h-6 w-3/4 animate-pulse rounded bg-[#E1E1E1]" />
-                          <div className="mt-3 h-1.5 w-full animate-pulse rounded-full bg-[#E1E1E1]" />
+                        <div key={index} className="rounded-xl border border-[#E1D6C8] bg-white/50 p-6">
+                          <div className="mb-3 h-4 w-1/3 animate-pulse rounded bg-[#E1E1E1]" />
+                          <div className="h-8 w-1/2 animate-pulse rounded bg-[#E1E1E1]" />
+                          <div className="mt-4 h-2 w-full animate-pulse rounded-full bg-[#E1E1E1]" />
                         </div>
                       ))}
                     </div>
                   )}
 
                   {perf && (
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-1 gap-4">
                       {perfMetricsConfig.map(({ key, label }) => (
-                        <div key={key} className="rounded-lg border border-transparent bg-[#FAF3E9] p-4">
-                          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-[#6b6b6b]">
+                        <div key={key} className="rounded-xl border border-[#E1D6C8] bg-white p-6 shadow-sm">
+                          <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-widest text-[#6b6b6b]">
                             <span>{label}</span>
                             {renderSourceBadge(perf?._sources?.[key])}
                           </div>
-                          <div className="mt-2 text-2xl font-semibold text-[#231F20]">
+                          <div className="mt-2 text-3xl font-bold text-[#231F20]">
                             {formatPerfPercent(perf[key])}
                           </div>
                           {renderPerfBar(perf[key])}
@@ -598,14 +602,16 @@ export default function VMDetailModal({
                     </div>
                   )}
 
-                  {showPerfNoDataMessage && (
-                    <p className="text-xs text-[#6b6b6b]">Sin datos dentro de la ventana solicitada.</p>
-                  )}
-                  {perfCollectedLabel && (
-                    <p className="text-xs text-[#6b6b6b]">
-                      Última muestra: {perfCollectedLabel} · intervalo {perfIntervalSeconds} s
-                    </p>
-                  )}
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#E1D6C8]/30 pt-3">
+                    {showPerfNoDataMessage && (
+                      <p className="text-xs text-[#6b6b6b]">Sin datos dentro de la ventana solicitada.</p>
+                    )}
+                    {perfCollectedLabel && (
+                      <p className="text-xs text-[#939598]">
+                        Última muestra: <span className="font-medium text-[#6b6b6b]">{perfCollectedLabel}</span> · intervalo <span className="font-medium text-[#6b6b6b]">{perfIntervalSeconds}s</span>
+                      </p>
+                    )}
+                  </div>
                 </aside>
               </div>
             </div>
