@@ -28,7 +28,9 @@
 @layer components {
   /* Fix para layout de tabla de hosts en producción */
   .host-table-grid {
-    @apply grid gap-x-3 items-center;
+    display: grid;
+    column-gap: 0.75rem; /* gap-x-3 */
+    align-items: center;
     grid-template-columns: 
       minmax(180px,2fr) 
       minmax(140px,1.3fr) 
