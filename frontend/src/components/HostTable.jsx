@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { IoServerSharp, IoPulse, IoSwapHorizontalSharp } from 'react-icons/io5'
 import { MdOutlinePower } from 'react-icons/md'
 import { getVmwareHostsJob, getVmwareHostsSnapshot, postVmwareHostsRefresh } from '../api/hosts'
@@ -147,6 +148,7 @@ export default function HostTable({
   getHostDeep,
 }) {
   const { hasPermission } = useAuth()
+  const [searchParams] = useSearchParams()
   const isSuperadmin = hasPermission('jobs.trigger')
   const [snapshotGeneratedAt, setSnapshotGeneratedAt] = useState(null)
   const [snapshotSource, setSnapshotSource] = useState(null)
@@ -262,6 +264,19 @@ export default function HostTable({
     },
     [setSelectedRecord, setSelectedVm]
   )
+
+  const autoHostId = searchParams.get('hostId')
+  const autoHostRef = useRef(null)
+
+  useEffect(() => {
+    if (!autoHostId) return
+    if (autoHostRef.current === autoHostId) return
+    if (!hosts.length) return
+    const match = hosts.find((host) => String(host.id) === String(autoHostId))
+    if (!match) return
+    autoHostRef.current = autoHostId
+    handleRowClick(match)
+  }, [autoHostId, hosts, handleRowClick])
 
   const handleCloseModal = useCallback(() => {
     setSelectedVm(null)

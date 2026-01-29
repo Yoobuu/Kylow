@@ -2,15 +2,17 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timezone
-from typing import Dict, List, Optional
+from typing import Dict, Iterable, List, Optional
 
 from app.notifications.service import VmSample
+from app.ai.snapshots.query import get_latest_snapshot, flatten_vms_snapshot
 from app.providers.hyperv.remote import HostUnreachableError, RemoteCreds
 from app.providers.hyperv.schema import DiskInfo, VMRecord
 from app.vms.hyperv_router import _load_ps_content
 from app.vms.hyperv_service import collect_hyperv_inventory_for_host
 from app.vms.vm_service import fetch_vmware_snapshot
 from app.settings import settings
+from app.notifications.utils import ensure_utc
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +42,46 @@ def _normalize_disk_info(disk: DiskInfo | Dict) -> Dict:
     if size is not None:
         entry["size_gib"] = float(size)
     return entry
+
+
+def _as_float(value) -> Optional[float]:
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _extract_snapshot_items(payload) -> Iterable[dict]:
+    if payload is None:
+        return []
+    try:
+        return flatten_vms_snapshot(payload)
+    except Exception:
+        return []
+
+
+def _extract_cedia_id(record: dict) -> Optional[str]:
+    vm_id = record.get("id")
+    if vm_id:
+        return str(vm_id)
+    href = record.get("href")
+    if isinstance(href, str) and href:
+        return href.rstrip("/").split("/")[-1]
+    return None
+
+
+def _coerce_datetime(value: object, fallback: datetime) -> datetime:
+    if isinstance(value, datetime):
+        return ensure_utc(value)
+    if isinstance(value, str) and value:
+        try:
+            parsed = datetime.fromisoformat(value)
+            return ensure_utc(parsed)
+        except ValueError:
+            return fallback
+    return fallback
 
 
 def _build_hyperv_sample(record: VMRecord, observed_at: datetime) -> VmSample:
@@ -152,7 +194,88 @@ def collect_vmware_samples(refresh: bool) -> List[VmSample]:
     return samples
 
 
+def collect_ovirt_samples(refresh: bool) -> List[VmSample]:
+    if settings.test_mode:
+        return []
+    if not settings.ovirt_enabled or not settings.ovirt_configured:
+        return []
+    try:
+        payload = get_latest_snapshot(provider="ovirt", scope="vms", level="summary")
+    except Exception as exc:
+        logger.warning("Unable to load oVirt snapshot: %s", exc)
+        return []
+    if payload is None:
+        return []
+
+    observed_at = _coerce_datetime(getattr(payload, "generated_at", None), _now_utc())
+    samples: List[VmSample] = []
+    for item in _extract_snapshot_items(payload):
+        if not isinstance(item, dict):
+            continue
+        name = item.get("name") or item.get("vm_name")
+        if not name:
+            continue
+        cpu_pct = _as_float(item.get("cpu_usage_pct"))
+        ram_pct = _as_float(item.get("ram_usage_pct"))
+        if cpu_pct is None and ram_pct is None:
+            continue
+        samples.append(
+            {
+                "provider": "ovirt",
+                "vm_name": str(name),
+                "vm_id": str(item.get("id")) if item.get("id") is not None else None,
+                "cpu_pct": cpu_pct,
+                "ram_pct": ram_pct,
+                "env": item.get("environment") or item.get("env"),
+                "at": observed_at,
+            }
+        )
+    return samples
+
+
+def collect_cedia_samples(refresh: bool) -> List[VmSample]:
+    if settings.test_mode:
+        return []
+    if not settings.cedia_enabled or not settings.cedia_configured:
+        return []
+    try:
+        payload = get_latest_snapshot(provider="cedia", scope="vms", level="summary")
+    except Exception as exc:
+        logger.warning("Unable to load Cedia snapshot: %s", exc)
+        return []
+    if payload is None:
+        return []
+
+    snapshot_at = _coerce_datetime(getattr(payload, "generated_at", None), _now_utc())
+    samples: List[VmSample] = []
+    for item in _extract_snapshot_items(payload):
+        if not isinstance(item, dict):
+            continue
+        name = item.get("name") or item.get("Name") or item.get("vm_name")
+        if not name:
+            continue
+        cpu_pct = _as_float(item.get("cpu_pct")) or _as_float(item.get("cpuPct"))
+        ram_pct = _as_float(item.get("mem_pct")) or _as_float(item.get("memPct"))
+        if cpu_pct is None and ram_pct is None:
+            continue
+        observed_at = _coerce_datetime(item.get("metrics_updated_at"), snapshot_at)
+        samples.append(
+            {
+                "provider": "cedia",
+                "vm_name": str(name),
+                "vm_id": _extract_cedia_id(item),
+                "cpu_pct": cpu_pct,
+                "ram_pct": ram_pct,
+                "env": item.get("orgName") or item.get("environment") or item.get("env"),
+                "at": observed_at,
+            }
+        )
+    return samples
+
+
 def collect_all_samples(refresh: bool = True) -> List[VmSample]:
     vmware_samples = collect_vmware_samples(refresh=refresh)
     hyperv_samples = collect_hyperv_samples(refresh=refresh)
-    return vmware_samples + hyperv_samples
+    ovirt_samples = collect_ovirt_samples(refresh=refresh)
+    cedia_samples = collect_cedia_samples(refresh=refresh)
+    return vmware_samples + hyperv_samples + ovirt_samples + cedia_samples

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import warnings
 from dataclasses import dataclass, field
 from typing import List
 
@@ -107,6 +108,17 @@ def _collect_env_issues() -> List[str]:
     return critical, warnings
 
 
+def _suppress_insecure_request_warnings() -> None:
+    if not _as_bool(os.getenv("SUPPRESS_INSECURE_REQUEST_WARNINGS"), default=True):
+        return
+    try:
+        from urllib3.exceptions import InsecureRequestWarning
+
+        warnings.filterwarnings("ignore", category=InsecureRequestWarning)
+    except Exception:
+        return
+
+
 def _as_bool(value: str | None, default: bool = False) -> bool:
     if value is None:
         return default
@@ -129,6 +141,7 @@ def register_startup_events(app: FastAPI) -> None:
         if TEST_MODE:
             print("[TEST MODE ENABLED] Startup hooks skipped.")
             return
+        _suppress_insecure_request_warnings()
         diagnostics = StartupDiagnostics()
 
         critical_issues, warnings = _collect_env_issues()

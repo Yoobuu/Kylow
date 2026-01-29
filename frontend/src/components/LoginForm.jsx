@@ -139,27 +139,24 @@ export default function LoginRedesign() {
     setError("");
     setMsalLoading(true);
     try {
-      let result;
-      try {
-        result = await instance.loginPopup(loginRequest);
-      } catch (popupError) {
-        const code = popupError?.errorCode;
-        const message = String(popupError?.message || "").toLowerCase();
-        if (code === "popup_window_error" || message.includes("popup")) {
-          await instance.loginRedirect(loginRequest);
-          return;
-        }
-        throw popupError;
-      }
+      // Sync state before popup
+      await instance.handleRedirectPromise();
+      const result = await instance.loginPopup(loginRequest);
       await exchangeMicrosoftToken(result?.idToken);
     } catch (err) {
-      const code = err?.response?.data?.code;
-      const msg = err?.response?.data?.message || err?.message;
-      handleMicrosoftError(code, msg);
+      if (err.errorCode === "interaction_in_progress") {
+        setError("Microsoft sigue ocupado. Intenta de nuevo.");
+        await instance.handleRedirectPromise();
+      } else if (err.errorCode === "user_cancelled" || err.errorCode === "popup_window_error") {
+        setError("Inicio de sesión cancelado.");
+        await instance.handleRedirectPromise();
+      } else {
+        setError(err.message || "Error con Microsoft.");
+      }
     } finally {
-      setMsalLoading(false);
+      setTimeout(() => setMsalLoading(false), 500);
     }
-  }, [exchangeMicrosoftToken, handleMicrosoftError, instance]);
+  }, [exchangeMicrosoftToken, instance]);
 
   useEffect(() => {
     if (!instance || msRedirectHandledRef.current) {

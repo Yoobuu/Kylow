@@ -22,6 +22,7 @@ class PermissionCode(str, Enum):
     SYSTEM_RESTART = "system.restart"
     SYSTEM_SETTINGS_VIEW = "system.settings.view"
     SYSTEM_SETTINGS_EDIT = "system.settings.edit"
+    AI_CHAT = "ai.chat"
 
 
 class Permission(SQLModel, table=True):

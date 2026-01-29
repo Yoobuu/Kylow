@@ -15,7 +15,7 @@ from app.notifications.reconciler import (
     reconcile_notifications,
 )
 from app.notifications.sampler import collect_all_samples
-from app.notifications.service import evaluate_batch
+from app.notifications.service import evaluate_batch, build_observed_keys
 from app.settings import settings
 
 logger = logging.getLogger(__name__)
@@ -24,9 +24,10 @@ def _is_autoclear_enabled() -> bool:
     return settings.notifs_autoclear_enabled
 
 
-def _build_anomalies(refresh: bool) -> List[NotificationLike]:
+def _build_anomalies(refresh: bool) -> tuple[List[NotificationLike], set[tuple[str, str, str]]]:
     samples = collect_all_samples(refresh=refresh)
     notifications = evaluate_batch(samples, threshold=85.0)
+    observed_keys = build_observed_keys(samples)
 
     anomalies: List[NotificationLike] = []
     for notif in notifications:
@@ -45,7 +46,7 @@ def _build_anomalies(refresh: bool) -> List[NotificationLike]:
                 "disks_json": notif.disks_json,
             }
         )
-    return anomalies
+    return anomalies, observed_keys
 
 
 def run_hourly_reconcile(refresh: bool = True) -> Optional[ReconciliationReport]:
@@ -53,10 +54,10 @@ def run_hourly_reconcile(refresh: bool = True) -> Optional[ReconciliationReport]
         logger.info("Notifications autoclear disabled via NOTIFS_AUTOCLEAR_ENABLED")
         return None
 
-    anomalies = _build_anomalies(refresh=refresh)
+    anomalies, observed_keys = _build_anomalies(refresh=refresh)
     now = datetime.now(timezone.utc)
 
-    report = reconcile_notifications(anomalies, now)
+    report = reconcile_notifications(anomalies, now, observed_keys=observed_keys)
 
     engine = get_engine()
     with Session(engine) as session:

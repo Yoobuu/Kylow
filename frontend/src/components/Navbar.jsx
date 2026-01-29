@@ -5,6 +5,7 @@ import {
   IoAppsSharp, 
   IoSpeedometerSharp, 
   IoNotificationsSharp, 
+  IoChatbubbleEllipsesSharp,
   IoShieldCheckmark, 
   IoPeopleSharp, 
   IoSettingsSharp,
@@ -37,6 +38,9 @@ export default function Navbar() {
   }
   if (hasPermission("notifications.view")) {
     links.push({ to: "/notifications", label: "Avisos", icon: IoNotificationsSharp });
+  }
+  if (hasPermission("ai.chat")) {
+    links.push({ to: "/ai", label: "KYLOW", icon: IoChatbubbleEllipsesSharp });
   }
   if (hasPermission("audit.view")) {
     links.push({ to: "/audit", label: "Auditoría", icon: IoShieldCheckmark });
@@ -72,6 +76,7 @@ export default function Navbar() {
             {links.map((link) => {
               const Icon = link.icon;
               const isCurrent = location.pathname.startsWith(link.to);
+              const label = link.label === "KYLOW" ? <span className="font-brand">KYLOW</span> : link.label;
               
               return (
                 <NavLink
@@ -84,7 +89,7 @@ export default function Navbar() {
                   }`}
                 >
                   <Icon className={isCurrent ? "text-white" : "text-lg"} />
-                  <span>{link.label}</span>
+                  <span>{label}</span>
                 </NavLink>
               );
             })}
@@ -116,6 +121,7 @@ export default function Navbar() {
           {links.map((link) => {
             const Icon = link.icon;
             const isCurrent = location.pathname.startsWith(link.to);
+            const label = link.label === "KYLOW" ? <span className="font-brand">KYLOW</span> : link.label;
             return (
               <NavLink
                 key={link.to}
@@ -125,7 +131,7 @@ export default function Navbar() {
                 }`}
               >
                 <Icon />
-                {link.label}
+                {label}
               </NavLink>
             );
           })}

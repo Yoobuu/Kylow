@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import ChooseInventory from "./components/ChooseInventory";
 import LoginForm from "./components/LoginForm";
 import HyperVInventoryPage from "./components/HyperVInventoryPage";
@@ -11,12 +11,13 @@ import AccessPending from "./pages/AccessPending";
 import AccessDeniedTenant from "./pages/AccessDeniedTenant";
 import UserAdminPage from "./pages/UserAdminPage";
 import AuditPage from "./pages/AuditPage";
-import NotificationsComingSoon from "./pages/NotificationsComingSoon";
+import NotificationsPage from "./pages/NotificationsPage";
 import VMwarePage from "./components/VMwarePage";
 import CediaPage from "./components/CediaPage";
 import AzurePage from "./components/AzurePage";
 import SystemPage from "./pages/SystemPage";
 import ExecutiveMissionControl from "./pages/ExecutiveMissionControl";
+import AiChatPanel from "./components/AiChatPanel";
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
 
 function AppRoutes() {
   const { token, mustChangePassword, hasPermission } = useAuth();
+  const location = useLocation();
   const isAuthenticated = Boolean(token);
   const enforcePasswordChange = isAuthenticated && mustChangePassword;
   const canViewVmware = hasPermission("vms.view");
@@ -40,7 +42,9 @@ function AppRoutes() {
   const canViewAudit = hasPermission("audit.view");
   const canManageUsers = hasPermission("users.manage");
   const canViewSystemSettings = hasPermission("system.settings.view");
+  const canUseAi = hasPermission("ai.chat");
   const canViewInventory = canViewVmware || canViewHyperv || canViewCedia || canViewAzure;
+  const hostIdParam = new URLSearchParams(location.search).get("hostId");
 
   return (
     <Routes>
@@ -194,7 +198,10 @@ function AppRoutes() {
             enforcePasswordChange ? (
               <Navigate to="/change-password" replace />
             ) : canViewVmware ? (
-              <Navigate to="/vmware?view=hosts" replace />
+              <Navigate
+                to={`/vmware?view=hosts${hostIdParam ? `&hostId=${encodeURIComponent(hostIdParam)}` : ""}`}
+                replace
+              />
             ) : (
               <AppLayout>
                 <AccessDenied description="Necesitas el permiso vms.view para acceder." />
@@ -252,7 +259,7 @@ function AppRoutes() {
               <Navigate to="/change-password" replace />
             ) : canViewNotifications ? (
               <AppLayout>
-                <NotificationsComingSoon />
+                <NotificationsPage />
               </AppLayout>
             ) : (
               <AppLayout>
@@ -320,6 +327,27 @@ function AppRoutes() {
             ) : (
               <AppLayout>
                 <AccessDenied description="Necesitas el permiso system.settings.view para acceder." />
+              </AppLayout>
+            )
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+
+      <Route
+        path="/ai"
+        element={
+          isAuthenticated ? (
+            enforcePasswordChange ? (
+              <Navigate to="/change-password" replace />
+            ) : canUseAi ? (
+              <AppLayout mainClassName="flex-1 min-h-0 px-4 py-3 sm:px-6">
+                <AiChatPanel />
+              </AppLayout>
+            ) : (
+              <AppLayout>
+                <AccessDenied description="No tienes acceso a KYLOW." />
               </AppLayout>
             )
           ) : (

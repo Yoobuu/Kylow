@@ -33,6 +33,7 @@ from app.notifications.schemas import (
     NotificationRead,
 )
 from app.notifications.utils import ensure_utc, norm_enum
+from app.notifications.sample_history import history
 
 logger = logging.getLogger(__name__)
 
@@ -239,6 +240,11 @@ def _evaluate_clear_candidates(
     samples: Iterable[dict],
     threshold: float = 85.0,
 ) -> List[Notification]:
+    sample_list = [sample for sample in samples]
+    if not sample_list:
+        return []
+    history.record_samples(sample_list)
+
     index = {}
     for notif in open_notifications:
         key = (
@@ -249,8 +255,10 @@ def _evaluate_clear_candidates(
         index[key] = notif
 
     candidates: List[Notification] = []
+    seen_cpu: set[tuple[str, str]] = set()
+    seen_ram: set[tuple[str, str]] = set()
 
-    for sample in samples:
+    for sample in sample_list:
         provider_raw = sample.get("provider")
         vm_name = sample.get("vm_name")
         if not provider_raw or not vm_name:
@@ -262,19 +270,28 @@ def _evaluate_clear_candidates(
 
         vm_key = vm_name.lower()
 
+        at_value = sample.get("at")
         cpu_pct = sample.get("cpu_pct")
-        if cpu_pct is not None and cpu_pct < threshold:
-            key = (provider_enum, vm_key, NotificationMetric.CPU)
-            notif = index.get(key)
-            if notif:
-                candidates.append(notif)
+        cpu_key = (provider_enum.value, vm_key)
+        if cpu_pct is not None and cpu_key not in seen_cpu:
+            avg, _last_at, _count = history.get_recent_average(provider_enum.value, vm_name, "cpu", now=at_value)
+            if avg is not None and avg < threshold:
+                key = (provider_enum, vm_key, NotificationMetric.CPU)
+                notif = index.get(key)
+                if notif:
+                    candidates.append(notif)
+            seen_cpu.add(cpu_key)
 
         ram_pct = sample.get("ram_pct")
-        if ram_pct is not None and ram_pct < threshold:
-            key = (provider_enum, vm_key, NotificationMetric.RAM)
-            notif = index.get(key)
-            if notif:
-                candidates.append(notif)
+        ram_key = (provider_enum.value, vm_key)
+        if ram_pct is not None and ram_key not in seen_ram:
+            avg, _last_at, _count = history.get_recent_average(provider_enum.value, vm_name, "ram", now=at_value)
+            if avg is not None and avg < threshold:
+                key = (provider_enum, vm_key, NotificationMetric.RAM)
+                notif = index.get(key)
+                if notif:
+                    candidates.append(notif)
+            seen_ram.add(ram_key)
 
         disks = sample.get("disks") or []
         if provider_enum == NotificationProvider.HYPERV and disks:

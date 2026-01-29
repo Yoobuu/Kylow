@@ -1,0 +1,2 @@
+"""AI copilot backend package."""
+

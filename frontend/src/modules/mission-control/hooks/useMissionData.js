@@ -5,7 +5,8 @@ import { getHypervSnapshot, getHypervConfig, getHypervHosts } from "../../../api
 import { getOvirtSnapshot } from "../../../api/ovirt";
 import { getOvirtHostsSnapshot } from "../../../api/ovirtHosts";
 import { getCediaSnapshot } from "../../../api/cedia";
-import { normalizeHyperV, normalizeVMware } from "../../../lib/normalize";
+import { getAzureSnapshot } from "../../../api/azure";
+import { normalizeAzure, normalizeHyperV, normalizeVMware } from "../../../lib/normalize";
 import { normalizeHostSummary } from "../../../lib/normalizeHost";
 
 const PROVIDER_LABELS = {
@@ -13,6 +14,7 @@ const PROVIDER_LABELS = {
   hyperv: "Hyper-V",
   ovirt: "oVirt",
   cedia: "CEDIA",
+  azure: "Azure",
 };
 
 const safeNumber = (value) => {
@@ -459,9 +461,44 @@ export function useMissionData() {
       return { provider: "cedia", vms, hosts: [], meta, status };
     };
 
+    const fetchAzure = async () => {
+      const meta = {};
+      const status = { ok: false, errorMessage: null, empty: false, stale: false };
+      let vms = [];
+
+      try {
+        const snapshot = await getAzureSnapshot();
+        if (snapshot?.empty) {
+          status.empty = true;
+        } else {
+          meta.generated_at = snapshot?.generated_at || null;
+          meta.source = snapshot?.source || null;
+          meta.stale = Boolean(snapshot?.stale);
+          meta.stale_reason = snapshot?.stale_reason || null;
+          status.stale = Boolean(snapshot?.stale);
+          const list = Array.isArray(snapshot?.data?.azure)
+            ? snapshot.data.azure
+            : Array.isArray(snapshot?.data)
+              ? snapshot.data
+              : [];
+          vms = list
+            .map((vm) => normalizeAzure(vm))
+            .filter(Boolean)
+            .map((vm) => toUnifiedVm(vm, "azure"));
+          status.ok = true;
+        }
+      } catch (err) {
+        status.errorMessage = formatError(err, "Azure no disponible.");
+      }
+
+      status.vmCount = vms.length;
+      status.hostCount = 0;
+      return { provider: "azure", vms, hosts: [], meta, status };
+    };
+
     const fetchAll = async () => {
       setState((prev) => ({ ...prev, loading: true }));
-      const providers = [fetchVmware, fetchHyperv, fetchOvirt, fetchCedia];
+      const providers = [fetchVmware, fetchHyperv, fetchOvirt, fetchCedia, fetchAzure];
       const settled = await Promise.allSettled(providers.map((fn) => fn()));
 
       if (cancelled) return;
@@ -495,9 +532,15 @@ export function useMissionData() {
           vmware: providerStatus.vmware?.hostCount || 0,
           hyperv: providerStatus.hyperv?.hostCount || 0,
           ovirt: providerStatus.ovirt?.hostCount || 0,
+          cedia: providerStatus.cedia?.hostCount || 0,
+          azure: providerStatus.azure?.hostCount || 0,
         };
         hostBreakdown.total =
-          hostBreakdown.vmware + hostBreakdown.hyperv + hostBreakdown.ovirt;
+          hostBreakdown.vmware +
+          hostBreakdown.hyperv +
+          hostBreakdown.ovirt +
+          hostBreakdown.cedia +
+          hostBreakdown.azure;
         console.info("[MissionControl] host counts", hostBreakdown);
       }
 

@@ -1,0 +1,243 @@
+diff --git a/backend/app/db.py b/backend/app/db.py
+index a83e854..dcf5f92 100755
+--- a/backend/app/db.py
++++ b/backend/app/db.py
+@@ -1,6 +1,8 @@
+ from __future__ import annotations
+ 
+ import os
++import json
++import re
+ from pathlib import Path
+ from typing import Iterator, Optional
+ 
+@@ -14,61 +16,73 @@ from sqlmodel import SQLModel, Session, create_engine
+ 
+ BASE_DIR = Path(__file__).resolve().parent.parent
+ if load_dotenv is not None:
+-    load_dotenv(BASE_DIR / ".env", override=False)
++    load_dotenv(BASE_DIR / '.env', override=False)
+ 
+-# Resolve database path relative to this module so the app doesn't depend on the working directory.
+-APP_DIR = BASE_DIR / "app"
+-DB_PATH = (APP_DIR / "app.db").resolve()
+-_raw_database_url = os.getenv("DATABASE_URL", "").strip()
+-if _raw_database_url.startswith("postgres://"):
+-    _raw_database_url = f"postgresql://{_raw_database_url[len('postgres://'):]}"
+-SQLALCHEMY_DATABASE_URL = _raw_database_url or f"sqlite:///{DB_PATH.as_posix()}"
+-_app_env = (os.getenv("APP_ENV") or os.getenv("ENVIRONMENT") or "dev").strip().lower()
+-_missing_database_url = _app_env in {"prod", "production"} and not _raw_database_url
+-_IS_SQLITE = SQLALCHEMY_DATABASE_URL.startswith("sqlite:")
++APP_DIR = BASE_DIR / 'app'
++DB_PATH = (APP_DIR / 'app.db').resolve()
++_raw_database_url = os.getenv('DATABASE_URL', '').strip()
++if _raw_database_url.startswith('postgres://'):
++    _raw_database_url = f'postgresql://{_raw_database_url[len("postgres://"): ]}'
++SQLALCHEMY_DATABASE_URL = _raw_database_url or f'sqlite:///{DB_PATH.as_posix()}'
++_app_env = (os.getenv('APP_ENV') or os.getenv('ENVIRONMENT') or 'dev').strip().lower()
++_missing_database_url = _app_env in {'prod', 'production'} and not _raw_database_url
++_IS_SQLITE = SQLALCHEMY_DATABASE_URL.startswith('sqlite:')
+ 
+-_engine: Engine | None = None
++def robust_json_loads(s):
++    if not s:
++        return None
++    if not isinstance(s, (str, bytes)):
++        return s
++    try:
++        return json.loads(s)
++    except json.JSONDecodeError:
++        try:
++            # Use character codes to avoid shell escape issues during deployment
++            # chr(92) is backslash             backslash = chr(92)
++            double_backslash = backslash + backslash
++            return json.loads(s.replace(backslash, double_backslash))
++        except Exception:
++            return {}
+ 
++_engine: Engine | None = None
+ 
+ def get_engine() -> Engine:
+-    """Return the application engine, creating it if necessary."""
+     global _engine
+     if _missing_database_url:
+-        raise RuntimeError("DATABASE_URL is required when APP_ENV is set to production")
++        raise RuntimeError('DATABASE_URL is required when APP_ENV is set to production')
+     if _engine is None:
+         if _IS_SQLITE:
+             _engine = create_engine(
+                 SQLALCHEMY_DATABASE_URL,
+                 echo=False,
+-                connect_args={"check_same_thread": False},
++                connect_args={'check_same_thread': False},
+             )
+         else:
+-            _engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=False)
++            _engine = create_engine(
++                SQLALCHEMY_DATABASE_URL, 
++                echo=False, 
++                pool_size=20, 
++                max_overflow=10,
++                json_deserializer=robust_json_loads
++            )
+     return _engine
+ 
+-
+ def set_engine(engine: Engine | None) -> None:
+-    """Override the application engine (useful for testing)."""
+     global _engine
+     _engine = engine
+ 
+-
+ def init_db(*, bind: Optional[Engine] = None) -> None:
+-    """Create database tables on startup so a fresh environment boots cleanly."""
+     engine = bind or get_engine()
+-    # Ensure all SQLModel tables are registered before create_all().
+-    from app.audit import models as audit_models  # noqa: F401
+-    from app.auth import external_identities_model  # noqa: F401
+-    from app.auth import user_model  # noqa: F401
+-    from app.notifications import models as notification_models  # noqa: F401
+-    from app.permissions import models as permission_models  # noqa: F401
+-    from app.snapshots import models as snapshot_models  # noqa: F401
+-    from app.system_settings import models as system_settings_models  # noqa: F401
++    from app.audit import models as audit_models
++    from app.auth import external_identities_model
++    from app.auth import user_model
++    from app.notifications import models as notification_models
++    from app.permissions import models as permission_models
++    from app.snapshots import models as snapshot_models
++    from app.system_settings import models as system_settings_models
+     SQLModel.metadata.create_all(bind=engine)
+ 
+-
+ def get_session() -> Iterator[Session]:
+-    """Provide a SQLModel session for dependency injection."""
+     engine = get_engine()
+     with Session(engine) as session:
+         yield session
+diff --git a/backend/requirements.txt b/backend/requirements.txt
+index ad4b09e..f4503d7 100755
+--- a/backend/requirements.txt
++++ b/backend/requirements.txt
+@@ -34,3 +34,4 @@ typing-inspection==0.4.1
+ typing_extensions==4.13.2
+ urllib3==2.4.0
+ uvicorn==0.34.2
++pymysql
+diff --git a/frontend/Dockerfile b/frontend/Dockerfile
+index 64e131a..43b9415 100644
+--- a/frontend/Dockerfile
++++ b/frontend/Dockerfile
+@@ -3,7 +3,7 @@ FROM node:20-alpine AS build
+ WORKDIR /app
+ 
+ COPY package.json package-lock.json ./
+-RUN npm install
++RUN npm install --legacy-peer-deps
+ 
+ ARG VITE_API_BASE=/api
+ ENV VITE_API_BASE=$VITE_API_BASE
+diff --git a/frontend/src/components/LoginForm.jsx b/frontend/src/components/LoginForm.jsx
+index b070d98..8057e1c 100755
+--- a/frontend/src/components/LoginForm.jsx
++++ b/frontend/src/components/LoginForm.jsx
+@@ -139,27 +139,24 @@ export default function LoginRedesign() {
+     setError("");
+     setMsalLoading(true);
+     try {
+-      let result;
+-      try {
+-        result = await instance.loginPopup(loginRequest);
+-      } catch (popupError) {
+-        const code = popupError?.errorCode;
+-        const message = String(popupError?.message || "").toLowerCase();
+-        if (code === "popup_window_error" || message.includes("popup")) {
+-          await instance.loginRedirect(loginRequest);
+-          return;
+-        }
+-        throw popupError;
+-      }
++      // Sync state before popup
++      await instance.handleRedirectPromise();
++      const result = await instance.loginPopup(loginRequest);
+       await exchangeMicrosoftToken(result?.idToken);
+     } catch (err) {
+-      const code = err?.response?.data?.code;
+-      const msg = err?.response?.data?.message || err?.message;
+-      handleMicrosoftError(code, msg);
++      if (err.errorCode === "interaction_in_progress") {
++        setError("Microsoft sigue ocupado. Intenta de nuevo.");
++        await instance.handleRedirectPromise();
++      } else if (err.errorCode === "user_cancelled" || err.errorCode === "popup_window_error") {
++        setError("Inicio de sesión cancelado.");
++        await instance.handleRedirectPromise();
++      } else {
++        setError(err.message || "Error con Microsoft.");
++      }
+     } finally {
+-      setMsalLoading(false);
++      setTimeout(() => setMsalLoading(false), 500);
+     }
+-  }, [exchangeMicrosoftToken, handleMicrosoftError, instance]);
++  }, [exchangeMicrosoftToken, instance]);
+ 
+   useEffect(() => {
+     if (!instance || msRedirectHandledRef.current) {
+diff --git a/frontend/src/main.jsx b/frontend/src/main.jsx
+index 99d06d2..7f57f6b 100755
+--- a/frontend/src/main.jsx
++++ b/frontend/src/main.jsx
+@@ -9,7 +9,8 @@ import { TutorialProvider } from './context/TutorialContext'
+ import { msalInstance } from "./auth/msalConfig";
+ 
+ // —————— Punto de entrada y montaje en el DOM ——————
+-ReactDOM.createRoot(document.getElementById('root')).render(
++msalInstance.initialize().then(() => {
++  ReactDOM.createRoot(document.getElementById('root')).render(
+   <React.StrictMode>
+     {/* Renderiza el componente App en modo estricto */}
+     <MsalProvider instance={msalInstance}>
+@@ -19,3 +20,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
+     </MsalProvider>
+   </React.StrictMode>
+ )
++})
+diff --git a/frontend/src/styles/fonts.css b/frontend/src/styles/fonts.css
+index 95e57ef..a2edf85 100644
+--- a/frontend/src/styles/fonts.css
++++ b/frontend/src/styles/fonts.css
+@@ -1,6 +1,6 @@
+ @font-face {
+   font-family: "USFQ Title";
+-  src: url("../assets/fonts/Title/UniversityRomanStdBold.OTF") format("opentype");
++  src: url("/fonts/Title/UniversityRomanStdBold.OTF") format("opentype");
+   font-weight: 700;
+   font-style: normal;
+   font-display: swap;
+@@ -8,7 +8,7 @@
+ 
+ @font-face {
+   font-family: "USFQ Title";
+-  src: url("../assets/fonts/Title/UniversityRomanStdItalic.OTF") format("opentype");
++  src: url("/fonts/Title/UniversityRomanStdItalic.OTF") format("opentype");
+   font-weight: 400;
+   font-style: italic;
+   font-display: swap;
+@@ -16,7 +16,7 @@
+ 
+ @font-face {
+   font-family: "USFQ Title";
+-  src: url("../assets/fonts/Title/UniversityRomanStdRegular.OTF") format("opentype");
++  src: url("/fonts/Title/UniversityRomanStdRegular.OTF") format("opentype");
+   font-weight: 400;
+   font-style: normal;
+   font-display: swap;
+@@ -24,7 +24,7 @@
+ 
+ @font-face {
+   font-family: "USFQ Body";
+-  src: url("../assets/fonts/Body/Helvetica-Neue-LT-Std-47-Light-Condensed.otf") format("opentype");
++  src: url("/fonts/Body/Helvetica-Neue-LT-Std-47-Light-Condensed.otf") format("opentype");
+   font-weight: 300;
+   font-style: normal;
+   font-display: swap;

@@ -9,7 +9,8 @@ import { TutorialProvider } from './context/TutorialContext'
 import { msalInstance } from "./auth/msalConfig";
 
 // —————— Punto de entrada y montaje en el DOM ——————
-ReactDOM.createRoot(document.getElementById('root')).render(
+msalInstance.initialize().then(() => {
+  ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     {/* Renderiza el componente App en modo estricto */}
     <MsalProvider instance={msalInstance}>
@@ -19,3 +20,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </MsalProvider>
   </React.StrictMode>
 )
+})

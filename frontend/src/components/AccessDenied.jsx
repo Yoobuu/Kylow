@@ -56,7 +56,7 @@ export default function AccessDenied({ title = "Acceso denegado" }) {
           <div className="h-px w-16 bg-[#E1D6C8]" />
           
           <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#939598]">
-            KYLOW &middot; v1.00
+            <span className="font-brand">KYLOW</span> &middot; v1.00
           </p>
         </div>
       </motion.div>

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { getCediaSnapshot, getCediaVm, getCediaVmMetrics } from "../api/cedia";
 import { useAuth } from "../context/AuthContext";
 import AccessDenied from "./AccessDenied";
@@ -1017,6 +1018,8 @@ function StatCard({ label, value, tone = "text-gray-900", bg = "bg-gray-50" }) {
 export default function CediaPage() {
   const { hasPermission } = useAuth();
   const canView = hasPermission("cedia.view");
+  const [searchParams] = useSearchParams();
+  const autoOpenRef = useRef(null);
 
   const [vms, setVms] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -1208,6 +1211,17 @@ export default function CediaPage() {
       setDetailLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!canView) return;
+    const vmIdParam = searchParams.get("vmId");
+    if (!vmIdParam) return;
+    if (autoOpenRef.current === vmIdParam) return;
+    if (!normalized.length) return;
+    const match = normalized.find((vm) => String(vm.id) === String(vmIdParam));
+    autoOpenRef.current = vmIdParam;
+    openDetail(match || { id: vmIdParam });
+  }, [canView, normalized, openDetail, searchParams]);
 
   const closeDetail = () => {
     setSelectedVm(null);

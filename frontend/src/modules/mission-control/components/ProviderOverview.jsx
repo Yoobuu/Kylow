@@ -4,6 +4,8 @@ const PROVIDERS = [
   { key: "vmware", label: "VMware", tone: "mc-provider-vmware" },
   { key: "hyperv", label: "Hyper-V", tone: "mc-provider-hyperv" },
   { key: "ovirt", label: "oVirt", tone: "mc-provider-ovirt" },
+  { key: "cedia", label: "CEDIA", tone: "mc-provider-cedia" },
+  { key: "azure", label: "Azure", tone: "mc-provider-azure" },
 ];
 
 const isPoweredOn = (state) => {

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaCloud, FaCubes, FaMicrosoft, FaServer, FaWindows, FaArrowRight } from "react-icons/fa";
+import { FaCloud, FaCubes, FaMicrosoft, FaServer, FaWindows, FaArrowRight, FaComments } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 
 const ENVIRONMENTS = [
@@ -78,6 +78,7 @@ const cardVariants = {
 export default function ChooseInventory() {
   const navigate = useNavigate();
   const { hasPermission } = useAuth();
+  const canUseAi = hasPermission("ai.chat");
 
   const visibleEnvs = ENVIRONMENTS.map((env) => {
     const allowed = env.actions.filter((a) => !a.permission || hasPermission(a.permission));
@@ -108,6 +109,36 @@ export default function ChooseInventory() {
             Selecciona una plataforma para gestionar tus recursos virtuales.
           </p>
         </motion.div>
+
+        {canUseAi && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="mb-10 flex flex-col items-start justify-between gap-6 rounded-3xl border border-[#E1D6C8] bg-white/80 p-6 shadow-lg backdrop-blur-sm sm:flex-row sm:items-center"
+          >
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FAF3E9] text-2xl text-[#E11B22]">
+                <FaComments />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">Asistente IA</p>
+                <h2 className="mt-1 text-2xl font-semibold text-[#231F20]">
+                  Habla con <span className="font-brand">KYLOW</span>
+                </h2>
+                <p className="mt-2 text-sm text-[#6b6b6b]">
+                  Consultas rápidas sobre inventario, hosts, avisos y auditoría sin salir del portal.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigate("/ai")}
+              className="rounded-2xl border border-[#E11B22] bg-[#E11B22] px-5 py-2 text-xs font-semibold uppercase tracking-widest text-white transition hover:bg-[#c9161c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E11B22]/40"
+            >
+              Abrir KYLOW
+            </button>
+          </motion.div>
+        )}
 
         {/* Cards Grid */}
         {visibleEnvs.length === 0 ? (

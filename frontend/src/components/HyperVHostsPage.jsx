@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { IoServerSharp, IoSwapHorizontalSharp, IoAlertCircleSharp } from 'react-icons/io5'
 import { getHypervHosts, getHypervSnapshot, postHypervRefresh, getHypervConfig } from '../api/hypervHosts'
 import { normalizeHypervHostSummary } from '../lib/normalizeHypervHost'
@@ -196,6 +197,8 @@ const BeigeSelect = ({ id, value, options, onChange }) => {
 
 export default function HyperVHostsPage() {
   const [selected, setSelected] = useState(null)
+  const [searchParams] = useSearchParams()
+  const autoHostRef = useRef(null)
   const hostsRef = useRef([])
   const snapshotRef = useRef(null)
   const bannerRef = useRef(null)
@@ -320,6 +323,20 @@ export default function HyperVHostsPage() {
   const entries = useMemo(() => Object.entries(groups), [groups])
   const hasGroups = entries.length > 0
   const fallbackRows = !hasGroups && hosts.length > 0 ? hosts : null
+
+  const autoHost = searchParams.get('host')
+  useEffect(() => {
+    if (!autoHost) return
+    if (autoHostRef.current === autoHost) return
+    if (!hosts.length) return
+    const match = hosts.find((host) => {
+      const candidate = String(host?.host || host?.name || host?.id || '').toLowerCase()
+      return candidate === String(autoHost).toLowerCase()
+    })
+    if (!match) return
+    autoHostRef.current = autoHost
+    setSelected(match)
+  }, [autoHost, hosts])
   const statusNode = status ? (
     <div className={`mb-4 flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider shadow-sm w-fit ${
       status.kind === 'warning' ? 'border-[#FFE3A3] bg-[#FFF3CD] text-[#7A5E00]' :

@@ -59,7 +59,12 @@ SYSTEM_ACTOR = {"username": "system"}
 _EPSILON = 1e-6
 
 
-def reconcile_notifications(current_anomalies: List[NotificationLike], now: datetime) -> ReconciliationReport:
+def reconcile_notifications(
+    current_anomalies: List[NotificationLike],
+    now: datetime,
+    *,
+    observed_keys: Optional[set[tuple[str, str, str]]] = None,
+) -> ReconciliationReport:
     """
     Reconcile persisted notifications with the anomalies detected during the latest scrape.
 
@@ -71,7 +76,7 @@ def reconcile_notifications(current_anomalies: List[NotificationLike], now: date
     engine = get_engine()
     with Session(engine) as session:
         with session.begin():
-            report = _reconcile_with_session(session, current_anomalies, now_utc)
+            report = _reconcile_with_session(session, current_anomalies, now_utc, observed_keys)
             session.flush()
         return report
 
@@ -121,6 +126,7 @@ def _reconcile_with_session(
     session: Session,
     current_anomalies: List[NotificationLike],
     now: datetime,
+    observed_keys: Optional[set[tuple[str, str, str]]] = None,
 ) -> ReconciliationReport:
     report = ReconciliationReport()
     anomaly_index: Dict[NotificationKey, NotificationLike] = {}
@@ -150,10 +156,15 @@ def _reconcile_with_session(
             notif.metric,
             notif.env,
         )
+        key_no_env = (key[0], key[1], key[2])
 
         anomaly = anomaly_index.pop(key, None)
 
         if anomaly is None:
+            if observed_keys is not None and key_no_env not in observed_keys:
+                report.preserved += 1
+                report.preserved_ids.append(cast(int, notif.id))
+                continue
             previous_status = notif.status
             notif.status = NotificationStatus.CLEARED
             notif.cleared_at = now

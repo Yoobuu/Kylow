@@ -1,4 +1,5 @@
-﻿import React, { useCallback, useMemo, useDeferredValue, useState, useEffect } from 'react'
+import React, { useCallback, useMemo, useDeferredValue, useState, useEffect, useRef } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 import { useInventoryState } from './VMTable/useInventoryState'
 import VMSummaryCards from './VMTable/VMSummaryCards'
@@ -76,6 +77,7 @@ export default function HyperVTable({
   snapshotStaleReason = null,
   refreshNotice = null,
 }) {
+  const [searchParams] = useSearchParams()
   const { state, actions } = useInventoryState({
     fetcher,
     normalizeRecord,
@@ -151,6 +153,25 @@ export default function HyperVTable({
     },
     [setSelectedVm, setSelectorKey]
   )
+
+  const autoVm = searchParams.get('vm')
+  const autoHost = searchParams.get('host')
+  const autoKey = autoVm && autoHost ? `${autoVm}::${autoHost}` : null
+  const autoOpenRef = useRef(null)
+
+  useEffect(() => {
+    if (!autoKey) return
+    if (autoOpenRef.current === autoKey) return
+    if (!vms.length) return
+    const match = vms.find((vm) => {
+      const name = String(vm?.Name || vm?.name || '').toLowerCase()
+      const host = String(vm?.HVHost || vm?.host || '').toLowerCase()
+      return name === String(autoVm).toLowerCase() && host === String(autoHost).toLowerCase()
+    })
+    if (!match) return
+    autoOpenRef.current = autoKey
+    handleRowClick(match)
+  }, [autoKey, autoVm, autoHost, vms, handleRowClick])
 
   // ------------------------------
   // groups / processed para render
@@ -436,8 +457,6 @@ export default function HyperVTable({
     </div>
   )
 }
-
-
 
 
 

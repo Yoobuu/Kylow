@@ -78,7 +78,7 @@ export default function ExecutiveMissionControl() {
         value: totalHosts,
         tone: "amber",
         format: "number",
-        note: totalHosts == null ? "Snapshot de hosts no disponible" : "VMware + oVirt",
+        note: totalHosts == null ? "Snapshot de hosts no disponible" : "VMware + oVirt + Hyper-V",
       },
       {
         id: "kpi-cpu",

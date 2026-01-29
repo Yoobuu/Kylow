@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useDeferredValue, useState, useEffect, useRef } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { getVmwareSnapshot, getVmwareJob, postVmwareRefresh } from '../api/vmware'
 import { useInventoryState } from './VMTable/useInventoryState'
 import VMSummaryCards from './VMTable/VMSummaryCards'
@@ -36,6 +37,7 @@ export default function VMTable({
   powerUnavailableMessage,
 }) {
   const { hasPermission } = useAuth()
+  const [searchParams] = useSearchParams()
   const isSuperadmin = hasPermission('jobs.trigger')
   const [snapshotGeneratedAt, setSnapshotGeneratedAt] = useState(null)
   const [snapshotSource, setSnapshotSource] = useState(null)
@@ -272,6 +274,19 @@ export default function VMTable({
     },
     [normalizeRecord, setSelectedRecord, setSelectedVm]
   )
+
+  const autoVmId = searchParams.get('vmId')
+  const autoVmRef = useRef(null)
+
+  useEffect(() => {
+    if (!autoVmId) return
+    if (autoVmRef.current === autoVmId) return
+    if (!vms.length) return
+    const match = vms.find((vm) => String(vm.id) === String(autoVmId))
+    if (!match) return
+    autoVmRef.current = autoVmId
+    handleRowClick(match)
+  }, [autoVmId, vms, handleRowClick])
 
   const handleCloseModal = useCallback(
     () => {

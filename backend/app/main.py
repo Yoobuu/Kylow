@@ -18,6 +18,7 @@ from app.db import get_engine
 from app.audit import router as audit_router  # /api/audit
 from app.auth import auth_router, user_admin_router  # /api/auth/...
 from app.auth.microsoft_router import router as microsoft_router
+from app.ai import router as ai_router
 from app.middleware import install_audit_middleware, install_security_headers
 from app.hosts import router as host_router  # /api/hosts
 from app.hosts.vmware_host_snapshot_router import router as vmware_hosts_router  # /api/vmware/hosts
@@ -99,6 +100,7 @@ app.add_middleware(
 app.include_router(auth_router.router, prefix="/api/auth")  # /api/auth/...
 app.include_router(microsoft_router)  # /api/auth/microsoft/...
 app.include_router(user_admin_router.router)  # /api/users (Admin)
+app.include_router(ai_router.router, prefix="/api/ai")  # /api/ai (AI copilot)
 app.include_router(vm_router.router, prefix="/api")  # /api/vms (VMware)
 app.include_router(host_router, prefix="/api")  # /api/hosts (ESXi)
 app.include_router(vmware_hosts_router)  # /api/vmware/hosts (snapshot/jobs)

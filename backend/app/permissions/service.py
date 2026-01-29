@@ -23,6 +23,7 @@ PERMISSION_DEFINITIONS: Dict[PermissionCode, Dict[str, str]] = {
     PermissionCode.SYSTEM_RESTART: {"name": "Reiniciar backend", "category": "system"},
     PermissionCode.SYSTEM_SETTINGS_VIEW: {"name": "Ver configuración del sistema", "category": "system"},
     PermissionCode.SYSTEM_SETTINGS_EDIT: {"name": "Editar configuración del sistema", "category": "system"},
+    PermissionCode.AI_CHAT: {"name": "Usar copiloto IA", "category": "ai"},
 }
 
 
