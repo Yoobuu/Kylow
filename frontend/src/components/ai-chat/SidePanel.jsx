@@ -9,7 +9,12 @@ const SUGGESTIONS = [
   "Recomendaciones rápidas de salud",
 ];
 
-export default function SidePanel({ onPromptSelect, variant = "card", className = "" }) {
+export default function SidePanel({
+  onPromptSelect,
+  variant = "card",
+  className = "",
+  maintenanceMode = false,
+}) {
   const containerClass =
     variant === "flat"
       ? `flex h-full flex-col gap-4 ${className}`
@@ -21,32 +26,54 @@ export default function SidePanel({ onPromptSelect, variant = "card", className 
         <div>
           <p className="text-xs uppercase tracking-[0.2em] text-usfq-gray">Estado</p>
           <h3 className="mt-1 font-usfqTitle text-lg text-usfq-black">
-            <span className="font-brand">KYLOW</span> activo
+            <span className="font-brand">KYLOW</span>{" "}
+            {maintenanceMode ? "en mantenimiento" : "activo"}
           </h3>
         </div>
-        <span className="rounded-pill border border-usfq-red/20 bg-usfq-red/10 px-2 py-1 text-[10px] font-semibold text-usfq-red">
-          IA activa
-        </span>
+        {maintenanceMode ? (
+          <span className="rounded-pill border border-amber-200 bg-amber-100 px-2 py-1 text-[10px] font-semibold text-amber-700">
+            IA en pausa
+          </span>
+        ) : (
+          <span className="rounded-pill border border-usfq-red/20 bg-usfq-red/10 px-2 py-1 text-[10px] font-semibold text-usfq-red">
+            IA activa
+          </span>
+        )}
       </div>
 
       <div className="rounded-card border border-[#E1D6C8] bg-white/80 px-3 py-3 text-sm text-usfq-gray">
         <p className="text-[11px] uppercase tracking-[0.2em] text-usfq-gray">Modo</p>
-        <p className="mt-1 font-semibold text-usfq-black">Solo lectura</p>
-        <p className="mt-2 text-xs text-usfq-gray">
-          <span className="font-brand">KYLOW</span> no ejecuta acciones, solo consulta inventario y reportes.
-        </p>
+        {maintenanceMode ? (
+          <>
+            <p className="mt-1 font-semibold text-usfq-black">En migración</p>
+            <p className="mt-2 text-xs text-usfq-gray">
+              Estamos migrando a un modelo local. El asistente no está disponible.
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="mt-1 font-semibold text-usfq-black">Solo lectura</p>
+            <p className="mt-2 text-xs text-usfq-gray">
+              <span className="font-brand">KYLOW</span> no ejecuta acciones, solo consulta inventario y reportes.
+            </p>
+          </>
+        )}
       </div>
 
       <div className="rounded-card border border-[#E1D6C8] bg-white/80 px-3 py-3 text-sm text-usfq-gray">
         <p className="text-[11px] uppercase tracking-[0.2em] text-usfq-gray">Atajos</p>
-        <div className="mt-2 flex flex-wrap gap-2 text-xs">
-          <span className="rounded-pill border border-usfq-gray/30 bg-usfq-white px-2 py-1 text-usfq-gray">
-            Enter · Enviar
-          </span>
-          <span className="rounded-pill border border-usfq-gray/30 bg-usfq-white px-2 py-1 text-usfq-gray">
-            Shift + Enter · Salto
-          </span>
-        </div>
+        {maintenanceMode ? (
+          <p className="mt-2 text-xs text-usfq-gray">No disponibles mientras está en mantenimiento.</p>
+        ) : (
+          <div className="mt-2 flex flex-wrap gap-2 text-xs">
+            <span className="rounded-pill border border-usfq-gray/30 bg-usfq-white px-2 py-1 text-usfq-gray">
+              Enter · Enviar
+            </span>
+            <span className="rounded-pill border border-usfq-gray/30 bg-usfq-white px-2 py-1 text-usfq-gray">
+              Shift + Enter · Salto
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex-1 rounded-card border border-[#E1D6C8] bg-white/80 px-3 py-3">
@@ -57,7 +84,12 @@ export default function SidePanel({ onPromptSelect, variant = "card", className 
               key={prompt}
               type="button"
               onClick={() => onPromptSelect(prompt)}
-              className="rounded-pill border border-usfq-red/20 bg-usfq-red/5 px-2.5 py-1 text-xs font-semibold text-usfq-red transition hover:border-usfq-red/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-usfq-red/30"
+              disabled={maintenanceMode}
+              className={`rounded-pill border px-2.5 py-1 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-usfq-red/30 ${
+                maintenanceMode
+                  ? "border-usfq-gray/20 bg-usfq-white text-usfq-gray/70"
+                  : "border-usfq-red/20 bg-usfq-red/5 text-usfq-red hover:border-usfq-red/50"
+              }`}
             >
               {prompt}
             </button>

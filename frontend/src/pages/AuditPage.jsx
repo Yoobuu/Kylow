@@ -1,6 +1,7 @@
 import { createPortal } from "react-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { listAudit } from "../api/audit";
+import { formatGuayaquilDateTime } from "../lib/snapshotTime";
 
 const LIMIT_OPTIONS = [10, 25, 50];
 
@@ -317,11 +318,7 @@ export default function AuditPage() {
   }, [action, actorUsername, targetType]);
 
   const formatDate = (value) => {
-    try {
-      return value ? new Date(value).toLocaleString() : "";
-    } catch {
-      return value || "";
-    }
+    return formatGuayaquilDateTime(value) || value || "";
   };
 
   const openDetail = useCallback((item) => {

@@ -10,6 +10,7 @@ import {
   FaWindows,
 } from 'react-icons/fa'
 import { GiSandCastle } from 'react-icons/gi'
+import { formatGuayaquilDateTime } from '../lib/snapshotTime'
 
 const formatPercent = (value) => {
   if (value == null || value === '') return '\u2014'
@@ -28,10 +29,7 @@ const formatGiB = (value) => {
 }
 
 const formatDateTime = (value) => {
-  if (!value) return '\u2014'
-  const parsed = new Date(value)
-  if (Number.isNaN(parsed.getTime())) return value
-  return parsed.toLocaleString()
+  return formatGuayaquilDateTime(value) || '\u2014'
 }
 
 const joinList = (list) =>

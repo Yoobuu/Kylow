@@ -12,6 +12,7 @@ import copyToClipboard from "./utils/copyToClipboard";
 import { actionToNavigate, buildUrl, labelForAction } from "./utils/actionRouting";
 
 const STREAMING_MODE = (import.meta.env.VITE_AI_STREAMING || "auto").toLowerCase();
+const MAINTENANCE_MODE = true;
 
 const resolveApiUrl = (path) => {
   const base = api.defaults.baseURL || "/api";
@@ -81,6 +82,7 @@ const typeInChunks = async (text, onChunk) => {
 
 export default function ChatContainer() {
   const navigate = useNavigate();
+  const maintenanceMode = MAINTENANCE_MODE;
   const { start, abort } = useAbortableRequest();
   const {
     containerRef,
@@ -187,9 +189,10 @@ export default function ChatContainer() {
 
   const handlePromptSelect = useCallback((prompt) => {
     if (isGenerating) return;
+    if (maintenanceMode) return;
     setInput(prompt);
     requestAnimationFrame(() => inputRef.current?.focus());
-  }, [isGenerating]);
+  }, [isGenerating, maintenanceMode]);
 
   const handleModelPreference = useCallback((value) => {
     setModelPreference(value);
@@ -203,6 +206,10 @@ export default function ChatContainer() {
   const sendMessage = useCallback(
     async ({ prompt, parentId = null, replaceMessageId = null } = {}) => {
       const text = (prompt ?? input).trim();
+      if (maintenanceMode) {
+        setLiveAnnouncement("KYLOW en mantenimiento. Intenta más tarde.");
+        return;
+      }
       if (!text || isGenerating) return;
 
       const userMessageId = replaceMessageId || `user-${crypto.randomUUID()}`;
@@ -384,7 +391,7 @@ export default function ChatContainer() {
         setIsGenerating(false);
       }
     },
-    [conversationId, input, isGenerating, modelPreference, start, updateMessage]
+    [conversationId, input, isGenerating, maintenanceMode, modelPreference, start, updateMessage]
   );
 
   const handleRegenerate = useCallback(
@@ -438,6 +445,7 @@ export default function ChatContainer() {
               <button
                 type="button"
                 onClick={() => handleModelPreference("fast")}
+                disabled={maintenanceMode}
                 className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] ${
                   modelPreference === "fast"
                     ? "bg-usfq-red/10 text-usfq-red"
@@ -449,6 +457,7 @@ export default function ChatContainer() {
               <button
                 type="button"
                 onClick={() => handleModelPreference("smart")}
+                disabled={maintenanceMode}
                 className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] ${
                   modelPreference === "smart"
                     ? "bg-usfq-red/10 text-usfq-red"
@@ -459,18 +468,37 @@ export default function ChatContainer() {
               </button>
             </div>
           </div>
-          <span className="rounded-pill border border-usfq-red/20 bg-usfq-red/10 px-3 py-1 font-semibold text-usfq-red">
-            <span className="font-brand">KYLOW</span> activo
-          </span>
+          {maintenanceMode ? (
+            <span className="rounded-pill border border-amber-200 bg-amber-100 px-3 py-1 font-semibold text-amber-700">
+              <span className="font-brand">KYLOW</span> en mantenimiento
+            </span>
+          ) : (
+            <span className="rounded-pill border border-usfq-red/20 bg-usfq-red/10 px-3 py-1 font-semibold text-usfq-red">
+              <span className="font-brand">KYLOW</span> activo
+            </span>
+          )}
         </div>
       </div>
+
+      {maintenanceMode && (
+        <div className="mt-3 rounded-card border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          Estamos migrando <span className="font-brand">KYLOW</span> a un modelo local. El asistente está
+          temporalmente fuera de servicio.
+        </div>
+      )}
 
       <div className="mt-3 grid flex-1 min-h-0 gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="relative flex min-h-0 flex-col overflow-hidden rounded-card border border-[#E1D6C8] bg-[#FAF3E9] shadow-soft">
           <div className="border-b border-[#E1D6C8] bg-white/80 px-4 py-3 text-xs text-usfq-gray md:hidden">
-            <span className="rounded-pill border border-usfq-red/20 bg-usfq-red/10 px-2 py-1 text-[10px] font-semibold text-usfq-red">
-              <span className="font-brand">KYLOW</span> activo
-            </span>
+            {maintenanceMode ? (
+              <span className="rounded-pill border border-amber-200 bg-amber-100 px-2 py-1 text-[10px] font-semibold text-amber-700">
+                <span className="font-brand">KYLOW</span> en mantenimiento
+              </span>
+            ) : (
+              <span className="rounded-pill border border-usfq-red/20 bg-usfq-red/10 px-2 py-1 text-[10px] font-semibold text-usfq-red">
+                <span className="font-brand">KYLOW</span> activo
+              </span>
+            )}
           </div>
 
           <div className="hidden md:block lg:hidden">
@@ -479,7 +507,7 @@ export default function ChatContainer() {
                 Panel de <span className="font-brand">KYLOW</span>
               </summary>
               <div className="mt-3">
-                <SidePanel onPromptSelect={handlePromptSelect} variant="flat" />
+                <SidePanel onPromptSelect={handlePromptSelect} variant="flat" maintenanceMode={maintenanceMode} />
               </div>
             </details>
           </div>
@@ -520,13 +548,19 @@ export default function ChatContainer() {
               isGenerating={isGenerating}
               isEditing={Boolean(editingMessageId)}
               inputRef={inputRef}
-              canSend={Boolean(input.trim())}
+              canSend={!maintenanceMode && Boolean(input.trim())}
+              disabled={maintenanceMode}
+              placeholder={
+                maintenanceMode
+                  ? "KYLOW en mantenimiento. Pronto estará disponible."
+                  : "Escribe una pregunta..."
+              }
             />
           </div>
         </div>
 
         <aside className="hidden min-h-0 lg:block">
-          <SidePanel onPromptSelect={handlePromptSelect} />
+          <SidePanel onPromptSelect={handlePromptSelect} maintenanceMode={maintenanceMode} />
         </aside>
       </div>
 

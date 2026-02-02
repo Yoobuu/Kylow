@@ -4,6 +4,7 @@ import { AnimatePresence, motion as Motion } from "framer-motion";
 import { IoPowerSharp, IoPowerOutline, IoRefreshSharp } from "react-icons/io5";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
+import { formatGuayaquilDateTime } from "../lib/snapshotTime";
 
 const ACTION_THEMES = {
   start: {
@@ -390,8 +391,7 @@ export default function VMDetailModal({
     );
   };
 
-  const perfCollectedAt = perf && perf["_collected_at"] ? new Date(perf["_collected_at"]) : null;
-  const perfCollectedLabel = perfCollectedAt && !Number.isNaN(perfCollectedAt.getTime()) ? perfCollectedAt.toLocaleString() : null;
+  const perfCollectedLabel = perf?._collected_at ? formatGuayaquilDateTime(perf["_collected_at"]) : null;
   const perfIntervalSeconds = perf?._interval_seconds ?? PERF_WINDOW_SECONDS;
   const hasPerfValues = perfMetricsConfig.some(({ key }) => perf && perf[key] != null);
   const showPerfNoDataMessage = !perfLoading && !perfError && !hasPerfValues;

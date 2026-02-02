@@ -5,6 +5,7 @@ import { ackNotification, listNotifications, NOTIFICATION_STATUS } from "../api/
 import { useAuth } from "../context/AuthContext";
 import NotificationsTable from "../components/NotificationsTable";
 import DisksModal from "../components/DisksModal";
+import { formatGuayaquilDateTime, formatUtcDateTime, parseSnapshotTimestamp } from "../lib/snapshotTime";
 
 const PROVIDER_OPTIONS = ["", "CEDIA", "HYPERV", "OVIRT", "VMWARE"];
 const METRIC_OPTIONS = ["", "CPU", "RAM", "DISK"];
@@ -65,29 +66,11 @@ function formatNumber(value) {
 }
 
 function formatDate(value) {
-  if (!value) return "—";
-  try {
-    return new Date(value).toLocaleString("es-ES");
-  } catch {
-    return value;
-  }
+  return formatGuayaquilDateTime(value, "es-EC") || "—";
 }
 
 function formatDateUTC(value) {
-  if (!value) return "—";
-  try {
-    return new Intl.DateTimeFormat("es-ES", {
-      timeZone: "UTC",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    }).format(new Date(value));
-  } catch {
-    return value;
-  }
+  return formatUtcDateTime(value, "es-EC") || "—";
 }
 
 function ToastStack({ toasts, onDismiss }) {
@@ -291,7 +274,11 @@ export default function NotificationsPage() {
       const ts = item.created_at || item.at;
       if (!ts) return acc;
       if (!acc) return ts;
-      return new Date(ts) > new Date(acc) ? ts : acc;
+      const tsDate = parseSnapshotTimestamp(ts);
+      const accDate = parseSnapshotTimestamp(acc);
+      if (!tsDate) return acc;
+      if (!accDate) return ts;
+      return tsDate > accDate ? ts : acc;
     }, null);
   }, [data.items]);
 

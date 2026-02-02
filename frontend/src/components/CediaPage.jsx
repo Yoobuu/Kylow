@@ -8,6 +8,7 @@ import VMSummaryCards from "./VMTable/VMSummaryCards";
 import { columnsVMware } from "./inventoryColumns.jsx";
 import { exportCediaInventoryXlsx } from "../lib/exportXlsx";
 import InventoryMetaBar from "./common/InventoryMetaBar";
+import { formatGuayaquilDateTime } from "../lib/snapshotTime";
 
 const STATUS_COLORS = {
   POWERED_ON: "text-emerald-600 bg-emerald-50 border-emerald-200",
@@ -41,10 +42,7 @@ function normalizeStatus(raw) {
 }
 
 function formatDateTime(value) {
-  if (!value) return "—";
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return "—";
-  return parsed.toLocaleString();
+  return formatGuayaquilDateTime(value) || "—";
 }
 
 function formatNumber(value, options = {}) {

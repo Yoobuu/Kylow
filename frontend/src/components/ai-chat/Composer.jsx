@@ -12,6 +12,7 @@ export default function Composer({
   canSend,
   inputRef,
   placeholder = "Escribe una pregunta...",
+  disabled = false,
 }) {
   const localRef = useRef(null);
   const textareaRef = inputRef || localRef;
@@ -28,6 +29,7 @@ export default function Composer({
   }, [value]);
 
   const handleKeyDown = (event) => {
+    if (disabled) return;
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       onSend();
@@ -41,11 +43,15 @@ export default function Composer({
           <textarea
             ref={textareaRef}
             value={value}
-            onChange={(event) => onChange(event.target.value)}
+            onChange={(event) => {
+              if (disabled) return;
+              onChange(event.target.value);
+            }}
             onKeyDown={handleKeyDown}
             rows={1}
             placeholder={placeholder}
-            className="w-full resize-none bg-transparent text-body text-usfq-black placeholder:text-usfq-gray/70 outline-none focus-visible:ring-2 focus-visible:ring-usfq-red/30"
+            disabled={disabled}
+            className="w-full resize-none bg-transparent text-body text-usfq-black placeholder:text-usfq-gray/70 outline-none focus-visible:ring-2 focus-visible:ring-usfq-red/30 disabled:cursor-not-allowed disabled:opacity-60"
             aria-label="Escribe tu mensaje"
           />
           <div className="mt-2 flex flex-wrap items-center gap-3 text-[11px] text-usfq-gray">
@@ -65,7 +71,7 @@ export default function Composer({
         <button
           type="button"
           onClick={isGenerating ? onStop : onSend}
-          disabled={!isGenerating && !canSend}
+          disabled={disabled || (!isGenerating && !canSend)}
           className={`inline-flex h-11 w-11 items-center justify-center rounded-full border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-usfq-red/40 disabled:cursor-not-allowed disabled:opacity-60 ${
             isGenerating
               ? "border-usfq-red/50 bg-usfq-red/10 text-usfq-red hover:bg-usfq-red/20"

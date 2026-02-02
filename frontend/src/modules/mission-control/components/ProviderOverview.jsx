@@ -1,9 +1,10 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
+import { formatGuayaquilTime } from "../../../lib/snapshotTime";
 
 const PROVIDERS = [
   { key: "vmware", label: "VMware", tone: "mc-provider-vmware" },
   { key: "hyperv", label: "Hyper-V", tone: "mc-provider-hyperv" },
-  { key: "ovirt", label: "oVirt", tone: "mc-provider-ovirt" },
+  { key: "ovirt", label: "KVM", tone: "mc-provider-ovirt" },
   { key: "cedia", label: "CEDIA", tone: "mc-provider-cedia" },
   { key: "azure", label: "Azure", tone: "mc-provider-azure" },
 ];
@@ -24,6 +25,11 @@ const safeNumber = (value) => {
   return Number.isFinite(num) ? num : null;
 };
 
+const normalizeProviderKey = (value) => {
+  const key = String(value || "").toLowerCase();
+  return key === "kvm" ? "ovirt" : key;
+};
+
 const formatNumber = (value) => {
   if (value == null || value === "") return "—";
   return new Intl.NumberFormat("en-US").format(value);
@@ -35,28 +41,26 @@ const formatPct = (value) => {
 };
 
 const formatSnapshotTime = (value) => {
-  if (!value) return "—";
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return String(value);
-  return parsed.toLocaleTimeString();
-};
-
-const resolveEnvBucket = (env) => {
-  const raw = String(env || "").toLowerCase();
-  if (!raw) return null;
-  if (raw.includes("sand")) return "sandbox";
-  if (raw.includes("test") || raw.includes("qa")) return "test";
-  if (raw.includes("prod") || raw.includes("produccion") || raw.includes("production")) return "prod";
-  return null;
+  return formatGuayaquilTime(value) || "—";
 };
 
 export default function ProviderOverview({ vms = [], hosts = [], providerMeta = {}, providerStatus = {} }) {
   const providerCards = useMemo(() => {
     return PROVIDERS.map((provider) => {
-      const status = providerStatus?.[provider.key] || {};
-      const meta = providerMeta?.[provider.key] || {};
-      const providerVms = vms.filter((vm) => vm.provider === provider.key);
-      const providerHosts = hosts.filter((host) => host.provider === provider.key);
+      const status =
+        provider.key === "ovirt"
+          ? providerStatus?.ovirt || providerStatus?.kvm || {}
+          : providerStatus?.[provider.key] || {};
+      const meta =
+        provider.key === "ovirt"
+          ? providerMeta?.ovirt || providerMeta?.kvm || {}
+          : providerMeta?.[provider.key] || {};
+      const providerVms = vms.filter(
+        (vm) => normalizeProviderKey(vm.provider) === provider.key
+      );
+      const providerHosts = hosts.filter(
+        (host) => normalizeProviderKey(host.provider) === provider.key
+      );
       const vmTotal = Number.isFinite(status?.vmCount) ? status.vmCount : providerVms.length;
       const hostTotal = Number.isFinite(status?.hostCount)
         ? status.hostCount
@@ -81,16 +85,6 @@ export default function ProviderOverview({ vms = [], hosts = [], providerMeta = 
       const badgeLabel = hasError ? "Sin datos" : isEmpty ? "Sin snapshot" : stale ? "Stale" : "Fresh";
       const badgeTone = hasError ? "mc-badge-error" : isEmpty ? "mc-badge-empty" : stale ? "mc-badge-warn" : "mc-badge-ok";
 
-      const envCounts = providerVms.reduce(
-        (acc, vm) => {
-          const bucket = resolveEnvBucket(vm.environment);
-          if (bucket) acc[bucket] += 1;
-          return acc;
-        },
-        { sandbox: 0, test: 0, prod: 0 }
-      );
-      const hasEnv = envCounts.sandbox + envCounts.test + envCounts.prod > 0;
-
       return {
         key: provider.key,
         label: provider.label,
@@ -112,18 +106,9 @@ export default function ProviderOverview({ vms = [], hosts = [], providerMeta = 
           timeLabel: formatSnapshotTime(meta.generated_at),
           source: meta.source || "—",
         },
-        envCounts,
-        hasEnv,
       };
     });
   }, [vms, hosts, providerMeta, providerStatus]);
-
-  const handleJump = useCallback((key) => {
-    const row = document.getElementById(`mc-breakdown-${key}`);
-    if (row && typeof row.scrollIntoView === "function") {
-      row.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  }, []);
 
   return (
     <div className="mc-provider-overview">
@@ -172,46 +157,9 @@ export default function ProviderOverview({ vms = [], hosts = [], providerMeta = 
               <div className="mc-provider-meta">
                 {card.status?.stale ? "Snapshot stale" : "Snapshot activo"}
               </div>
-              <button type="button" className="mc-provider-link" onClick={() => handleJump(card.key)}>
-                Ver detalle
-              </button>
             </div>
           </article>
         ))}
-      </div>
-
-      <div className="mc-breakdown" id="mc-breakdown">
-        <div className="mc-breakdown-header">
-          <div className="mc-breakdown-title">Breakdown por ambiente</div>
-          <div className="mc-breakdown-subtitle">Sandbox · Test · Prod</div>
-        </div>
-        <div className="mc-breakdown-table">
-          <div className="mc-breakdown-row mc-breakdown-head">
-            <span>Provider</span>
-            <span>Sandbox</span>
-            <span>Test</span>
-            <span>Prod</span>
-            <span>Total</span>
-          </div>
-          {providerCards.map((card) => {
-            const sandbox = card.hasEnv ? formatNumber(card.envCounts.sandbox) : "—";
-            const test = card.hasEnv ? formatNumber(card.envCounts.test) : "—";
-            const prod = card.hasEnv ? formatNumber(card.envCounts.prod) : "—";
-            return (
-              <div
-                key={card.key}
-                id={`mc-breakdown-${card.key}`}
-                className="mc-breakdown-row"
-              >
-                <span className={`mc-breakdown-provider ${card.tone}`}>{card.label}</span>
-                <span>{sandbox}</span>
-                <span>{test}</span>
-                <span>{prod}</span>
-                <span>{formatNumber(card.counts.vms)}</span>
-              </div>
-            );
-          })}
-        </div>
       </div>
     </div>
   );

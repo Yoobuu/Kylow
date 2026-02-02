@@ -7,6 +7,7 @@ import { useInventoryState } from './VMTable/useInventoryState'
 import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import InventoryMetaBar from './common/InventoryMetaBar'
+import { formatGuayaquilTime } from '../lib/snapshotTime'
 
 const AUTO_REFRESH_MS = 5 * 60 * 1000
 const gradientBg = 'bg-white'
@@ -46,7 +47,8 @@ const hostFetcherFactory = ({ hostsState, snapshotState, bannerState, discoverHo
         setSnapshotSource(snap.source || null)
         setSnapshotStale(Boolean(snap.stale))
         setSnapshotStaleReason(snap.stale_reason || null)
-        setStatus({ kind: 'success', text: `Snapshot hosts ${new Date(snap.generated_at).toLocaleTimeString()}` })
+        const updatedAt = formatGuayaquilTime(snap.generated_at)
+        setStatus({ kind: 'success', text: `Snapshot hosts ${updatedAt || '—'}` })
         return snap.data
       }
     } catch (err) {

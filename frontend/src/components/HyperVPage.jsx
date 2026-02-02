@@ -7,6 +7,7 @@ import { exportInventoryXlsx } from '../lib/exportXlsx'
 import HyperVTable from './HyperVTable'
 import { getHypervHosts, getHypervSnapshot, postHypervRefresh, getHypervConfig } from '../api/hypervHosts'
 import { useAuth } from '../context/AuthContext'
+import { formatGuayaquilDateTime, formatGuayaquilTime, parseSnapshotTimestamp } from '../lib/snapshotTime'
 
 const POLL_MS = 2500
 const HOST_STATE_LABELS = {
@@ -33,17 +34,7 @@ const NOTICE_STYLES = {
 }
 
 const formatLocalTimestamp = (value) => {
-  if (!value) return null
-  const raw = String(value)
-  const cleaned = raw.includes('.') ? raw.replace(/(\.\d{3})\d+/, '$1') : raw
-  const parsed = new Date(cleaned)
-  if (Number.isNaN(parsed.getTime())) return raw
-  const yyyy = String(parsed.getFullYear()).padStart(4, '0')
-  const mm = String(parsed.getMonth() + 1).padStart(2, '0')
-  const dd = String(parsed.getDate()).padStart(2, '0')
-  const hh = String(parsed.getHours()).padStart(2, '0')
-  const min = String(parsed.getMinutes()).padStart(2, '0')
-  return `${yyyy}-${mm}-${dd} ${hh}:${min}`
+  return formatGuayaquilDateTime(value) || (value ? String(value) : null)
 }
 
 export default function HyperVPage() {
@@ -187,7 +178,8 @@ export default function HyperVPage() {
             setStatus({ kind: 'warning', text: 'Snapshot parcial' })
           } else {
             setBanner(null)
-            setStatus({ kind: 'success', text: `Snapshot actualizado ${new Date(snap.generated_at).toLocaleTimeString()}` })
+            const updatedAt = formatGuayaquilTime(snap.generated_at)
+            setStatus({ kind: 'success', text: `Snapshot actualizado ${updatedAt || '—'}` })
           }
           setRefreshNotice(null)
           if (flattened.length) {
@@ -363,7 +355,8 @@ export default function HyperVPage() {
 
   useEffect(() => {
     if (!cooldownUntil) return undefined
-    const untilTs = Date.parse(String(cooldownUntil))
+    const untilDate = parseSnapshotTimestamp(cooldownUntil)
+    const untilTs = untilDate ? untilDate.getTime() : Number.NaN
     if (!Number.isFinite(untilTs)) return undefined
     const delay = Math.max(0, untilTs - Date.now())
     if (delay === 0) {

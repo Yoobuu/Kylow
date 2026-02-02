@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { postSystemRestart } from "../api/system";
+import { getSystemDiagnostics, postSystemRestart } from "../api/system";
 import { getSystemSettings, updateSystemSettings } from "../api/systemSettings";
 import AccessDenied from "../components/AccessDenied";
 import { useAuth } from "../context/AuthContext";
@@ -74,6 +74,9 @@ export default function SystemPage() {
   const [initialSettings, setInitialSettings] = useState(null);
   const [saveMessage, setSaveMessage] = useState("");
   const [restartState, setRestartState] = useState("idle");
+  const [diagnostics, setDiagnostics] = useState(null);
+  const [diagLoading, setDiagLoading] = useState(false);
+  const [diagError, setDiagError] = useState("");
   const pollRef = useRef(null);
 
   const confirmValid = useMemo(() => confirmText.trim() === "RESTART", [confirmText]);
@@ -113,9 +116,28 @@ export default function SystemPage() {
     }
   }, [canView]);
 
+  const loadDiagnostics = useCallback(async () => {
+    if (!canView) return;
+    setDiagLoading(true);
+    setDiagError("");
+    try {
+      const resp = await getSystemDiagnostics();
+      setDiagnostics(resp);
+    } catch (err) {
+      const detail = err?.response?.data?.detail || err?.message || "No se pudo cargar diagnóstico.";
+      setDiagError(detail);
+    } finally {
+      setDiagLoading(false);
+    }
+  }, [canView]);
+
   useEffect(() => {
     loadSettings();
   }, [loadSettings]);
+
+  useEffect(() => {
+    loadDiagnostics();
+  }, [loadDiagnostics]);
 
   const pollHealth = useCallback(async () => {
     try {
@@ -166,6 +188,24 @@ export default function SystemPage() {
   if (!canView) {
     return <AccessDenied description="Necesitas el permiso system.settings.view para acceder." />;
   }
+
+  const statusTone = (state) => {
+    if (state === "ok") return "border-emerald-200 bg-emerald-100 text-emerald-700";
+    if (state === "error") return "border-rose-200 bg-rose-100 text-rose-700";
+    if (state === "skipped") return "border-amber-200 bg-amber-100 text-amber-700";
+    return "border-slate-200 bg-slate-100 text-slate-600";
+  };
+
+  const statusLabel = (state) => {
+    if (state === "ok") return "OK";
+    if (state === "error") return "Error";
+    if (state === "skipped") return "N/A";
+    return "—";
+  };
+
+  const diagTimestamp = diagnostics?.generated_at
+    ? new Date(diagnostics.generated_at).toLocaleString()
+    : null;
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-10 bg-white">
@@ -473,6 +513,96 @@ export default function SystemPage() {
           )}
           {error && <p className="text-sm text-[#E11B22]">{error}</p>}
         </div>
+      </section>
+
+      <section className="rounded-xl border border-[#E1D6C8] bg-[#FAF3E9] p-6 shadow">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-semibold text-[#E11B22]">Diagnóstico de conectividad</h2>
+            <p className="mt-1 text-sm text-[#3b3b3b]">
+              Estado de conexión y autenticación por proveedor/endpoint.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={loadDiagnostics}
+            className="rounded-lg border border-[#E1D6C8] bg-white px-4 py-2 text-sm font-semibold text-[#231F20] shadow-sm transition hover:border-[#E11B22] hover:text-[#E11B22]"
+          >
+            Actualizar
+          </button>
+        </div>
+
+        {diagLoading && <p className="mt-4 text-sm text-[#6b6b6b]">Cargando diagnóstico...</p>}
+        {diagError && !diagLoading && (
+          <p className="mt-4 text-sm text-[#8b0000]">Error: {diagError}</p>
+        )}
+
+        {diagnostics?.providers?.length ? (
+          <div className="mt-4 space-y-4">
+            {diagTimestamp && (
+              <div className="text-xs text-[#6b6b6b]">Última verificación: {diagTimestamp}</div>
+            )}
+            {diagnostics.providers.map((provider) => (
+              <div key={provider.key} className="rounded-xl border border-[#E1D6C8] bg-white p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-semibold text-[#231F20]">{provider.label}</div>
+                    <div className="mt-1 text-xs text-[#6b6b6b]">
+                      {provider.enabled ? "Habilitado" : "Deshabilitado"}
+                      {provider.configured ? "" : " · Sin configurar"}
+                    </div>
+                  </div>
+                  {provider.missing?.length ? (
+                    <span className="rounded-full border border-amber-200 bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
+                      Faltan variables: {provider.missing.join(", ")}
+                    </span>
+                  ) : null}
+                </div>
+
+                <div className="mt-3 overflow-x-auto">
+                  <div className="grid gap-2">
+                    <div className="grid min-w-[620px] grid-cols-[1.6fr_1fr_1fr_2fr] gap-2 rounded-lg border border-[#E1D6C8] bg-[#FAF3E9] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-[#6b6b6b]">
+                      <span>Endpoint</span>
+                      <span>Conexión</span>
+                      <span>Auth</span>
+                      <span>Detalle</span>
+                    </div>
+                    {provider.targets.map((target) => (
+                      <div
+                        key={target.id}
+                        className="grid min-w-[620px] grid-cols-[1.6fr_1fr_1fr_2fr] gap-2 rounded-lg border border-[#E1D6C8] bg-white px-3 py-2 text-sm text-[#231F20]"
+                      >
+                        <div>
+                          <div className="font-medium">{target.label}</div>
+                          <div className="text-xs text-[#6b6b6b]">
+                            {target.host || "—"}{target.port ? `:${target.port}` : ""}
+                          </div>
+                        </div>
+                        <span className={`inline-flex w-fit items-center rounded-full border px-2 py-1 text-xs ${statusTone(target.connection?.state)}`}>
+                          {statusLabel(target.connection?.state)}
+                        </span>
+                        <span className={`inline-flex w-fit items-center rounded-full border px-2 py-1 text-xs ${statusTone(target.auth?.state)}`}>
+                          {statusLabel(target.auth?.state)}
+                        </span>
+                        <div className="text-xs text-[#6b6b6b]">
+                          {target.auth?.error && target.auth.state === "error"
+                            ? `Auth: ${target.auth.error}`
+                            : target.connection?.error && target.connection.state === "error"
+                              ? `Conexión: ${target.connection.error}`
+                              : "—"}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          !diagLoading && !diagError && (
+            <p className="mt-4 text-sm text-[#6b6b6b]">Sin diagnóstico disponible.</p>
+          )
+        )}
       </section>
 
       <section className="rounded-xl border border-[#E1D6C8] bg-[#FAF3E9] p-6 shadow">

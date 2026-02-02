@@ -10,6 +10,11 @@ const DATE_TIME_OPTIONS = {
   minute: "2-digit",
   second: "2-digit",
 };
+const TIME_OPTIONS = {
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+};
 
 function normalizeSnapshotTimestamp(value) {
   if (!value) return null;
@@ -43,6 +48,24 @@ function formatDateTime(date, { locale = DEFAULT_LOCALE, timeZone } = {}) {
   return new Intl.DateTimeFormat(locale, options).format(date);
 }
 
+function formatTime(date, { locale = DEFAULT_LOCALE, timeZone } = {}) {
+  if (!date || Number.isNaN(date.getTime())) return null;
+  const options = timeZone ? { ...TIME_OPTIONS, timeZone } : TIME_OPTIONS;
+  return new Intl.DateTimeFormat(locale, options).format(date);
+}
+
+function formatDateTimeWithZone(value, timeZone, locale = DEFAULT_LOCALE) {
+  const parsed = normalizeSnapshotTimestamp(value);
+  if (!parsed) return null;
+  return formatDateTime(parsed, { locale, timeZone });
+}
+
+function formatTimeWithZone(value, timeZone, locale = DEFAULT_LOCALE) {
+  const parsed = normalizeSnapshotTimestamp(value);
+  if (!parsed) return null;
+  return formatTime(parsed, { locale, timeZone });
+}
+
 export function formatSnapshotTimes(value, locale = DEFAULT_LOCALE) {
   const parsed = normalizeSnapshotTimestamp(value);
   if (!parsed) return null;
@@ -56,4 +79,20 @@ export function formatLocalDateTime(value, locale = DEFAULT_LOCALE) {
   const parsed = normalizeLocalTimestamp(value);
   if (!parsed) return null;
   return formatDateTime(parsed, { locale });
+}
+
+export function formatGuayaquilDateTime(value, locale = DEFAULT_LOCALE) {
+  return formatDateTimeWithZone(value, TZ_GUAYAQUIL, locale);
+}
+
+export function formatUtcDateTime(value, locale = DEFAULT_LOCALE) {
+  return formatDateTimeWithZone(value, TZ_UTC, locale);
+}
+
+export function formatGuayaquilTime(value, locale = DEFAULT_LOCALE) {
+  return formatTimeWithZone(value, TZ_GUAYAQUIL, locale);
+}
+
+export function parseSnapshotTimestamp(value) {
+  return normalizeSnapshotTimestamp(value);
 }

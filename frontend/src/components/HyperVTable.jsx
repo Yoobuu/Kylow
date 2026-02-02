@@ -10,6 +10,7 @@ import HyperVDetailModal from './HyperVDetailModal'
 import { columnsHyperV } from './inventoryColumns.jsx'
 import { exportInventoryCsv } from '../lib/exportCsv'
 import InventoryMetaBar from './common/InventoryMetaBar'
+import { parseSnapshotTimestamp } from '../lib/snapshotTime'
 
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // MISMA LOGICA DE AMBIENTE QUE EN EL MODAL
@@ -246,7 +247,8 @@ export default function HyperVTable({
     }
   }, [fetchVm, onRefresh])
 
-  const cooldownTs = refreshCooldownUntil ? Date.parse(String(refreshCooldownUntil)) : null
+  const cooldownDate = refreshCooldownUntil ? parseSnapshotTimestamp(refreshCooldownUntil) : null
+  const cooldownTs = cooldownDate ? cooldownDate.getTime() : null
   const cooldownActive = Number.isFinite(cooldownTs) && cooldownTs > Date.now()
   const refreshDisabled = cooldownActive || refreshBusy || loading || refreshing
   const refreshLabel = cooldownActive
@@ -457,7 +459,6 @@ export default function HyperVTable({
     </div>
   )
 }
-
 
 
 

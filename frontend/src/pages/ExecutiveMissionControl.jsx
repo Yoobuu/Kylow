@@ -1,9 +1,11 @@
 import { useMemo } from "react";
 import { motion as Motion } from "framer-motion";
 import KpiStrip from "../modules/mission-control/components/KpiStrip";
+import EnvironmentSummary from "../modules/mission-control/components/EnvironmentSummary";
 import ProviderOverview from "../modules/mission-control/components/ProviderOverview";
 import { useMissionData, missionControlProviderLabels } from "../modules/mission-control/hooks/useMissionData";
 import "../modules/mission-control/styles/mission-control.css";
+import { formatGuayaquilTime } from "../lib/snapshotTime";
 
 const containerVariants = {
   hidden: { opacity: 0, y: 8 },
@@ -20,10 +22,7 @@ const itemVariants = {
 };
 
 const formatSnapshotTime = (value) => {
-  if (!value) return "—";
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return String(value);
-  return parsed.toLocaleTimeString();
+  return formatGuayaquilTime(value) || "—";
 };
 
 export default function ExecutiveMissionControl() {
@@ -144,6 +143,15 @@ export default function ExecutiveMissionControl() {
 
         <Motion.div variants={itemVariants}>
           <KpiStrip kpis={kpiCards} loading={loading} />
+        </Motion.div>
+
+        <Motion.div variants={itemVariants}>
+          <EnvironmentSummary
+            vms={vms}
+            providerStatus={providerStatus}
+            providerLabels={missionControlProviderLabels}
+            loading={loading}
+          />
         </Motion.div>
 
         <Motion.div className="mc-snapshot-row" variants={itemVariants}>

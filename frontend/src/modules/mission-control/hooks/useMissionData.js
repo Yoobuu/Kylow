@@ -12,7 +12,8 @@ import { normalizeHostSummary } from "../../../lib/normalizeHost";
 const PROVIDER_LABELS = {
   vmware: "VMware",
   hyperv: "Hyper-V",
-  ovirt: "oVirt",
+  ovirt: "KVM",
+  kvm: "KVM",
   cedia: "CEDIA",
   azure: "Azure",
 };
@@ -39,6 +40,13 @@ const normalizeCediaStatus = (raw) => {
 const normalizeCediaVm = (vm, idx) => {
   const status = normalizeCediaStatus(vm?.status);
   const id = vm?.id || (vm?.href ? String(vm.href).split("/").pop() : null) || `cedia-${idx}`;
+  const guest_os =
+    vm?.detectedGuestOs ??
+    vm?.detectedGuestOS ??
+    vm?.guestOs ??
+    vm?.guestOS ??
+    vm?.osType ??
+    null;
   return {
     id,
     name: vm?.name || "VM",
@@ -47,6 +55,7 @@ const normalizeCediaVm = (vm, idx) => {
     cpu_usage_pct: safeNumber(vm?.cpu_pct ?? vm?.cpu_usage_pct),
     ram_usage_pct: safeNumber(vm?.mem_pct ?? vm?.ram_usage_pct),
     memory_size_MiB: safeNumber(vm?.memoryMB),
+    guest_os,
     host: vm?.vdcName || null,
     cluster: vm?.containerName || vm?.vdcName || null,
     environment: vm?.orgName || "cedia",
@@ -64,6 +73,7 @@ const toUnifiedVm = (vm, fallbackProvider) => ({
   host: vm?.host || null,
   cluster: vm?.cluster || null,
   environment: vm?.environment || "desconocido",
+  guest_os: vm?.guest_os ?? vm?.os_type ?? null,
 });
 
 const toUnifiedHost = (host, provider) => ({
@@ -86,6 +96,18 @@ const isPoweredOn = (state) => {
 const isPoweredOff = (state) => {
   const value = String(state || "").toUpperCase();
   return value === "POWERED_OFF" || value === "OFF";
+};
+
+const classifyOs = (value) => {
+  if (!value) return "unknown";
+  const raw = String(value).toLowerCase();
+  if (!raw) return "unknown";
+  const windowsRe = /(windows|microsoft\s*windows|\bwin(dows)?\b|\bwin\d+)/i;
+  if (windowsRe.test(raw)) return "windows";
+  const linuxRe =
+    /(linux|ubuntu|debian|centos|red hat|rhel|suse|sles|alpine|arch|fedora|rocky|alma|oracle|kali|amazon|amzn|coreos)/i;
+  if (linuxRe.test(raw)) return "linux";
+  return "unknown";
 };
 
 const formatError = (err, fallback) => {
@@ -206,13 +228,17 @@ const buildEnvKpis = (vms) => {
   return vms.reduce((acc, vm) => {
     const env = vm.environment || "desconocido";
     if (!acc[env]) {
-      acc[env] = { total: 0, on: 0, off: 0, providers: {} };
+      acc[env] = { total: 0, on: 0, off: 0, linux: 0, windows: 0, unknown_os: 0, providers: {} };
     }
     acc[env].total += 1;
     if (isPoweredOn(vm.power_state)) acc[env].on += 1;
     if (isPoweredOff(vm.power_state)) acc[env].off += 1;
     const provider = vm.provider || "unknown";
     acc[env].providers[provider] = (acc[env].providers[provider] || 0) + 1;
+    const osBucket = classifyOs(vm.guest_os);
+    if (osBucket === "linux") acc[env].linux += 1;
+    else if (osBucket === "windows") acc[env].windows += 1;
+    else acc[env].unknown_os += 1;
     return acc;
   }, {});
 };

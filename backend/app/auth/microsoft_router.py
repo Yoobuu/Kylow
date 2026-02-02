@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import secrets
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
+from passlib.hash import bcrypt
 from pydantic import BaseModel
 from sqlmodel import Session, select
 
@@ -185,60 +187,62 @@ def token_exchange(
         session.commit()
         return _build_token_response(user, session)
 
-    if email:
-        user = session.exec(select(User).where(User.username == email)).first()
-        if user:
-            identity = ExternalIdentity(
-                provider="microsoft",
-                tenant_id=tid,
-                external_oid=oid,
-                email=email,
-                user_id=user.id,
-                status="active",
-                updated_at=_utcnow(),
-            )
-            session.add(identity)
-            session.commit()
-            log_audit(
-                session,
-                actor=user,
-                action="auth.microsoft.login.success",
-                target_type="user",
-                target_id=str(user.id),
-                meta={
-                    "provider": "microsoft",
-                    "tenant_id": tid,
-                    "external_oid": oid,
-                    "email": email,
-                    "linked": True,
-                },
-                ip=audit_ctx.ip,
-                ua=audit_ctx.user_agent,
-                corr=audit_ctx.correlation_id,
-            )
-            session.commit()
-            return _build_token_response(user, session)
+    if not email:
+        log_audit(
+            session,
+            actor=None,
+            action="auth.microsoft.login.denied",
+            target_type="external_identity",
+            target_id=f"{tid}:{oid}",
+            meta={"reason": "missing_email", "provider": "microsoft", "tenant_id": tid},
+            ip=audit_ctx.ip,
+            ua=audit_ctx.user_agent,
+            corr=audit_ctx.correlation_id,
+        )
+        session.commit()
+        return _error(400, "invalid_token", "Email requerido")
+
+    user = session.exec(select(User).where(User.username == email)).first()
+    user_created = False
+    if not user:
+        random_password = secrets.token_urlsafe(32)
+        user = User(
+            username=email,
+            hashed_password=bcrypt.hash(random_password),
+        )
+        user.mark_password_changed()
+        session.add(user)
+        session.flush()
+        user_created = True
 
     identity = ExternalIdentity(
         provider="microsoft",
         tenant_id=tid,
         external_oid=oid,
         email=email,
-        status="pending",
+        user_id=user.id,
+        status="active",
         updated_at=_utcnow(),
     )
     session.add(identity)
     session.commit()
     log_audit(
         session,
-        actor={"username": email},
-        action="auth.microsoft.login.pending",
-        target_type="external_identity",
-        target_id=f"{tid}:{oid}",
-        meta={"provider": "microsoft", "tenant_id": tid, "email": email},
+        actor=user,
+        action="auth.microsoft.login.success",
+        target_type="user",
+        target_id=str(user.id),
+        meta={
+            "provider": "microsoft",
+            "tenant_id": tid,
+            "external_oid": oid,
+            "email": email,
+            "linked": not user_created,
+            "provisioned": user_created,
+        },
         ip=audit_ctx.ip,
         ua=audit_ctx.user_agent,
         corr=audit_ctx.correlation_id,
     )
     session.commit()
-    return _error(403, "pending_access", "Acceso pendiente")
+    return _build_token_response(user, session)
