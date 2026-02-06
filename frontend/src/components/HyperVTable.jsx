@@ -61,6 +61,7 @@ export default function HyperVTable({
   fetcher,
   normalizeRecord,
   summaryBuilder,
+  providerKey = 'hyperv',
   columns = columnsHyperV,
   onRefresh,
   searchInputId = 'hyperv-global-search',
@@ -83,7 +84,7 @@ export default function HyperVTable({
     fetcher,
     normalizeRecord,
     summaryBuilder,
-    provider: 'hyperv',
+    provider: providerKey,
     cacheTtlMs: 5 * 60 * 1000,
     autoRefreshMs: 5 * 60 * 1000,
     keepPreviousOnEmpty: true,
@@ -252,7 +253,7 @@ export default function HyperVTable({
   const cooldownActive = Number.isFinite(cooldownTs) && cooldownTs > Date.now()
   const refreshDisabled = cooldownActive || refreshBusy || loading || refreshing
   const refreshLabel = cooldownActive
-    ? 'Cooldown activo'
+    ? 'Actualizado recientemente'
     : refreshBusy || loading || refreshing
       ? 'Consultando...'
       : 'Actualizar inventario'
@@ -289,7 +290,7 @@ export default function HyperVTable({
               onClick={handleRefresh}
               disabled={refreshDisabled}
               aria-busy={refreshDisabled}
-              title={cooldownActive ? 'Cooldown activo' : 'Actualizar inventario'}
+              title={cooldownActive ? 'Espera al próximo refresh' : 'Actualizar inventario'}
               className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 font-medium shadow-sm transition ${
                 refreshDisabled
                   ? 'cursor-not-allowed border-gray-300 bg-gray-100 text-gray-500'
@@ -459,7 +460,5 @@ export default function HyperVTable({
     </div>
   )
 }
-
-
 
 

@@ -628,13 +628,14 @@ def hyperv_config(
     Devuelve hosts configurados sin disparar WinRM.
     """
     hosts = _resolve_host_list(None)
+    hosts_otros = list(settings.hyperv_hosts_otros or [])
     log_audit(
         session,
         actor=current_user,
         action="hyperv.config.view",
         target_type="hyperv",
         target_id="config",
-        meta={"hosts": hosts},
+        meta={"hosts": hosts, "hosts_otros": hosts_otros},
         ip=audit_ctx.ip,
         ua=audit_ctx.user_agent,
         corr=audit_ctx.correlation_id,
@@ -642,6 +643,7 @@ def hyperv_config(
     session.commit()
     return {
         "hosts": hosts,
+        "hosts_otros": hosts_otros,
         "refresh_interval_min": REFRESH_INTERVAL_MINUTES,
         "caps": {
             "scopes": ["vms", "hosts"],
@@ -1266,7 +1268,6 @@ def _run_job_scope_hosts_inner(job: JobStatus) -> None:
         j.message = message
 
     update_job(finalize)
-    _GLOBAL_CONCURRENCY.release()
 
 
 def _should_warm(scope: ScopeName, level: str) -> bool:

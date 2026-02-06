@@ -29,9 +29,12 @@ const inferCluster = (name) => {
 
 const hostFetcherFactory = ({ hostsState, snapshotState, bannerState, discoverHosts, setStatus, setSnapshotGeneratedAt, setSnapshotSource, setSnapshotStale, setSnapshotStaleReason, isSuperadmin, useLegacyRef, initialRefreshRef, setJobId, setPolling }) => {
   return async ({ refresh } = {}) => {
-    const params = refresh ? { refresh: true } : undefined
+    const params = refresh ? { refresh: true } : {}
     const hs = hostsState.current.length ? hostsState.current : await discoverHosts()
     if (!hs.length) return []
+    if (hs.length) {
+      params.hosts = hs.join(',')
+    }
     try {
       setStatus({ kind: 'info', text: 'Cargando snapshot hosts...' })
       const snap = await getHypervSnapshot('hosts', hs, 'summary')
@@ -197,9 +200,10 @@ const BeigeSelect = ({ id, value, options, onChange }) => {
   )
 }
 
-export default function HyperVHostsPage() {
+export default function HyperVHostsPage({ group = 'cumbaya' }) {
   const [selected, setSelected] = useState(null)
   const [searchParams] = useSearchParams()
+  const groupKey = group === 'otros' ? 'otros' : 'cumbaya'
   const autoHostRef = useRef(null)
   const hostsRef = useRef([])
   const snapshotRef = useRef(null)
@@ -219,21 +223,48 @@ export default function HyperVHostsPage() {
   const initialRefreshRef = useRef(false)
   const useLegacyRef = useRef(false)
 
+  useEffect(() => {
+    hostsRef.current = []
+    snapshotRef.current = null
+    bannerRef.current = null
+    setBanner(null)
+    setSnapshotGeneratedAt(null)
+    setSnapshotSource(null)
+    setSnapshotStale(false)
+    setSnapshotStaleReason(null)
+    setStatus(null)
+    setJobId(null)
+    setPolling(false)
+    initialRefreshRef.current = false
+  }, [groupKey])
+
   const discoverHosts = useCallback(async () => {
     if (hostsRef.current.length) return hostsRef.current
     try {
       setStatus({ kind: 'info', text: 'Descubriendo hosts (config)...' })
       const cfg = await getHypervConfig()
-      const hs = Array.isArray(cfg?.hosts)
+      const primary = Array.isArray(cfg?.hosts)
         ? cfg.hosts.map((h) => (h || '').trim().toLowerCase()).filter(Boolean).sort()
         : []
+      const otros = Array.isArray(cfg?.hosts_otros)
+        ? cfg.hosts_otros.map((h) => (h || '').trim().toLowerCase()).filter(Boolean).sort()
+        : []
+      const hs = groupKey === 'otros' ? otros : primary
       if (hs.length) {
         console.log('[HyperVHosts] hosts discover via /hyperv/config', hs)
         hostsRef.current = hs
         return hs
       }
+      if (groupKey === 'otros' && !otros.length) {
+        setStatus({ kind: 'error', text: 'No se encontraron hosts para Hyper-V Otros' })
+        return []
+      }
     } catch (err) {
       console.warn('[HyperVHosts] config discovery failed', err)
+    }
+    if (groupKey === 'otros') {
+      setStatus({ kind: 'error', text: 'No se encontraron hosts para Hyper-V Otros' })
+      return []
     }
     try {
       setStatus({ kind: 'info', text: 'Descubriendo hosts (hosts)...' })
@@ -269,10 +300,10 @@ export default function HyperVHostsPage() {
     }
     setStatus({ kind: 'error', text: 'No se encontraron hosts para Hyper-V' })
     return []
-  }, [])
+  }, [groupKey, setStatus])
 
   const { state, actions } = useInventoryState({
-    provider: 'hyperv-hosts',
+    provider: `hyperv-hosts-${groupKey}`,
     fetcher: hostFetcherFactory({
       hostsState: hostsRef,
       snapshotState: snapshotRef,
@@ -406,10 +437,10 @@ export default function HyperVHostsPage() {
       if (resp?.message === 'cooldown_active') {
         setBanner({
           kind: 'info',
-          title: 'Cooldown activo',
-          details: [`Próximo refresh después de ${resp.cooldown_until || 'intervalo mínimo'}`],
+          title: 'Snapshot reciente',
+          details: [`Próximo refresh: ${resp.cooldown_until || 'intervalo mínimo'}`],
         })
-        setStatus({ kind: 'info', text: `Cooldown activo hasta ${resp.cooldown_until || ''}` })
+        setStatus({ kind: 'info', text: `Actualizado recientemente (${resp.cooldown_until || 'intervalo mínimo'})` })
         return
       }
       if (resp?.job_id) {

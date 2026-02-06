@@ -37,7 +37,7 @@ const formatLocalTimestamp = (value) => {
   return formatGuayaquilDateTime(value) || (value ? String(value) : null)
 }
 
-export default function HyperVPage() {
+export default function HyperVPage({ group = 'cumbaya' }) {
   const refreshRef = useRef(false)
   const [hosts, setHosts] = useState([])
   const [snapshotMeta, setSnapshotMeta] = useState(null)
@@ -56,20 +56,46 @@ export default function HyperVPage() {
   const [refreshRequested, setRefreshRequested] = useState(false)
   const [refreshNotice, setRefreshNotice] = useState(null)
   const lastGoodRef = useRef({ data: null, level: null })
+  const groupKey = group === 'otros' ? 'otros' : 'cumbaya'
+
+  useEffect(() => {
+    setHosts([])
+    setSnapshotMeta(null)
+    setBanner(null)
+    setStatus(null)
+    setJobId(null)
+    setPolling(false)
+    refreshRef.current = false
+    initialRefreshRef.current = false
+    lastGoodRef.current = { data: null, level: null }
+  }, [groupKey])
 
   const discoverHosts = useCallback(async () => {
     if (hosts.length) return hosts
+    const pickFromConfig = (cfg) => {
+      const primary = Array.isArray(cfg?.hosts)
+        ? cfg.hosts.map((h) => (h || '').trim().toLowerCase()).filter(Boolean).sort()
+        : []
+      const otros = Array.isArray(cfg?.hosts_otros)
+        ? cfg.hosts_otros.map((h) => (h || '').trim().toLowerCase()).filter(Boolean).sort()
+        : []
+      const picked = groupKey === 'otros' ? otros : primary
+      return { picked, primary, otros }
+    }
     // preferir /hyperv/hosts
     try {
       setStatus({ kind: 'info', text: 'Descubriendo hosts (config)...' })
       const cfg = await getHypervConfig()
-      const hs = Array.isArray(cfg?.hosts)
-        ? cfg.hosts.map((h) => (h || '').trim().toLowerCase()).filter(Boolean).sort()
-        : []
+      const { picked, otros } = pickFromConfig(cfg)
+      const hs = picked
       if (hs.length) {
         console.log('[HyperVPage] hosts discover via /hyperv/config', hs)
         setHosts(hs)
         return hs
+      }
+      if (groupKey === 'otros' && !otros.length) {
+        setStatus({ kind: 'error', text: 'No se encontraron hosts para Hyper-V Otros' })
+        return []
       }
     } catch (err) {
       console.warn('[HyperVPage] config discovery failed', err)
@@ -77,16 +103,23 @@ export default function HyperVPage() {
     try {
       setStatus({ kind: 'info', text: 'Descubriendo hosts (config)...' })
       const cfg = await getHypervConfig()
-      const hs = Array.isArray(cfg?.hosts)
-        ? cfg.hosts.map((h) => (h || '').trim().toLowerCase()).filter(Boolean).sort()
-        : []
+      const { picked, otros } = pickFromConfig(cfg)
+      const hs = picked
       if (hs.length) {
         console.log('[HyperVPage] hosts discover via /hyperv/config', hs)
         setHosts(hs)
         return hs
       }
+      if (groupKey === 'otros' && !otros.length) {
+        setStatus({ kind: 'error', text: 'No se encontraron hosts para Hyper-V Otros' })
+        return []
+      }
     } catch (err) {
       console.warn('[HyperVPage] config discovery failed', err)
+    }
+    if (groupKey === 'otros') {
+      setStatus({ kind: 'error', text: 'No se encontraron hosts para Hyper-V Otros' })
+      return []
     }
     try {
       setStatus({ kind: 'info', text: 'Descubriendo hosts (hosts)...' })
@@ -125,7 +158,7 @@ export default function HyperVPage() {
     console.warn('[HyperVPage] hosts discover failed, empty list')
     setStatus({ kind: 'error', text: 'No se encontraron hosts para Hyper-V' })
     return []
-  }, [hosts.length])
+  }, [groupKey, hosts.length])
 
   const fetchSnapshot = useCallback(
     async (useRefreshLegacy = false) => {
@@ -196,6 +229,17 @@ export default function HyperVPage() {
           const status = err?.response?.status
           if (status === 401) throw err
           if (status === 204 || useRefreshLegacy) {
+            if (allowSummaryFallback && level === 'detail') {
+              try {
+                const summaryRows = await attemptSnapshot('summary', false)
+                if (Array.isArray(summaryRows) && summaryRows.length) {
+                  setRefreshNotice('Detalles no disponibles; mostrando resumen.')
+                }
+                return summaryRows
+              } catch (e) {
+                // fallback to refresh/legacy flows below
+              }
+            }
             if (isSuperadmin && !initialRefreshRef.current) {
               initialRefreshRef.current = true
               const message =
@@ -312,14 +356,14 @@ export default function HyperVPage() {
       const resp = await postHypervRefresh({ scope: 'vms', hosts: hs, level: 'detail', force: false })
       if (resp?.message === 'cooldown_active') {
         const cooldownAt = formatLocalTimestamp(resp.cooldown_until)
-        const cooldownLabel = cooldownAt ? `Proximo refresh: ${cooldownAt}` : 'Proximo refresh: intervalo minimo'
+        const cooldownLabel = cooldownAt ? `Próximo refresh: ${cooldownAt}` : 'Próximo refresh: intervalo mínimo'
         setCooldownUntil(resp.cooldown_until || null)
         setBanner({
           kind: 'info',
-          title: 'Cooldown activo',
+          title: 'Snapshot reciente',
           details: [cooldownLabel],
         })
-        setStatus({ kind: 'info', text: cooldownAt ? `Cooldown activo hasta ${cooldownAt}` : 'Cooldown activo' })
+        setStatus({ kind: 'info', text: cooldownAt ? `Actualizado recientemente (próximo refresh ${cooldownAt})` : 'Actualizado recientemente' })
         setRefreshRequested(false)
         return
       }
@@ -523,6 +567,7 @@ export default function HyperVPage() {
       {noticeNode}
       <HyperVTable
         title="Inventario Hyper-V"
+        providerKey={`hyperv-${groupKey}`}
         fetcher={fetcher}
         normalizeRecord={normalizeHyperV}
         summaryBuilder={summaryBuilder}

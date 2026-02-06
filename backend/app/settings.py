@@ -191,6 +191,7 @@ class Settings:
 
     # Hyper-V
     hyperv_hosts: List[str]
+    hyperv_hosts_otros: List[str]
     hyperv_host: Optional[str]
     hyperv_user: Optional[str]
     hyperv_pass: Optional[str]
@@ -301,6 +302,7 @@ def _build_settings() -> Settings:
     ovirt_ca_bundle = os.getenv("OVIRT_CA_BUNDLE")
 
     hyperv_hosts = _split_hosts(os.getenv("HYPERV_HOSTS"))
+    hyperv_hosts_otros = _split_hosts(os.getenv("HYPERV_HOSTS_OTROS"))
     hyperv_host = os.getenv("HYPERV_HOST")
     hyperv_user = os.getenv("HYPERV_USER")
     hyperv_pass = os.getenv("HYPERV_PASS")
@@ -634,6 +636,7 @@ def _build_settings() -> Settings:
         entra_login_client_id=entra_login_client_id,
         entra_allowed_tenants=entra_allowed_tenants,
         hyperv_hosts=hyperv_hosts,
+        hyperv_hosts_otros=hyperv_hosts_otros,
         hyperv_host=hyperv_host,
         hyperv_user=hyperv_user,
         hyperv_pass=hyperv_pass,
@@ -669,7 +672,7 @@ def _build_settings() -> Settings:
         hyperv_refresh_interval_minutes=(
             max(
                 int(overrides.get("hyperv_refresh_interval_minutes")), 10
-            )
+        )
             if overrides and overrides.get("hyperv_refresh_interval_minutes") is not None
             else max(
                 _as_int(os.getenv("HYPERV_REFRESH_INTERVAL_MINUTES"), refresh_interval_minutes),
